@@ -20,6 +20,7 @@ class Header extends Component {
                         <FormControl type="Username" placeholder="Username" className=" mr-sm-2" />
                         <FormControl type="Password" placeholder="Password" className=" mr-sm-2" />
                         <Button type="submit">Submit</Button>
+                        <Button style={{marginLeft: "0.7vw"}} type="link">Register user</Button>
                     </Form>
                 </Navbar>
             </div>
