@@ -7,8 +7,7 @@ import TestRequest from './components/button';
 function App() {
   return (
     <div className="App">
-      <Header text="Hello"/>
-      <Header text="Goodbye"/>
+      <Header/>
       <TestRequest/>
     </div>
   );
