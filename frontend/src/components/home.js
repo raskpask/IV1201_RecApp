@@ -10,20 +10,30 @@ class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: "",
-            password: "",
-            email: "",
-            date:"",
-            firstName:"",
-            lastName:""
+            user: {
+                username: "",
+                password: "",
+                email: "",
+                date: "",
+                firstName: "",
+                lastName: ""
+            }
 
         }
     }
 
     registerUser = async () => {
         try {
-            console.log(this.state);
-            const response = await axios.get('/test');
+            console.log(this.state.username);
+            const user = {
+                username: this.state.username,
+                password: this.state.password,
+                email: this.state.email,
+                date: this.state.date,
+                firstName: this.state.firstName,
+                lastName: this.state.lastName
+            }
+            const response = await axios.post('/user',user);
             this.setState({ response: response.data });
 
         } catch (error) {
@@ -34,7 +44,6 @@ class Home extends Component {
     render() {
         return (
             <div>
-
                 <Form className="registerForm">
                     <h1>Register</h1>
                     <Form.Label>{this.props.info.register[0].name}</Form.Label>
