@@ -2,7 +2,7 @@ from flask import Flask
 from flask_cors import CORS, cross_origin
 from flask_restful import Resource, Api, reqparse
 
-from Model.user import UserModel
+from Controller.controller import Controller
 
 app = Flask(__name__)
 api = Api(app)
@@ -10,12 +10,8 @@ api = Api(app)
 # CORS(app)
 # app.config['CORS_HEADERS'] = 'Content-Type'
 cors = CORS(app)
-
+controller = Controller()
 parser = reqparse.RequestParser()
-
-
-
-
 
 class User(Resource):
     
@@ -33,18 +29,7 @@ class User(Resource):
     def post(self):
         self.getRegiserParams()
         params = parser.parse_args()
-        print(params)
-        user = UserModel(
-            params.username,
-            params.password,
-            params.email,
-            params.date,
-            params.firstName,
-            params.lastName
-            )
-        user.printInfo()
-        
-
+        controller.registerUser(params)
         return "OK", 200
 
 
