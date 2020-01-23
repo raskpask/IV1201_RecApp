@@ -8,7 +8,7 @@ import Home from './components/home';
 import Register from './components/register';
 
 
-import '../resources/css/register.css';
+import './resources/css/register.css';
 
 class App extends Component {
     constructor(props) {
