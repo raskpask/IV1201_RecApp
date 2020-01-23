@@ -5,6 +5,7 @@ import { BrowserRouter, Route } from 'react-router-dom';
 
 import Header from './header';
 import Home from './home';
+import Register from './register';
 
 
 import '../resources/css/register.css';
@@ -49,8 +50,11 @@ class App extends Component {
             <div className="App" >
                 <Header />
                 <BrowserRouter>
-                    <Route exact path="/"
+                    <Route exact path="/home"
                         render={(props) => <Home info={this.state.eng} />}
+                    />
+                    <Route exact path="/register"
+                        render={(props) => <Register info={this.state.eng} />}
                     />
                 </BrowserRouter>
             </div>
