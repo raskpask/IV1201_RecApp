@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import '../resources/css/App.css';
+import './resources/css/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter, Route } from 'react-router-dom';
 
-import Header from './header';
-import Home from './home';
-import Register from './register';
+import Header from './components/header';
+import Home from './components/home';
+import Register from './components/register';
 
 
 import '../resources/css/register.css';
