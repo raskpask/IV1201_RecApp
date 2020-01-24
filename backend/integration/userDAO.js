@@ -2,13 +2,13 @@ const { Pool, Client } = require('pg')
 
 function connect() {
     const client = new Client({
-        connectionString: process.env.DATABASE_URL,
-        // user: "wlmremkduaitnk",
-        // password: "83a43bfb610544a9c62da56a7144bafb13a726bf63a91e7ec454178a9623b479",
-        // database: "d38bijitre5o3s",
-        // port: 5432,
-        // host: "ec2-54-247-92-167.eu-west-1.compute.amazonaws.com",
-        // ssl: true
+        // connectionString: process.env.DATABASE_URL,
+        user: "wlmremkduaitnk",
+        password: "83a43bfb610544a9c62da56a7144bafb13a726bf63a91e7ec454178a9623b479",
+        database: "d38bijitre5o3s",
+        port: 5432,
+        host: "ec2-54-247-92-167.eu-west-1.compute.amazonaws.com",
+        ssl: true
     });
     client.connect();
     return client
@@ -24,7 +24,9 @@ function registerUser(user) {
         }
         client.query(query, (err, res) => {
             // console.log(res.rows[0].username)
-            if (res.rows[0].username == user.username) {
+            if(res == null || res.rows == null || res.rows[0] == null){
+                reject("Error with inserting into db")
+            } else if (res.rows[0].username == user.username) {
                 client.end()
                 resolve(200)
             }
@@ -41,12 +43,15 @@ function authenticateUser(credentials) {
             values: [credentials.username]
         }
         client.query(query, (err, res) => {
-            if (res.rows[0].password === credentials.password) {
+            if(res == null || res.rows == null || res.rows[0] == null){
+                console.error("wrong username/password");
+                // reject();
+            } else if (res.rows[0].password === credentials.password) {
                 client.end()
-                resolve();
+                return resolve();
             }
             client.end()
-            reject("No access")
+            reject()
         })
     });
 }
@@ -69,9 +74,31 @@ function changeAuthToken(credentials,token) {
         });
     });
 }
+
+function getUser(token) {
+    return new Promise(function (resolve, reject) {
+        client = connect();
+        console.log("token: "+token)
+        const getUserQuery = {
+            text: "SELECT person FROM person WHERE token=$1",
+            values: [token]
+        }
+        client.query(getUserQuery, (err, res) => {
+            console.log(res)
+            if (res.rows[0] != null) {
+                client.end()
+                resolve(res.rows[0].person)
+            }
+            client.end()
+            reject("Token could not be set")
+        });
+    });
+}
+
 module.exports = {
     registerUser,
     authenticateUser,
     changeAuthToken,
+    getUser,
 
 }

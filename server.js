@@ -14,26 +14,44 @@ const User = require('./backend/model/user');
 
 
 app.post('/api/user', async (req, res) => {
+  const body = req.body;
   try {
-    const body = req.body;
-    const statusCode = await controller.registerUser(body, res)
-    res.status(statusCode)
-    res.send();
+    const statusCode = await controller.registerUser(body, res);
+    res.status(statusCode);
   } catch (error) {
-    console.log(error)
+    console.log(error);
+    res.status(400)
+  }
+  res.send();
+});
+
+app.get('/api/user', async (req, res) => {
+  const body = req.body;
+  try {
+    // console.log(req.headers.cookie)
+    // const cookie = extractCookie(req.header.cookie);
+    const user = await controller.getUser(req);
+    console.log(user)
+  } catch(error){
+    console.error(error)
   }
 });
 
 app.post('/api/login', async (req, res) => {
   const body = req.body;
-  const token = await controller.authenticateUser(body)
-  res.cookie('authToken', token);
+  try {
+    const token = await controller.authenticateUser(body);
+    res.cookie('authToken', token);
+  } catch (error) {
+    res.status(401);
+  }
+
   res.send()
 });
 
 function extractCookie(cookieHeader) {
   if (!cookieHeader) {
-      return null
+    return null
   }
   return cookieHeader ? cookieHeader.split('=')[1] : null;
 }
