@@ -12,28 +12,32 @@ app.use(express.static(path.join(__dirname, 'build')));
 const controller = require('./backend/controller/controller');
 const User = require('./backend/model/user');
 
+
 app.post('/api/user', async (req, res) => {
   try {
     const body = req.body;
-    if (!body || !body.username || !body.password || !body.email || !body.date || !body.firstName || !body.lastName) {
-      console.log("Missing param or params")
-      res.status(400)
-      res.send()
-    }
-    registerUser = new User(body.username, body.password, body.email, body.date, body.firstName, body.lastName);
-    controller.registerUser(registerUser);
-
-    // controller.registerUser(user)
+    const statusCode = await controller.registerUser(body, res)
+    res.status(statusCode)
     res.send();
   } catch (error) {
     console.log(error)
   }
 });
 
-
-app.get('/ping', function (req, res) {
-  return res.send('pong');
+app.post('/api/login', async (req, res) => {
+  const body = req.body;
+  const token = await controller.authenticateUser(body)
+  res.cookie('authToken', token);
+  res.send()
 });
+
+function extractCookie(cookieHeader) {
+  if (!cookieHeader) {
+      return null
+  }
+  return cookieHeader ? cookieHeader.split('=')[1] : null;
+}
+// For React
 app.get('/*', function (req, res) {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });

@@ -1,8 +1,12 @@
 
-async function registerUser(user){
-    return userDAO.registerUser(user)
+function extractCredentials(body){
+    const credentials = {
+        username: body.username,
+        password: body.password
+    }
+    return credentials
 }
 module.exports = {
-    registerUser,
+    extractCredentials,
 
 }
