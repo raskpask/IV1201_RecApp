@@ -32,7 +32,8 @@ class Register extends Component {
                 firstName: this.state.firstName,
                 lastName: this.state.lastName
             }
-            const response = await axios.post('/api/user', user);
+            const response = await axios.post('/api/user',user);
+
             if (response.status === 200) {
                 this.setState({ submitted: true });
             }
