@@ -10,7 +10,7 @@ app.use(express.static(__dirname));
 app.use(express.static(path.join(__dirname, 'build')));
 
 const controller = require('./backend/controller/controller');
-const requestHandler = require('./backend/model/requestHandler')
+const User = require('./backend/model/user');
 
 app.post('/api/user', async (req, res) => {
   try {
@@ -20,8 +20,9 @@ app.post('/api/user', async (req, res) => {
       res.status(400)
       res.send()
     }
-    
-    console.log(req.body)
+    registerUser = new User(body.username, body.password, body.email, body.date, body.firstName, body.lastName);
+    controller.registerUser(registerUser);
+
     // controller.registerUser(user)
     res.send();
   } catch (error) {

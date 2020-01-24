@@ -1,8 +1,13 @@
-
-async function registerUser(user){
-    return userDAO.registerUser(user)
-}
-module.exports = {
-    registerUser,
-
+module.exports = class User{
+    constructor(username,password,email,date,firstName,lastName){
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.date = date;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+    display() {
+        console.log(this.firstName + " " + this.lastName);
+    }
 }
