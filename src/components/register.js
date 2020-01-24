@@ -17,7 +17,12 @@ class Register extends Component {
                 date: "",
                 firstName: "",
                 lastName: ""
+
             },
+            formErrors:{email: '', password: ''},
+            emailValid: false,
+            passwordValid: false,
+            formValid: false,
             submitted: false
         }
     }
@@ -59,7 +64,7 @@ class Register extends Component {
             <Form.Label>{this.props.info.register[2].name}</Form.Label>
             <Form.Control
                 type="email"
-                onChange={event => this.setState({ email: event.target.value })}
+                onChange={event => this.setState({ email: event.target.value }), event => { this.validateField('email', event.target.value) }}
                 placeholder={this.props.info.register[2].placeholder} />
             <Form.Label>{this.props.info.register[3].name}</Form.Label>
             <Form.Control
@@ -76,9 +81,37 @@ class Register extends Component {
                 type="name"
                 onChange={event => this.setState({ lastName: event.target.value })}
                 placeholder={this.props.info.register[5].placeholder} />
-            <Button className="registerButton" onClick={() => this.registerUser()} variant="primary">Register</Button>
+            <Button className="registerButton" disabled={!this.state.formValid} onClick={() => this.registerUser()} variant="primary" >Register</Button>
         </Form>)
     }
+        
+    validateField(fieldName, value) {
+        let fieldValidationErrors = this.state.formErrors;
+        let emailValid = this.state.emailValid;
+        let passwordValid = this.state.passwordValid;
+    
+        switch(fieldName) {
+        case 'email':
+            emailValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
+            fieldValidationErrors.email = emailValid ? '' : ' is invalid';
+            break;
+        case 'password':
+            passwordValid = value.length >= 6;
+            fieldValidationErrors.password = passwordValid ? '': ' is too short';
+            break;
+        default:
+            break;
+        }
+        this.setState({formErrors: fieldValidationErrors,
+                        emailValid: emailValid,
+                        passwordValid: passwordValid
+                    }, this.validateForm);
+    }
+    
+    validateForm() {
+        this.setState({formValid: this.state.emailValid && this.state.passwordValid});
+    }
+
     renderRegisterComplete() {
         return (
             <h1>Reg OK</h1>
@@ -92,5 +125,7 @@ class Register extends Component {
             </div >
         );
     };
+
+  
 }
 export default Register
