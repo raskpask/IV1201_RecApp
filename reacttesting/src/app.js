@@ -50,14 +50,14 @@ class App extends Component {
             <div className="App" >
                 <Header />
                 <BrowserRouter>
+                    <Route exact path="/user"
+                        render={(props) => <User info={this.state.eng} />}
+                    />
                     <Route exact path="/home"
                         render={(props) => <Home info={this.state.eng} />}
                     />
                     <Route exact path="/register"
                         render={(props) => <Register info={this.state.eng} />}
-                    />
-                    <Route exact path="/user"
-                        render={(props) => <User info={this.state.eng} />}
                     />
                 </BrowserRouter>
             </div>

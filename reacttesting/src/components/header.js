@@ -52,7 +52,6 @@ class Header extends Component {
                 <Nav className="mr-auto">
                     <Nav.Link href="/home">Home</Nav.Link>
                     <Nav.Link href="/register">Register</Nav.Link>
-                    <Nav.Link href="/user">User</Nav.Link>
                 </Nav>
             </React.Fragment>
         )

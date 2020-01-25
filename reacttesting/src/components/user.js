@@ -81,7 +81,7 @@ class User extends Component {
     }
     renderUserComplete() {
         return (
-            <h1>User not logged in</h1>
+            <h1>Reg OK</h1>
         )
     }
 

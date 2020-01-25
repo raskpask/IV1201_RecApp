@@ -6,7 +6,7 @@ import axios from 'axios';
 
 import '../resources/css/register.css';
 
-class User extends Component {
+class Register extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -22,7 +22,7 @@ class User extends Component {
         }
     }
 
-    updateUser = async () => {
+    registerUser = async () => {
         try {
             const user = {
                 username: this.state.username,
@@ -32,7 +32,7 @@ class User extends Component {
                 firstName: this.state.firstName,
                 lastName: this.state.lastName
             }
-            const response = await axios.put('/api/user',user);
+            const response = await axios.post('/api/user',user);
 
             if (response.status === 200) {
                 this.setState({ submitted: true });
@@ -42,55 +42,55 @@ class User extends Component {
             console.log(error);
         }
     }
-    renderUserForm = () => {
-        return (<Form className="userForm">
-            <h1>User</h1>
-            <Form.Label>{this.props.info.user[0].name}</Form.Label>
+    renderRegisterForm = () => {
+        return (<Form className="registerForm">
+            <h1>Register</h1>
+            <Form.Label>{this.props.info.register[0].name}</Form.Label>
             <Form.Control
                 value={this.state.username}
                 onChange={event => this.setState({ username: event.target.value })}
                 type="username"
-                placeholder={this.props.info.user[0].placeholder} />
-            <Form.Label>{this.props.info.user[1].name}</Form.Label>
+                placeholder={this.props.info.register[0].placeholder} />
+            <Form.Label>{this.props.info.register[1].name}</Form.Label>
             <Form.Control
                 type="password"
                 onChange={event => this.setState({ password: event.target.value })}
-                placeholder={this.props.info.user[1].placeholder} />
-            <Form.Label>{this.props.info.user[2].name}</Form.Label>
+                placeholder={this.props.info.register[1].placeholder} />
+            <Form.Label>{this.props.info.register[2].name}</Form.Label>
             <Form.Control
                 type="email"
                 onChange={event => this.setState({ email: event.target.value })}
-                placeholder={this.props.info.user[2].placeholder} />
-            <Form.Label>{this.props.info.user[3].name}</Form.Label>
+                placeholder={this.props.info.register[2].placeholder} />
+            <Form.Label>{this.props.info.register[3].name}</Form.Label>
             <Form.Control
                 type="date"
                 onChange={event => this.setState({ date: event.target.value })}
-                placeholder={this.props.info.user[3].placeholder} />
-            <Form.Label>{this.props.info.user[4].name}</Form.Label>
+                placeholder={this.props.info.register[3].placeholder} />
+            <Form.Label>{this.props.info.register[4].name}</Form.Label>
             <Form.Control
                 type="name"
                 onChange={event => this.setState({ firstName: event.target.value })}
-                placeholder={this.props.info.user[4].placeholder} />
-            <Form.Label>{this.props.info.user[5].name}</Form.Label>
+                placeholder={this.props.info.register[4].placeholder} />
+            <Form.Label>{this.props.info.register[5].name}</Form.Label>
             <Form.Control
                 type="name"
                 onChange={event => this.setState({ lastName: event.target.value })}
-                placeholder={this.props.info.user[5].placeholder} />
-            <Button className="userButton" onClick={() => this.userUser()} variant="primary">User</Button>
+                placeholder={this.props.info.register[5].placeholder} />
+            <Button className="registerButton" onClick={() => this.registerUser()} variant="primary">Register</Button>
         </Form>)
     }
-    renderUserComplete() {
+    renderRegisterComplete() {
         return (
-            <h1>User not logged in</h1>
+            <h1>Reg OK</h1>
         )
     }
 
     render() {
         return (
             <div>
-                {this.state.submitted ? this.renderUserComplete() : this.renderUserForm()}
+                {this.state.submitted ? this.renderRegisterComplete() : this.renderRegisterForm()}
             </div >
         );
     };
 }
-export default User
+export default Register
