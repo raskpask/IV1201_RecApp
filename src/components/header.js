@@ -76,8 +76,7 @@ class Header extends Component {
     renderUser() {
         return (
             <Nav className="ml-auto">
-                {/* <Button onClick={() => this.logout()} variant="primary">Logout</Button> */}
-                <Navbar.Text className="userText"> Hello user </Navbar.Text>
+                <Navbar.Link className="userText" href="/home"> Hello user</Navbar.Link>
                 <Nav.Link onClick={() => this.logout()} href="/home">Logout</Nav.Link>
             </Nav>
         )

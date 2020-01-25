@@ -14,9 +14,20 @@ const User = require('./backend/model/user');
 
 
 app.post('/api/user', async (req, res) => {
+  try {
+    const statusCode = await controller.registerUser(req, res);
+    res.status(statusCode);
+  } catch (error) {
+    console.log(error);
+    res.status(400)
+  }
+  res.send();
+});
+
+app.put('/api/user', async (req, res) => {
   const body = req.body;
   try {
-    const statusCode = await controller.registerUser(body, res);
+    const statusCode = await controller.updateUser(req);
     res.status(statusCode);
   } catch (error) {
     console.log(error);
@@ -26,21 +37,22 @@ app.post('/api/user', async (req, res) => {
 });
 
 app.get('/api/user', async (req, res) => {
-  const body = req.body;
   try {
     // console.log(req.headers.cookie)
     // const cookie = extractCookie(req.header.cookie);
     const user = await controller.getUser(req);
+    res.send(JSON.stringify({user: user}))
     console.log(user)
   } catch(error){
     console.error(error)
   }
 });
 
+
+
 app.post('/api/login', async (req, res) => {
-  const body = req.body;
   try {
-    const token = await controller.authenticateUser(body);
+    const token = await controller.authenticateUser(req);
     res.cookie('authToken', token);
   } catch (error) {
     res.status(401);
@@ -49,12 +61,7 @@ app.post('/api/login', async (req, res) => {
   res.send()
 });
 
-function extractCookie(cookieHeader) {
-  if (!cookieHeader) {
-    return null
-  }
-  return cookieHeader ? cookieHeader.split('=')[1] : null;
-}
+
 // For React
 app.get('/*', function (req, res) {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));

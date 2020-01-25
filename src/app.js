@@ -6,7 +6,7 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import Header from './components/header';
 import Home from './components/home';
 import Register from './components/register';
-
+import User from './components/user';
 
 import './resources/css/register.css';
 
@@ -50,6 +50,9 @@ class App extends Component {
             <div className="App" >
                 <Header />
                 <BrowserRouter>
+                    <Route exact path="/user"
+                        render={(props) => <User info={this.state.eng} />}
+                    />
                     <Route exact path="/home"
                         render={(props) => <Home info={this.state.eng} />}
                     />

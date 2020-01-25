@@ -1,4 +1,5 @@
 const { Pool, Client } = require('pg')
+const User = require('../model/user');
 
 function connect() {
     const client = new Client({
@@ -35,6 +36,27 @@ function registerUser(user) {
         });
     });
 }
+function updateUser(user,token) {
+    return new Promise(function (resolve, reject) {
+        client = connect();
+        const query = {
+            text: "UPDATE person SET (email,name,password,role_id,ssn,surname,username) VALUES($1,$2,$3,$4,$5,$6,$7) WHERE token = $8",
+            values: [user.email, user.firstName, user.password, 2, user.date, user.lastName, user.username,token]
+        }
+        console.log(query)
+        client.query(query, (err, res) => {
+            // console.log(res.rows[0])
+            if(res == null || res.rows == null || res.rows[0] == null){
+                reject("Error with inserting into db")
+            } else if (res.rows[0].username == user.username) {
+                client.end()
+                resolve(200)
+            }
+            client.end()
+            reject("Some error while inserting person")
+        });
+    });
+}
 function authenticateUser(credentials) {
     return new Promise(function (resolve, reject) {
         client = connect();
@@ -45,7 +67,7 @@ function authenticateUser(credentials) {
         client.query(query, (err, res) => {
             if(res == null || res.rows == null || res.rows[0] == null){
                 console.error("wrong username/password");
-                // reject();
+                // Throw error here
             } else if (res.rows[0].password === credentials.password) {
                 client.end()
                 return resolve();
@@ -78,16 +100,16 @@ function changeAuthToken(credentials,token) {
 function getUser(token) {
     return new Promise(function (resolve, reject) {
         client = connect();
-        console.log("token: "+token)
+        // console.log("token: "+token)
         const getUserQuery = {
             text: "SELECT person FROM person WHERE token=$1",
             values: [token]
         }
         client.query(getUserQuery, (err, res) => {
-            console.log(res)
             if (res.rows[0] != null) {
+                const rawUser = res.rows[0].person.split('(')[1].split(',');
                 client.end()
-                resolve(res.rows[0].person)
+                resolve(new User(rawUser[7],rawUser[5],rawUser[4],rawUser[3],rawUser[1],rawUser[2]));
             }
             client.end()
             reject("Token could not be set")
@@ -100,5 +122,6 @@ module.exports = {
     authenticateUser,
     changeAuthToken,
     getUser,
+    updateUser,
 
 }
