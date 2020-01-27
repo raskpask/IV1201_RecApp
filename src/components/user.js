@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
+import { Form, Card, ListGroup } from 'react-bootstrap';
 
 import axios from 'axios';
 
 import '../resources/css/register.css';
+import '../resources/css/user.css';
 
 class User extends Component {
     constructor(props) {
@@ -21,7 +22,10 @@ class User extends Component {
             submitted: false
         }
     }
-
+    componentDidMount = async () => {
+        const user = await (await axios.get('/api/user')).data.user;
+        this.setState({ user: user })
+    }
     updateUser = async () => {
         try {
             const user = {
@@ -32,7 +36,7 @@ class User extends Component {
                 firstName: this.state.firstName,
                 lastName: this.state.lastName
             }
-            const response = await axios.put('/api/user',user);
+            const response = await axios.put('/api/user', user);
 
             if (response.status === 200) {
                 this.setState({ submitted: true });
@@ -41,6 +45,25 @@ class User extends Component {
         } catch (error) {
             console.log(error);
         }
+    }
+    renderUser = () => {
+        return (
+            <Fragment>
+                
+                <Card className="userInfo">
+                    <Card.Header>
+                        {this.props.info.user[6].name}{this.state.user.firstName} {this.state.user.lastName}!
+
+                    </Card.Header>
+                    <ListGroup variant="flush">
+
+                        <ListGroup.Item>{this.props.info.user[0].name}{this.state.user.username}</ListGroup.Item>
+                        <ListGroup.Item>{this.props.info.user[2].name}{this.state.user.email}</ListGroup.Item>
+                        <ListGroup.Item>{this.props.info.user[3].name}{this.state.user.date}</ListGroup.Item>
+                    </ListGroup>
+                </Card>
+            </Fragment>
+        )
     }
     renderUserForm = () => {
         return (<Form className="userForm">
@@ -76,7 +99,7 @@ class User extends Component {
                 type="name"
                 onChange={event => this.setState({ lastName: event.target.value })}
                 placeholder={this.props.info.user[5].placeholder} />
-            <Button className="userButton" onClick={() => this.userUser()} variant="primary">User</Button>
+            <Button className="userButton" onClick={() => this.updateUser()} variant="primary">User</Button>
         </Form>)
     }
     renderUserComplete() {
@@ -88,7 +111,7 @@ class User extends Component {
     render() {
         return (
             <div>
-                {this.state.submitted ? this.renderUserComplete() : this.renderUserForm()}
+                {this.renderUser()}
             </div >
         );
     };

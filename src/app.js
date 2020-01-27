@@ -40,6 +40,35 @@ class App extends Component {
                         name: "Last Name",
                         placeholder: "Enter last name"
                     }
+                ],
+                user: [
+                    {
+                        name: "Username: ",
+                        placeholder: "Enter username"
+                    },
+                    {
+                        name: "Password: ",
+                        placeholder: "Enter Password",
+                    },
+                    {
+                        name: "Email: ",
+                        placeholder: "Enter Email"
+                    },
+                    {
+                        name: "Date of birth: ",
+                        placeholder: "Enter date of birth"
+                    },
+                    {
+                        name: "First Name: ",
+                        placeholder: "Enter first name"
+                    },
+                    {
+                        name: "Last Name: ",
+                        placeholder: "Enter last name"
+                    },
+                    {
+                        name: "Welcome "
+                    }
                 ]
             }
         }

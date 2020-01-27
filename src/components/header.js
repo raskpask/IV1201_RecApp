@@ -6,6 +6,8 @@ import axios from 'axios';
 import '../resources/css/header.css';
 
 class Header extends Component {
+    
+    
     constructor(props) {
         super(props);
         this.state = {
@@ -14,7 +16,7 @@ class Header extends Component {
                 password: "",
             },
             submitted: false,
-            isloggedIn: false 
+            isLoggedIn: false 
         }
     }
     login = async () => {
@@ -24,8 +26,10 @@ class Header extends Component {
                 password: this.state.password
             }
             const response = await axios.post('/api/login', credentials)
+            this.isLoggedIn()
+            console.log(response.status)
             if(response.status === 200){
-                this.setState({ isloggedIn: true })
+                // this.setState({ submitted: true })
                 this.forceUpdate()
             }
             
@@ -43,6 +47,7 @@ class Header extends Component {
         if (!document.cookie) {
             return false
         }
+        // this.setState({isLoggedIn: true});
         return true
     }
     renderBrand() {
@@ -52,7 +57,6 @@ class Header extends Component {
                 <Nav className="mr-auto">
                     <Nav.Link href="/home">Home</Nav.Link>
                     <Nav.Link href="/register">Register</Nav.Link>
-                    <Nav.Link href="/user">User</Nav.Link>
                 </Nav>
             </React.Fragment>
         )
@@ -77,7 +81,7 @@ class Header extends Component {
     renderUser() {
         return (
             <Nav className="ml-auto">
-                <Navbar.Link className="userText" href="/home"> Hello user</Navbar.Link>
+                <Nav.Link className="userText" href="/user"> Your Profile</Nav.Link>
                 <Nav.Link onClick={() => this.logout()} href="/home">Logout</Nav.Link>
             </Nav>
         )
@@ -87,7 +91,7 @@ class Header extends Component {
             <div>
                 <Navbar bg="dark" variant="dark">
                     {this.renderBrand()}
-                    {this.state.isloggedIn ? this.renderUser() : this.renderLogin()}
+                    {this.isLoggedIn() ? this.renderUser() : this.renderLogin()}
                 </Navbar>
             </div>
         );

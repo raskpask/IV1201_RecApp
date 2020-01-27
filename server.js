@@ -38,12 +38,12 @@ app.put('/api/user', async (req, res) => {
 
 app.get('/api/user', async (req, res) => {
   try {
-    // console.log(req.headers.cookie)
+    console.log("the request was recived")
     // const cookie = extractCookie(req.header.cookie);
     const user = await controller.getUser(req);
-    res.send(JSON.stringify({user: user}))
+    res.send(JSON.stringify({ user: user }))
     console.log(user)
-  } catch(error){
+  } catch (error) {
     console.error(error)
   }
 });
@@ -60,6 +60,35 @@ app.post('/api/login', async (req, res) => {
 
   res.send()
 });
+
+app.get('/api/application', async (req, res) => {
+  try {
+    const application = controller.getApplication(req);
+  } catch (error) {
+    res.status(400);
+  }
+  res.send();
+});
+
+app.post('/api/application', async (req, res) => {
+  try {
+    const application = controller.createApplication(req);
+  } catch (error) {
+    res.status(400);
+  }
+  res.send();
+});
+
+app.get('/api/listApplication', async (req, res) => {
+  try {
+    const application = controller.getListApplication(req);
+  } catch (error) {
+    res.status(400);
+  }
+  res.send();
+});
+
+
 
 
 // For React

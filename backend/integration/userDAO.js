@@ -1,5 +1,6 @@
 const { Pool, Client } = require('pg')
 const User = require('../model/user');
+const Application = require('../model/application');
 
 function connect() {
     const client = new Client({
@@ -112,10 +113,75 @@ function getUser(token) {
                 resolve(new User(rawUser[7],rawUser[5],rawUser[4],rawUser[3],rawUser[1],rawUser[2]));
             }
             client.end()
-            reject("Token could not be set")
+            reject("User could not be found")
         });
     });
 }
+
+function getApplication(token) {
+    return new Promise(function (resolve, reject) {
+        // client = connect();
+        // // console.log("token: "+token)
+        // const getUserQuery = {
+        // //     // text: "SELECT person FROM person WHERE token=$1",
+        // //     // values: [token]
+        // //     // Do some query here
+        // // }
+        // client.query(getUserQuery, (err, res) => {
+        //     if (res.rows[0] != null) {
+        //         const rawUser = res.rows[0].person.split('(')[1].split(',');
+        //         client.end()
+        //         resolve(new Application(rawUser[7],rawUser[5],rawUser[4],rawUser[3],rawUser[1],rawUser[2]));
+        //     }
+        //     client.end();
+        //     reject();
+        // });
+        resolve();
+    });
+}
+function createApplication(application,token) {
+    return new Promise(function (resolve, reject) {
+        // client = connect();
+        // const query = {
+        //     text: "INSERT INTO person (email,name,password,role_id,ssn,surname,username) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING *",
+        //     values: [user.email, user.firstName, user.password, 2, user.date, user.lastName, user.username]
+        // }
+        // client.query(query, (err, res) => {
+        //     // console.log(res.rows[0].username)
+        //     if(res == null || res.rows == null || res.rows[0] == null){
+        //         reject("Error with inserting into db")
+        //     } else if (res.rows[0].username == user.username) {
+        //         client.end()
+        //         resolve(200)
+        //     }
+        //     client.end()
+        //     reject("Some error while inserting person")
+        // });
+        resolve();
+    });
+}
+function listApplications(token) {
+    return new Promise(function (resolve, reject) {
+        // client = connect();
+        // // console.log("token: "+token)
+        // const getUserQuery = {
+        // //     // text: "SELECT person FROM person WHERE token=$1",
+        // //     // values: [token]
+        // //     // Do some query here
+        // // }
+        // client.query(getUserQuery, (err, res) => {
+        //     if (res.rows[0] != null) {
+        //         const rawUser = res.rows[0].person.split('(')[1].split(',');
+        //         client.end()
+        //         resolve(new Application(rawUser[7],rawUser[5],rawUser[4],rawUser[3],rawUser[1],rawUser[2]));
+        //     }
+        //     client.end();
+        //     reject();
+        // });
+        resolve();
+    });
+}
+
 
 module.exports = {
     registerUser,
@@ -123,5 +189,8 @@ module.exports = {
     changeAuthToken,
     getUser,
     updateUser,
+    getApplication,
+    createApplication,
+    listApplications,
 
 }
