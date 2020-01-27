@@ -10,15 +10,15 @@ app.use(express.static(__dirname));
 app.use(express.static(path.join(__dirname, 'build')));
 
 const controller = require('./backend/controller/controller');
-const User = require('./backend/model/user');
 
 
 app.post('/api/user', async (req, res) => {
   try {
+    
     const statusCode = await controller.registerUser(req, res);
     res.status(statusCode);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(400)
   }
   res.send();
@@ -30,7 +30,7 @@ app.put('/api/user', async (req, res) => {
     const statusCode = await controller.updateUser(req);
     res.status(statusCode);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(400)
   }
   res.send();
@@ -38,33 +38,46 @@ app.put('/api/user', async (req, res) => {
 
 app.get('/api/user', async (req, res) => {
   try {
-    console.log("the request was recived")
-    // const cookie = extractCookie(req.header.cookie);
     const user = await controller.getUser(req);
-    res.send(JSON.stringify({ user: user }))
-    console.log(user)
+    res.send(JSON.stringify({ user: user }));
+    console.log(user);
   } catch (error) {
     console.error(error)
+    res.sendStatus(400);
   }
 });
 
 
 
-app.post('/api/login', async (req, res) => {
+app.post('/api/authentication', async (req, res) => {
   try {
     const token = await controller.authenticateUser(req);
     res.cookie('authToken', token);
+    
   } catch (error) {
+    console.error(error);
     res.status(401);
   }
-
   res.send()
 });
+
+app.delete('/api/authentication', async (req,res)=>{
+  try{
+    await controller.deAuthenticateUser(req);
+    res.clearCookie('authToken');
+    res.send();
+  } catch (error){
+    console.error(error)
+    res.status(401);
+  }
+  res.sendStatus(500)
+})
 
 app.get('/api/application', async (req, res) => {
   try {
     const application = controller.getApplication(req);
   } catch (error) {
+    console.error(error);
     res.status(400);
   }
   res.send();
@@ -74,6 +87,7 @@ app.post('/api/application', async (req, res) => {
   try {
     const application = controller.createApplication(req);
   } catch (error) {
+    console.error(error);
     res.status(400);
   }
   res.send();
@@ -83,6 +97,7 @@ app.get('/api/listApplication', async (req, res) => {
   try {
     const application = controller.getListApplication(req);
   } catch (error) {
+    console.error(error);
     res.status(400);
   }
   res.send();

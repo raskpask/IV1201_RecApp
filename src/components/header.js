@@ -25,9 +25,8 @@ class Header extends Component {
                 username: this.state.username,
                 password: this.state.password
             }
-            const response = await axios.post('/api/login', credentials)
-            this.isLoggedIn()
-            console.log(response.status)
+            const response = await axios.post('/api/authentication', credentials)
+            // console.log(response.status)
             if(response.status === 200){
                 // this.setState({ submitted: true })
                 this.forceUpdate()
@@ -37,9 +36,12 @@ class Header extends Component {
             console.log(error)
         }
     }
-    logout() {
-        this.setState({ isloggedIn: false })
-        this.forceUpdate()
+    logout = async () => {
+        const response =await axios.delete('/api/authentication')
+        if(response.status === 200){
+            this.forceUpdate()
+        }
+        // this.setState({ isloggedIn: false })
     }
     isLoggedIn() {
         console.log(document.cookie)
@@ -82,7 +84,7 @@ class Header extends Component {
         return (
             <Nav className="ml-auto">
                 <Nav.Link className="userText" href="/user"> Your Profile</Nav.Link>
-                <Nav.Link onClick={() => this.logout()} href="/home">Logout</Nav.Link>
+                <Nav.Link onClick={() => this.logout()} >Logout</Nav.Link>
             </Nav>
         )
     }

@@ -26,7 +26,7 @@ function registerUser(user) {
         }
         client.query(query, (err, res) => {
             // console.log(res.rows[0].username)
-            if(res == null || res.rows == null || res.rows[0] == null){
+            if (res == null || res.rows == null || res.rows[0] == null) {
                 reject("Error with inserting into db")
             } else if (res.rows[0].username == user.username) {
                 client.end()
@@ -37,17 +37,17 @@ function registerUser(user) {
         });
     });
 }
-function updateUser(user,token) {
+function updateUser(user, token) {
     return new Promise(function (resolve, reject) {
         client = connect();
         const query = {
             text: "UPDATE person SET (email,name,password,role_id,ssn,surname,username) VALUES($1,$2,$3,$4,$5,$6,$7) WHERE token = $8",
-            values: [user.email, user.firstName, user.password, 2, user.date, user.lastName, user.username,token]
+            values: [user.email, user.firstName, user.password, 2, user.date, user.lastName, user.username, token]
         }
         console.log(query)
         client.query(query, (err, res) => {
             // console.log(res.rows[0])
-            if(res == null || res.rows == null || res.rows[0] == null){
+            if (res == null || res.rows == null || res.rows[0] == null) {
                 reject("Error with inserting into db")
             } else if (res.rows[0].username == user.username) {
                 client.end()
@@ -66,8 +66,8 @@ function authenticateUser(credentials) {
             values: [credentials.username]
         }
         client.query(query, (err, res) => {
-            if(res == null || res.rows == null || res.rows[0] == null){
-                console.error("wrong username/password");
+            if (res == null || res.rows == null || res.rows[0] == null) {
+                reject("Wrong username/password")
                 // Throw error here
             } else if (res.rows[0].password === credentials.password) {
                 client.end()
@@ -78,13 +78,23 @@ function authenticateUser(credentials) {
         })
     });
 }
-function changeAuthToken(credentials,token) {
+function changeAuthToken(credentials, token) {
     return new Promise(function (resolve, reject) {
         client = connect();
         // console.log(credentials)
-        const updateTokenQuery = {
-            text: "UPDATE person SET token = $1 WHERE username = $2",
-            values: [token, credentials.username]
+        // console.log(token)
+        // If the credentials is null the function will perfom a logout.
+        let updateTokenQuery="";
+        if (credentials == null) {
+            updateTokenQuery ={
+                text: "UPDATE person SET token = null WHERE token = $1",
+                values: [token]
+            }
+        } else {
+            updateTokenQuery = {
+                text: "UPDATE person SET token = $1 WHERE username = $2",
+                values: [token, credentials.username]
+            }
         }
         client.query(updateTokenQuery, (err, res) => {
             // console.log(res)
@@ -110,7 +120,7 @@ function getUser(token) {
             if (res.rows[0] != null) {
                 const rawUser = res.rows[0].person.split('(')[1].split(',');
                 client.end()
-                resolve(new User(rawUser[7],rawUser[5],rawUser[4],rawUser[3],rawUser[1],rawUser[2]));
+                resolve(new User(rawUser[7], rawUser[5], rawUser[4], rawUser[3], rawUser[1], rawUser[2]));
             }
             client.end()
             reject("User could not be found")
@@ -139,7 +149,7 @@ function getApplication(token) {
         resolve();
     });
 }
-function createApplication(application,token) {
+function createApplication(application, token) {
     return new Promise(function (resolve, reject) {
         // client = connect();
         // const query = {

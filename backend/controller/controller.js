@@ -15,6 +15,10 @@ async function authenticateUser(req) {
     await userDAO.authenticateUser(credentials);
     return await userDAO.changeAuthToken(credentials, token);
 }
+async function deAuthenticateUser(req){
+    const token = requestHandler.extractToken(req);
+    return await userDAO.changeAuthToken(null,token);
+}
 async function getUser(req) {
     return await userDAO.getUser(requestHandler.extractToken(req));
 }
@@ -46,5 +50,6 @@ module.exports = {
     getApplication,
     createApplication,
     listApplications,
+    deAuthenticateUser,
 
 }
