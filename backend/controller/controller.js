@@ -4,8 +4,8 @@ const validation = require('../model/requestValidation');
 const requestHandler = require('../model/requestHandler');
 const authToken = require('../model/authToken');
 
-async function registerUser(req, res) {
-    await validation.userInput(body, res);
+async function registerUser(req) {
+    await validation.userInput(req);
     const registerUser = requestHandler.extractUser(req);
     return await userDAO.registerUser(registerUser);
 }
@@ -40,6 +40,11 @@ async function listApplications(req) {
     const token = requestHandler.extractToken(req)
     return await userDAO.listApplications(token);
 }
+async function getCompetence(req) {
+    const token = requestHandler.extractToken(req)
+    return await userDAO.getCompetence(token);
+}
+
 
 
 module.exports = {
@@ -51,5 +56,5 @@ module.exports = {
     createApplication,
     listApplications,
     deAuthenticateUser,
-
+    getCompetence,
 }

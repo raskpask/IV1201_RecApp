@@ -1,6 +1,7 @@
 const { Pool, Client } = require('pg')
 const User = require('../model/user');
 const Application = require('../model/application');
+const Competence = require('../model/competence');
 
 function connect() {
     const client = new Client({
@@ -81,12 +82,9 @@ function authenticateUser(credentials) {
 function changeAuthToken(credentials, token) {
     return new Promise(function (resolve, reject) {
         client = connect();
-        // console.log(credentials)
-        // console.log(token)
-        // If the credentials is null the function will perfom a logout.
-        let updateTokenQuery="";
+        let updateTokenQuery = "";
         if (credentials == null) {
-            updateTokenQuery ={
+            updateTokenQuery = {
                 text: "UPDATE person SET token = null WHERE token = $1",
                 values: [token]
             }
@@ -120,7 +118,7 @@ function getUser(token) {
             if (res.rows[0] != null) {
                 const rawUser = res.rows[0].person.split('(')[1].split(',');
                 client.end()
-                resolve(new User(rawUser[7], rawUser[5], rawUser[4], rawUser[3], rawUser[1], rawUser[2]));
+                resolve(new User(rawUser[7], rawUser[5], rawUser[4], rawUser[3], rawUser[1], rawUser[2], rawUser[0]),rawUser[6]);
             }
             client.end()
             reject("User could not be found")
@@ -151,23 +149,36 @@ function getApplication(token) {
 }
 function createApplication(application, token) {
     return new Promise(function (resolve, reject) {
-        // client = connect();
-        // const query = {
-        //     text: "INSERT INTO person (email,name,password,role_id,ssn,surname,username) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING *",
-        //     values: [user.email, user.firstName, user.password, 2, user.date, user.lastName, user.username]
-        // }
-        // client.query(query, (err, res) => {
-        //     // console.log(res.rows[0].username)
-        //     if(res == null || res.rows == null || res.rows[0] == null){
-        //         reject("Error with inserting into db")
-        //     } else if (res.rows[0].username == user.username) {
-        //         client.end()
-        //         resolve(200)
-        //     }
-        //     client.end()
-        //     reject("Some error while inserting person")
-        // });
-        resolve();
+        const user = this.getUser(token);
+        const pool = new Pool();
+        (async () => {
+            const client = await pool.connect()
+            try {
+                await client.query("BEGIN");
+                for (i = 0; i < application.competence.length; i++) {
+                    let addCompetenceProfileQuery = {
+                        text: "INSERT INTO person (person_id,competence_id,years_of_experience) VALUES($1,$2,$3) RETURNING *",
+                        values: [user.personID, application.competence[i].id, application.competence[i].years]
+                    }
+                    await client.query(addCompetenceProfileQuery);
+                }
+                for (i = 0; i < application.availability.length; i++) {
+                    let addAvailabilityQuery = {
+                        text: "INSERT INTO availability (person_id,from_date,to_date) VALUES($1,$2,$3) RETURNING *",
+                        values: [user.personID, application.availability[i].startDate, application.availability[i].endDate]
+                    }
+                    await client.query(addAvailabilityQuery);
+                }
+                await client.query("COMMIT");
+                resolve();
+            } catch (e) {
+                await client.query("ROLLBACK");
+                reject(e);
+
+            } finally {
+                client.release();
+            }
+        })().catch(e => console.error(e.stack));
     });
 }
 function listApplications(token) {
@@ -191,6 +202,23 @@ function listApplications(token) {
         resolve();
     });
 }
+function getCompetence(token) {
+    return new Promise(function (resolve, reject) {
+        client = connect();
+        const getCompetenceQuery = {
+            text: "SELECT * FROM competence",
+        }
+        client.query(getCompetenceQuery, (err, res) => {
+            if (res.rows[0] != null) {
+                // console.log(res.rows[0])
+                resolve(res.rows);
+                client.end()
+            }
+            client.end()
+            reject("Could not be found")
+        });
+    });
+}
 
 
 module.exports = {
@@ -202,5 +230,6 @@ module.exports = {
     getApplication,
     createApplication,
     listApplications,
+    getCompetence,
 
 }

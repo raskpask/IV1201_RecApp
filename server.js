@@ -14,8 +14,7 @@ const controller = require('./backend/controller/controller');
 
 app.post('/api/user', async (req, res) => {
   try {
-    
-    const statusCode = await controller.registerUser(req, res);
+    const statusCode = await controller.registerUser(req);
     res.status(statusCode);
   } catch (error) {
     console.error(error);
@@ -95,13 +94,22 @@ app.post('/api/application', async (req, res) => {
 
 app.get('/api/listApplication', async (req, res) => {
   try {
-    const application = controller.getListApplication(req);
+    const application = await controller.getListApplication(req);
   } catch (error) {
     console.error(error);
     res.status(400);
   }
   res.send();
 });
+
+app.get('/api/competence', async (req,res)=>{
+  try {
+    res.send(JSON.stringify(await controller.getCompetence(req)));
+  } catch (error){
+    console.error(error)
+    res.sendStatus(500);
+  }
+})
 
 
 // For React

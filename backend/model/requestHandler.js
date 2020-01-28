@@ -24,7 +24,7 @@ function extractToken(req) {
 }
 function extractApplication(req) {
     const body = req.body;
-    return new Application(body.date, body.competence, body.name, body.status);
+    return new Application(body.availability,body.applicationDate,body.competence,body,status);
 }
 module.exports = {
     extractCredentials,
