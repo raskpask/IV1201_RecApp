@@ -59,7 +59,7 @@ class Register extends Component {
             <Form.Label>{this.props.info.register[1].name}</Form.Label>
             <Form.Control
                 type="password"
-                onChange={event => this.setState({ password: event.target.value })}
+                onChange={event => this.setState({ password: event.target.value }),event => { this.validateField('password', event.target.value) }}
                 placeholder={this.props.info.register[1].placeholder} />
             <Form.Label>{this.props.info.register[2].name}</Form.Label>
             <Form.Control
@@ -81,7 +81,7 @@ class Register extends Component {
                 type="name"
                 onChange={event => this.setState({ lastName: event.target.value })}
                 placeholder={this.props.info.register[5].placeholder} />
-            <Button className="registerButton" disabled={!this.state.formValid} onClick={() => this.registerUser()} variant="primary" >Register</Button>
+            <Button className="registerButton" disabled={!this.state.passwordValid} onClick={() => this.registerUser()} variant="primary" >Register</Button>
         </Form>)
     }
         
