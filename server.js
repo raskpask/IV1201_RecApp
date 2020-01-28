@@ -104,8 +104,6 @@ app.get('/api/listApplication', async (req, res) => {
 });
 
 
-
-
 // For React
 app.get('/*', function (req, res) {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
