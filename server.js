@@ -46,13 +46,21 @@ app.get('/api/user', async (req, res) => {
   }
 });
 
+app.get('/api/username', async (req, res) => {
+  try {
+    res.send(await controller.checkIfUsernameIsAvailable(req));
+  } catch (e) {
+    console.error(e);
+    res.sendStatus(500);
+  }
+});
 
 
 app.post('/api/authentication', async (req, res) => {
   try {
     const token = await controller.authenticateUser(req);
     res.cookie('authToken', token);
-    
+
   } catch (error) {
     console.error(error);
     res.status(401);
@@ -60,12 +68,12 @@ app.post('/api/authentication', async (req, res) => {
   res.send()
 });
 
-app.delete('/api/authentication', async (req,res)=>{
-  try{
+app.delete('/api/authentication', async (req, res) => {
+  try {
     await controller.deAuthenticateUser(req);
     res.clearCookie('authToken');
     res.send();
-  } catch (error){
+  } catch (error) {
     console.error(error)
     res.status(401);
   }
@@ -74,12 +82,16 @@ app.delete('/api/authentication', async (req,res)=>{
 
 app.get('/api/application', async (req, res) => {
   try {
-    const application = controller.getApplication(req);
+    const application = await controller.getApplication(req);
+    if (application == "no access") {
+      res.sendStatus(401)
+    } else {
+      res.send(application);
+    }
   } catch (error) {
     console.error(error);
     res.status(400);
   }
-  res.send();
 });
 
 app.post('/api/application', async (req, res) => {
@@ -92,9 +104,9 @@ app.post('/api/application', async (req, res) => {
   res.send();
 });
 
-app.get('/api/listApplication', async (req, res) => {
+app.put('/api/application', async (req, res) => {
   try {
-    const application = await controller.getListApplication(req);
+    const application = await controller.updateApplication(req);
   } catch (error) {
     console.error(error);
     res.status(400);
@@ -102,10 +114,10 @@ app.get('/api/listApplication', async (req, res) => {
   res.send();
 });
 
-app.get('/api/competence', async (req,res)=>{
+app.get('/api/competence', async (req, res) => {
   try {
     res.send(JSON.stringify(await controller.getCompetence(req)));
-  } catch (error){
+  } catch (error) {
     console.error(error)
     res.sendStatus(500);
   }

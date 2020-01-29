@@ -95,7 +95,6 @@ function changeAuthToken(credentials, token) {
             }
         }
         client.query(updateTokenQuery, (err, res) => {
-            // console.log(res)
             if (res.rowCount == '1') {
                 client.end()
                 resolve(token)
@@ -106,10 +105,28 @@ function changeAuthToken(credentials, token) {
     });
 }
 
+function checkIfUsernameIsAvailable(username) {
+    return new Promise(function (resolve, reject) {
+        client = connect();
+        const getUserQuery = {
+            text: "SELECT * FROM person WHERE username = $1",
+            values: [username]
+        }
+        client.query(getUserQuery, (err, res) => {
+            if (res.rows[0] == null) {
+                client.end()
+                resolve("Username not taken");
+            } else {
+                resolve("Username taken");
+            }
+            client.end()
+            reject("Internal error")
+        });
+    });
+}
 function getUser(token) {
     return new Promise(function (resolve, reject) {
         client = connect();
-        // console.log("token: "+token)
         const getUserQuery = {
             text: "SELECT person FROM person WHERE token=$1",
             values: [token]
@@ -117,8 +134,28 @@ function getUser(token) {
         client.query(getUserQuery, (err, res) => {
             if (res.rows[0] != null) {
                 const rawUser = res.rows[0].person.split('(')[1].split(',');
+                // console.log("token: "+token)
                 client.end()
-                resolve(new User(rawUser[7], rawUser[5], rawUser[4], rawUser[3], rawUser[1], rawUser[2], rawUser[0]),rawUser[6]);
+                resolve(new User(rawUser[7], rawUser[5], rawUser[4], rawUser[3], rawUser[1], rawUser[2], rawUser[0], rawUser[6]));
+            }
+            client.end()
+            reject("User could not be found")
+        });
+    });
+}
+function getPrivilegeLevel(token) {
+    return new Promise(function (resolve, reject) {
+        if (!token) {
+            resolve("no access")
+        }
+        client = connect();
+        const getPrivilegeLevelQuery = {
+            text: "SELECT role_id FROM person WHERE token=$1",
+            values: [token]
+        }
+        client.query(getPrivilegeLevelQuery, (err, res) => {
+            if (res.rows[0] != null) {
+                resolve(res.rows[0]);
             }
             client.end()
             reject("User could not be found")
@@ -126,31 +163,53 @@ function getUser(token) {
     });
 }
 
-function getApplication(token) {
+function getApplication(privilegeLevel, token, application) {
     return new Promise(function (resolve, reject) {
-        // client = connect();
-        // // console.log("token: "+token)
-        // const getUserQuery = {
-        // //     // text: "SELECT person FROM person WHERE token=$1",
-        // //     // values: [token]
-        // //     // Do some query here
-        // // }
-        // client.query(getUserQuery, (err, res) => {
-        //     if (res.rows[0] != null) {
-        //         const rawUser = res.rows[0].person.split('(')[1].split(',');
-        //         client.end()
-        //         resolve(new Application(rawUser[7],rawUser[5],rawUser[4],rawUser[3],rawUser[1],rawUser[2]));
-        //     }
-        //     client.end();
-        //     reject();
-        // });
-        resolve();
+        client = connect();
+        let getApplicationQuery = {
+            text:
+                "SELECT person.name, person.surname, competence.name, competence_profile.years_of_experience, availability.to_date AS startDate, availability.from_date AS endDate, application.time_of_submission, application.status " +
+                "FROM application " +
+                "INNER JOIN availability ON availability.person_id = application.person_id " +
+                "INNER JOIN person ON person.person_id = application.person_id " +
+                "INNER JOIN competence_profile ON competence_profile.person_id = application.person_id " +
+                "INNER JOIN competence ON competence.competence_id = competence_profile.competence_id " +
+                "WHERE competence.competence_id IN " + '(' + application.competence.join() + ')' +
+                "AND availability.from_date >= DATE($1) " +
+                "AND availability.to_date <= DATE($2) " +
+                "AND(person.name LIKE ($3) OR person.surname LIKE ($4)) " +
+                "AND DATE(application.time_of_submission) >= DATE($5) " +
+                "AND DATE(application.time_of_submission) <= DATE($6)",
+            values: [application.availability.startDate, application.availability.endDate, application.name + "%", application.name + "%", application.applicationDate.startDate, application.applicationDate.endDate]
+        }
+        if (privilegeLevel == 2) {
+            getApplicationQuery.text.concat(" AND person.token = ($7)")
+            getApplicationQuery.values.push(token)
+        }
+
+        // get status, job application, competence with year, availability, person name *
+        client.query(getApplicationQuery, (err, res) => {
+            // console.log(err)
+            if (err) {
+                reject(err);
+            } else if (res.rows[0] != null) {
+                //         const rawUser = res.rows[0].person.split('(')[1].split(',');
+                //         client.end()
+                // console.log(res.rows)
+                resolve(res.rows)
+            }
+            //     client.end();
+            //     reject();
+            // });
+            resolve();
+        });
     });
 }
 function createApplication(application, token) {
     return new Promise(function (resolve, reject) {
         const user = this.getUser(token);
         const pool = new Pool();
+
         (async () => {
             const client = await pool.connect()
             try {
@@ -169,6 +228,11 @@ function createApplication(application, token) {
                     }
                     await client.query(addAvailabilityQuery);
                 }
+                const addApplicatonQuery = {
+                    text: "INSERT INTO application (person_id,time_of_submission,status) VALUES($1,$2,$3) RETURING *",
+                    values: [user.personID, Date.now(), 0]
+                }
+                await client.query(addApplicationQuery);
                 await client.query("COMMIT");
                 resolve();
             } catch (e) {
@@ -181,7 +245,7 @@ function createApplication(application, token) {
         })().catch(e => console.error(e.stack));
     });
 }
-function listApplications(token) {
+function updateApplication(token) {
     return new Promise(function (resolve, reject) {
         // client = connect();
         // // console.log("token: "+token)
@@ -210,8 +274,13 @@ function getCompetence(token) {
         }
         client.query(getCompetenceQuery, (err, res) => {
             if (res.rows[0] != null) {
+                let competences = [];
+                for (i = 0; i < res.rows.length; i++) {
+                    competences.push(res.rows[i].competence_id);
+                    competences.push(res.rows[i].name);
+                }
                 // console.log(res.rows[0])
-                resolve(res.rows);
+                resolve(competences);
                 client.end()
             }
             client.end()
@@ -229,7 +298,9 @@ module.exports = {
     updateUser,
     getApplication,
     createApplication,
-    listApplications,
+    updateApplication,
     getCompetence,
+    checkIfUsernameIsAvailable,
+    getPrivilegeLevel,
 
 }

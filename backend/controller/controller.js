@@ -1,5 +1,4 @@
 const userDAO = require('../integration/userDAO');
-
 const validation = require('../model/requestValidation');
 const requestHandler = require('../model/requestHandler');
 const authToken = require('../model/authToken');
@@ -15,37 +14,51 @@ async function authenticateUser(req) {
     await userDAO.authenticateUser(credentials);
     return await userDAO.changeAuthToken(credentials, token);
 }
-async function deAuthenticateUser(req){
+async function deAuthenticateUser(req) {
     const token = requestHandler.extractToken(req);
-    return await userDAO.changeAuthToken(null,token);
+    return await userDAO.changeAuthToken(null, token);
 }
 async function getUser(req) {
     return await userDAO.getUser(requestHandler.extractToken(req));
 }
+async function checkIfUsernameIsAvailable(req) {
+    return await userDAO.checkIfUsernameIsAvailable.getUser(requestHandler.extractUsername(req));
+}
 async function updateUser(req) {
-    // console.log(req.body)
     const updateUser = requestHandler.extractUser(req);
     return await userDAO.updateUser(updateUser, requestHandler.extractToken(req));
 }
 async function getApplication(req) {
-    const token = requestHandler.extractToken(req);
-    return await userDAO.getApplication(token);
+    try {
+        const token = requestHandler.extractToken(req);
+        const application = await requestHandler.extractApplication(req)
+        let privilegeLevel = await userDAO.getPrivilegeLevel(token);
+        if (privilegeLevel == "no access") {
+            return "no access";
+        }
+        return await userDAO.getApplication(privilegeLevel, token, application);
+    } catch (error) {
+        throw error
+    }
 }
 async function createApplication(req) {
     const token = requestHandler.extractToken(req);
     const application = requestHandler.extractApplication(req);
     return await userDAO.getApplication(application, token);
 }
-async function listApplications(req) {
+async function updateApplication(req) {
     const token = requestHandler.extractToken(req)
-    return await userDAO.listApplications(token);
+    const application = await requestHandler.extractApplication(req)
+        let privilegeLevel = await userDAO.getPrivilegeLevel(token);
+        if (privilegeLevel == "no access" || privilegeLevel > 1) {
+            return "no access";
+        }
+    return await userDAO.updateApplication(application);
 }
 async function getCompetence(req) {
     const token = requestHandler.extractToken(req)
     return await userDAO.getCompetence(token);
 }
-
-
 
 module.exports = {
     registerUser,
@@ -54,7 +67,8 @@ module.exports = {
     updateUser,
     getApplication,
     createApplication,
-    listApplications,
+    updateApplication,
     deAuthenticateUser,
     getCompetence,
+    checkIfUsernameIsAvailable,
 }
