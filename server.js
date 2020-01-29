@@ -10,33 +10,121 @@ app.use(express.static(__dirname));
 app.use(express.static(path.join(__dirname, 'build')));
 
 const controller = require('./backend/controller/controller');
-const User = require('./backend/model/user');
 
 
 app.post('/api/user', async (req, res) => {
   try {
-    const body = req.body;
-    const statusCode = await controller.registerUser(body, res)
-    res.status(statusCode)
-    res.send();
+    const statusCode = await controller.registerUser(req);
+    res.status(statusCode);
   } catch (error) {
-    console.log(error)
+    console.error(error);
+    res.status(400)
+  }
+  res.send();
+});
+
+app.put('/api/user', async (req, res) => {
+  const body = req.body;
+  try {
+    const statusCode = await controller.updateUser(req);
+    res.status(statusCode);
+  } catch (error) {
+    console.error(error);
+    res.status(400)
+  }
+  res.send();
+});
+
+app.get('/api/user', async (req, res) => {
+  try {
+    const user = await controller.getUser(req);
+    res.send(JSON.stringify({ user: user }));
+    console.log(user);
+  } catch (error) {
+    console.error(error)
+    res.sendStatus(400);
   }
 });
 
-app.post('/api/login', async (req, res) => {
-  const body = req.body;
-  const token = await controller.authenticateUser(body)
-  res.cookie('authToken', token);
+app.get('/api/username', async (req, res) => {
+  try {
+    res.send(await controller.checkIfUsernameIsAvailable(req));
+  } catch (e) {
+    console.error(e);
+    res.sendStatus(500);
+  }
+});
+
+
+app.post('/api/authentication', async (req, res) => {
+  try {
+    console.log(req.body)
+    const token = await controller.authenticateUser(req);
+    res.cookie('authToken', token);
+
+  } catch (error) {
+    console.error(error);
+    res.status(401);
+  }
   res.send()
 });
 
-function extractCookie(cookieHeader) {
-  if (!cookieHeader) {
-      return null
+app.delete('/api/authentication', async (req, res) => {
+  try {
+    await controller.deAuthenticateUser(req);
+    res.clearCookie('authToken');
+    res.send();
+  } catch (error) {
+    console.error(error)
+    res.status(401);
   }
-  return cookieHeader ? cookieHeader.split('=')[1] : null;
-}
+  res.sendStatus(500)
+})
+
+app.get('/api/application', async (req, res) => {
+  try {
+    const application = await controller.getApplication(req);
+    if (application == "no access") {
+      res.sendStatus(401)
+    } else {
+      res.send(application);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(400);
+  }
+});
+
+app.post('/api/application', async (req, res) => {
+  try {
+    const application = controller.createApplication(req);
+  } catch (error) {
+    console.error(error);
+    res.status(400);
+  }
+  res.send();
+});
+
+app.put('/api/application', async (req, res) => {
+  try {
+    const application = await controller.updateApplicationStatus(req);
+  } catch (error) {
+    console.error(error);
+    res.status(500);
+  }
+  res.send();
+});
+
+app.get('/api/competence', async (req, res) => {
+  try {
+    res.send(JSON.stringify(await controller.getCompetence(req)));
+  } catch (error) {
+    console.error(error)
+    res.sendStatus(500);
+  }
+})
+
+
 // For React
 app.get('/*', function (req, res) {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));

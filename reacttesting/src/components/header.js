@@ -6,8 +6,6 @@ import axios from 'axios';
 import '../resources/css/header.css';
 
 class Header extends Component {
-    
-    
     constructor(props) {
         super(props);
         this.state = {
@@ -16,7 +14,7 @@ class Header extends Component {
                 password: "",
             },
             submitted: false,
-            isLoggedIn: false 
+            isloggedIn: false 
         }
     }
     login = async () => {
@@ -25,10 +23,9 @@ class Header extends Component {
                 username: this.state.username,
                 password: this.state.password
             }
-            const response = await axios.post('/api/authentication', credentials)
-            // console.log(response.status)
+            const response = await axios.post('/api/login', credentials)
             if(response.status === 200){
-                // this.setState({ submitted: true })
+                this.setState({ isloggedIn: true })
                 this.forceUpdate()
             }
             
@@ -36,12 +33,9 @@ class Header extends Component {
             console.log(error)
         }
     }
-    logout = async () => {
-        const response =await axios.delete('/api/authentication')
-        if(response.status === 200){
-            this.forceUpdate()
-        }
-        // this.setState({ isloggedIn: false })
+    logout() {
+        this.setState({ isloggedIn: false })
+        this.forceUpdate()
     }
     isLoggedIn() {
         console.log(document.cookie)
@@ -49,7 +43,6 @@ class Header extends Component {
         if (!document.cookie) {
             return false
         }
-        // this.setState({isLoggedIn: true});
         return true
     }
     renderBrand() {
@@ -83,8 +76,8 @@ class Header extends Component {
     renderUser() {
         return (
             <Nav className="ml-auto">
-                <Nav.Link className="userText" href="/user"> Your Profile</Nav.Link>
-                <Nav.Link onClick={() => this.logout()} >Logout</Nav.Link>
+                <Navbar.Link className="userText" href="/home"> Hello user</Navbar.Link>
+                <Nav.Link onClick={() => this.logout()} href="/home">Logout</Nav.Link>
             </Nav>
         )
     }
@@ -93,7 +86,7 @@ class Header extends Component {
             <div>
                 <Navbar bg="dark" variant="dark">
                     {this.renderBrand()}
-                    {this.isLoggedIn() ? this.renderUser() : this.renderLogin()}
+                    {this.state.isloggedIn ? this.renderUser() : this.renderLogin()}
                 </Navbar>
             </div>
         );

@@ -1,22 +1,73 @@
 const userDAO = require('../integration/userDAO');
-const User = require('../model/user');
 const validation = require('../model/requestValidation');
 const requestHandler = require('../model/requestHandler');
 const authToken = require('../model/authToken');
 
-async function registerUser(body, res) {
-    await validation.userInput(body,res); 
-    const registerUser = new User(body.username, body.password, body.email, body.date, body.firstName, body.lastName);
+async function registerUser(req) {
+    await validation.userInput(req);
+    const registerUser = requestHandler.extractUser(req);
     return await userDAO.registerUser(registerUser);
 }
-async function authenticateUser(body){
-    const credentials = requestHandler.extractCredentials(body);
+async function authenticateUser(req) {
+    const credentials = requestHandler.extractCredentials(req);
     const token = authToken.generate();
     await userDAO.authenticateUser(credentials);
-    return await userDAO.changeAuthToken(credentials,token);
+    return await userDAO.changeAuthToken(credentials, token);
 }
+async function deAuthenticateUser(req) {
+    const token = requestHandler.extractToken(req);
+    return await userDAO.changeAuthToken(null, token);
+}
+async function getUser(req) {
+    return await userDAO.getUser(requestHandler.extractToken(req));
+}
+async function checkIfUsernameIsAvailable(req) {
+    return await userDAO.checkIfUsernameIsAvailable.getUser(requestHandler.extractUsername(req));
+}
+async function updateUser(req) {
+    const updateUser = requestHandler.extractUser(req);
+    return await userDAO.updateUser(updateUser, requestHandler.extractToken(req));
+}
+async function getApplication(req) {
+    try {
+        const token = requestHandler.extractToken(req);
+        const application = await requestHandler.extractApplication(req)
+        let privilegeLevel = await userDAO.getPrivilegeLevel(token);
+        if (privilegeLevel == "no access") {
+            return "no access";
+        }
+        return await userDAO.getApplication(privilegeLevel, token, application);
+    } catch (error) {
+        throw error
+    }
+}
+async function createApplication(req) {
+    const token = requestHandler.extractToken(req);
+    const application = requestHandler.extractApplication(req);
+    return await userDAO.getApplication(application, token);
+}
+async function updateApplicationStatus(req) {
+    const token = requestHandler.extractToken(req)
+        let privilegeLevel = await userDAO.getPrivilegeLevel(token);
+        if (privilegeLevel == "no access" || privilegeLevel > 1) {
+            return "no access";
+        }
+    return await userDAO.updateApplicationStatus(req.body.status);
+}
+async function getCompetence(req) {
+    const token = requestHandler.extractToken(req)
+    return await userDAO.getCompetence(token);
+}
+
 module.exports = {
     registerUser,
     authenticateUser,
-
+    getUser,
+    updateUser,
+    getApplication,
+    createApplication,
+    updateApplicationStatus,
+    deAuthenticateUser,
+    getCompetence,
+    checkIfUsernameIsAvailable,
 }

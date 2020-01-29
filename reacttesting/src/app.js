@@ -40,35 +40,6 @@ class App extends Component {
                         name: "Last Name",
                         placeholder: "Enter last name"
                     }
-                ],
-                user: [
-                    {
-                        name: "Username: ",
-                        placeholder: "Enter username"
-                    },
-                    {
-                        name: "Password: ",
-                        placeholder: "Enter Password",
-                    },
-                    {
-                        name: "Email: ",
-                        placeholder: "Enter Email"
-                    },
-                    {
-                        name: "Date of birth: ",
-                        placeholder: "Enter date of birth"
-                    },
-                    {
-                        name: "First Name: ",
-                        placeholder: "Enter first name"
-                    },
-                    {
-                        name: "Last Name: ",
-                        placeholder: "Enter last name"
-                    },
-                    {
-                        name: "Welcome "
-                    }
                 ]
             }
         }
@@ -79,14 +50,14 @@ class App extends Component {
             <div className="App" >
                 <Header />
                 <BrowserRouter>
+                    <Route exact path="/user"
+                        render={(props) => <User info={this.state.eng} />}
+                    />
                     <Route exact path="/home"
                         render={(props) => <Home info={this.state.eng} />}
                     />
                     <Route exact path="/register"
                         render={(props) => <Register info={this.state.eng} />}
-                    />
-                    <Route exact path="/user"
-                        render={(props) => <User info={this.state.eng} />}
                     />
                 </BrowserRouter>
             </div>
