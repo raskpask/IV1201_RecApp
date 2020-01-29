@@ -58,6 +58,7 @@ app.get('/api/username', async (req, res) => {
 
 app.post('/api/authentication', async (req, res) => {
   try {
+    console.log(req.body)
     const token = await controller.authenticateUser(req);
     res.cookie('authToken', token);
 
@@ -106,10 +107,10 @@ app.post('/api/application', async (req, res) => {
 
 app.put('/api/application', async (req, res) => {
   try {
-    const application = await controller.updateApplication(req);
+    const application = await controller.updateApplicationStatus(req);
   } catch (error) {
     console.error(error);
-    res.status(400);
+    res.status(500);
   }
   res.send();
 });

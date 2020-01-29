@@ -168,7 +168,7 @@ function getApplication(privilegeLevel, token, application) {
         client = connect();
         let getApplicationQuery = {
             text:
-                "SELECT person.name, person.surname, competence.name, competence_profile.years_of_experience, availability.to_date AS startDate, availability.from_date AS endDate, application.time_of_submission, application.status " +
+                "SELECT application.application_id, person.name, person.surname, competence.name, competence_profile.years_of_experience, availability.to_date AS startDate, availability.from_date AS endDate, application.time_of_submission, application.status " +
                 "FROM application " +
                 "INNER JOIN availability ON availability.person_id = application.person_id " +
                 "INNER JOIN person ON person.person_id = application.person_id " +
@@ -245,25 +245,22 @@ function createApplication(application, token) {
         })().catch(e => console.error(e.stack));
     });
 }
-function updateApplication(token) {
+function updateApplicationStatus(application_id, status) {
     return new Promise(function (resolve, reject) {
-        // client = connect();
+        client = connect();
         // // console.log("token: "+token)
-        // const getUserQuery = {
-        // //     // text: "SELECT person FROM person WHERE token=$1",
-        // //     // values: [token]
-        // //     // Do some query here
-        // // }
-        // client.query(getUserQuery, (err, res) => {
-        //     if (res.rows[0] != null) {
-        //         const rawUser = res.rows[0].person.split('(')[1].split(',');
-        //         client.end()
-        //         resolve(new Application(rawUser[7],rawUser[5],rawUser[4],rawUser[3],rawUser[1],rawUser[2]));
-        //     }
-        //     client.end();
-        //     reject();
-        // });
-        resolve();
+        const updateApplicationStatusQuery = {
+            text: "UPDATE application SET status = $1 WHERE application_id = $2",
+            values: [status, application_id]
+
+        }
+        client.query(getUserQuery, (err, res) => {
+            client.end();
+            if (res.rowCount == '1') {
+                resolve()
+            }
+            reject();
+        });
     });
 }
 function getCompetence(token) {
@@ -298,7 +295,7 @@ module.exports = {
     updateUser,
     getApplication,
     createApplication,
-    updateApplication,
+    updateApplicationStatus,
     getCompetence,
     checkIfUsernameIsAvailable,
     getPrivilegeLevel,

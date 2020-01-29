@@ -46,14 +46,13 @@ async function createApplication(req) {
     const application = requestHandler.extractApplication(req);
     return await userDAO.getApplication(application, token);
 }
-async function updateApplication(req) {
+async function updateApplicationStatus(req) {
     const token = requestHandler.extractToken(req)
-    const application = await requestHandler.extractApplication(req)
         let privilegeLevel = await userDAO.getPrivilegeLevel(token);
         if (privilegeLevel == "no access" || privilegeLevel > 1) {
             return "no access";
         }
-    return await userDAO.updateApplication(application);
+    return await userDAO.updateApplicationStatus(req.body.status);
 }
 async function getCompetence(req) {
     const token = requestHandler.extractToken(req)
@@ -67,7 +66,7 @@ module.exports = {
     updateUser,
     getApplication,
     createApplication,
-    updateApplication,
+    updateApplicationStatus,
     deAuthenticateUser,
     getCompetence,
     checkIfUsernameIsAvailable,
