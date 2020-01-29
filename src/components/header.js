@@ -44,7 +44,7 @@ class Header extends Component {
         // this.setState({ isloggedIn: false })
     }
     isLoggedIn() {
-        console.log(document.cookie)
+        // console.log(document.cookie)
         // token = document.cookie.split('authorization=')[1]
         if (!document.cookie) {
             return false
@@ -59,6 +59,17 @@ class Header extends Component {
                 <Nav className="mr-auto">
                     <Nav.Link href="/home">Home</Nav.Link>
                     <Nav.Link href="/register">Register</Nav.Link>
+                </Nav>
+            </React.Fragment>
+        )
+    }
+    renderBrandLogin(){
+        return (
+            <React.Fragment>
+                <Navbar.Brand>Recruitment app</Navbar.Brand>
+                <Nav className="mr-auto">
+                    <Nav.Link href="/home">Home</Nav.Link>
+                    <Nav.Link href="/apply">Apply</Nav.Link>
                 </Nav>
             </React.Fragment>
         )
@@ -92,7 +103,7 @@ class Header extends Component {
         return (
             <div>
                 <Navbar bg="dark" variant="dark">
-                    {this.renderBrand()}
+                    {this.isLoggedIn() ? this.renderBrandLogin() : this.renderBrand()}
                     {this.isLoggedIn() ? this.renderUser() : this.renderLogin()}
                 </Navbar>
             </div>

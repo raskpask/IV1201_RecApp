@@ -7,6 +7,7 @@ import Header from './components/header';
 import Home from './components/home';
 import Register from './components/register';
 import User from './components/user';
+import Apply from './components/apply';
 
 import './resources/css/register.css';
 
@@ -39,6 +40,13 @@ class App extends Component {
                     {
                         name: "Last Name",
                         placeholder: "Enter last name"
+                    }
+                ],
+                apply: [
+                    {
+                        buttonCompetences: "Competence:",
+                        buttonAddCompetence: "Add competence",
+                        textYearsOfExperience: "Years of experience:"
                     }
                 ],
                 user: [
@@ -81,6 +89,9 @@ class App extends Component {
                 <BrowserRouter>
                     <Route exact path="/home"
                         render={(props) => <Home info={this.state.eng} />}
+                    />
+                    <Route exact path="/apply"
+                        render={(props) => <Apply info={this.state.eng} />}
                     />
                     <Route exact path="/register"
                         render={(props) => <Register info={this.state.eng} />}

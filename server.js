@@ -60,7 +60,8 @@ app.post('/api/authentication', async (req, res) => {
   try {
     console.log(req.body)
     const token = await controller.authenticateUser(req);
-    res.cookie('authToken', token);
+    
+    res.cookie('authToken', token,{ expires: new Date(Date.now() + 1800000)});
 
   } catch (error) {
     console.error(error);
