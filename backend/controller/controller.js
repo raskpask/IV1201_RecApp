@@ -22,7 +22,7 @@ async function getUser(req) {
     return await userDAO.getUser(requestHandler.extractToken(req));
 }
 async function checkIfUsernameIsAvailable(req) {
-    return await userDAO.checkIfUsernameIsAvailable.getUser(requestHandler.extractUsername(req));
+    return await userDAO.checkIfUsernameIsAvailable(requestHandler.extractUsername(req));
 }
 async function updateUser(req) {
     const updateUser = requestHandler.extractUser(req);

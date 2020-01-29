@@ -11,3 +11,10 @@
 .marginTextBox{
     margin: 0 1vw 0 1vw;
 }
+.marginLeft{
+    margin-left: 1vw;
+}
+.table{
+    margin-top: 5vw;
+    width: 50%;
+}

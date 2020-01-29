@@ -10,7 +10,7 @@ function extractCredentials(req) {
     return credentials
 }
 function extractUsername(req) {
-    return body.username;
+    return req.body.username;
 }
 function extractUser(req) {
     const body = req.body;
@@ -55,4 +55,5 @@ module.exports = {
     extractUser,
     extractToken,
     extractApplication,
+    extractUsername,
 }

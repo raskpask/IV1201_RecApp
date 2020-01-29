@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import './resources/css/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-dates/initialize';
+import 'react-dates/lib/css/_datepicker.css';
 import { BrowserRouter, Route } from 'react-router-dom';
 
 import Header from './components/header';
@@ -42,13 +44,23 @@ class App extends Component {
                         placeholder: "Enter last name"
                     }
                 ],
-                apply: [
-                    {
-                        buttonCompetences: "Competence:",
-                        buttonAddCompetence: "Add competence",
-                        textYearsOfExperience: "Years of experience:"
-                    }
-                ],
+                apply: {
+                    buttonCompetences: "Competence:",
+                    buttonAddCompetence: "Add competence",
+                    textYearsOfExperience: "Years of experience:",
+                    availabilityButton: "Add availibility",
+                    tableCompetence: [
+                        "Competence",
+                        "Years of experience"
+                    ],
+                    tableAvailability: [
+                        "Availability",
+                        "Start date",
+                        "End date",
+                        "Period "
+                    ],
+                },
+
                 user: [
                     {
                         name: "Username: ",
