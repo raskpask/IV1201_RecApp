@@ -30,7 +30,8 @@ class Apply extends Component {
             availabilityCounter: 1,
             availability: [],
             startDate: "",
-            endDate: ""
+            endDate: "",
+            submitted: ""
         }
     }
     renderNumbers() {
@@ -159,30 +160,30 @@ class Apply extends Component {
         return (
             <Fragment>
                 <Button variant="primary" className="m-auto"
-                onClick={() => this.submitApplication()}
+                    onClick={() => this.submitApplication()}
                 >
                     {this.props.info.apply.sumbitApplication}
                 </Button>
             </Fragment>
         )
     }
-    submitApplication = async () =>{
-        const application ={
+    submitApplication = async () => {
+        const application = {
             competence: this.state.addedCompetences,
-            availability: this.state.availability, 
+            availability: this.state.availability,
         }
-        const res = await axios.post('/api/application',application);
-        console.log(res)
+        const res = await axios.post('/api/application', application);
+        if(res.status === 200){
+            this.setState({submitted: true})
+        }
     }
     componentDidMount = async () => {
         const competences = await (await axios.get('/api/competence')).data;
-        this.setState({ competences: competences, competence: competences[1] })
+        this.setState({ competences: competences, competence: this.props.info.apply.buttonDefaultValue })
     }
-
-
-    render() {
+    renderFullApplyPage() {
         return (
-            <div>
+            <Fragment>
                 <Row>
                     {this.renderCompetences()}
                 </Row>
@@ -200,6 +201,21 @@ class Apply extends Component {
                 <Row>
                     {this.renderSumbit()}
                 </Row>
+            </Fragment>
+        )
+    }
+    renderFullOkPage(){
+        return(
+            <Fragment>
+                Application received!
+            </Fragment>
+        )
+    }
+
+    render() {
+        return (
+            <div>
+                {this.state.submitted ? this.renderFullOkPage() : this.renderFullApplyPage()}
             </div >
         );
     };

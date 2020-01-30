@@ -26,15 +26,17 @@ function extractToken(req) {
 async function extractApplication(req) {
     const body = req.body;
     console.log(body)
-    console.log(body.competence[0].competenceName + " "+ body.availability)
+    // console.log(body.competence[0].competenceName + " "+ body.availability)
     let competenceList = body.competence ? body.competence : [];
     let availability = body.availability;
     let applicationDate = body.applicationDate;
+    // For get application only
+    let name = body.name ? body.name : "";
     const date = new Date();
     if (!body.competence) {
         const competences = await userDAO.getCompetence()
         for (i = 0; i < competences.length; i += 2) {
-            listCompetenceID.push(competences[i]);
+            competenceList.push(competences[i]);
         }
     }
     if (!availability) {
@@ -49,10 +51,7 @@ async function extractApplication(req) {
             endDate: date.getFullYear()+2000 +"-01-01"
         }
     }
-    console.log("Done list:"+availability +  " "+ competenceList)
-    const app = new Application(availability, applicationDate, competenceList);
-    app.display();
-    return JSON.stringify(app)
+    return new Application(availability, applicationDate, competenceList,name);
 }
 module.exports = {
     extractCredentials,

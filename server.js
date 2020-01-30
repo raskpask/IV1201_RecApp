@@ -85,6 +85,7 @@ app.delete('/api/authentication', async (req, res) => {
 app.get('/api/application', async (req, res) => {
   try {
     const application = await controller.getApplication(req);
+    console.log("Server sends: " + application)
     if (application == "no access") {
       res.sendStatus(401)
     } else {

@@ -1,7 +1,15 @@
 const { Pool, Client } = require('pg')
 const User = require('../model/user');
-const Application = require('../model/application');
-const Competence = require('../model/competence');
+
+const pool = new Pool({
+    // connectionString: process.env.DATABASE_URL,
+    user: "wlmremkduaitnk",
+    password: "83a43bfb610544a9c62da56a7144bafb13a726bf63a91e7ec454178a9623b479",
+    database: "d38bijitre5o3s",
+    port: 5432,
+    host: "ec2-54-247-92-167.eu-west-1.compute.amazonaws.com",
+    ssl: true
+})
 
 function connect() {
     const client = new Client({
@@ -200,6 +208,7 @@ function getApplication(privilegeLevel, token, application) {
                 //         const rawUser = res.rows[0].person.split('(')[1].split(',');
                 //         client.end()
                 // console.log(res.rows)
+                console.log(res.rows)
                 resolve(res.rows)
             }
             //     client.end();
@@ -211,51 +220,39 @@ function getApplication(privilegeLevel, token, application) {
 }
 async function createApplication(application, user) {
     // return new Promise(function (resolve, reject) {
-        console.log(application)
-        const app = JSON.parse(application)
-        const pool = new Pool({
-            // connectionString: process.env.DATABASE_URL,
-            user: "wlmremkduaitnk",
-            password: "83a43bfb610544a9c62da56a7144bafb13a726bf63a91e7ec454178a9623b479",
-            database: "d38bijitre5o3s",
-            port: 5432,
-            host: "ec2-54-247-92-167.eu-west-1.compute.amazonaws.com",
-            ssl: true
-        })
 
-        
-            const client = await pool.connect()
-            try {
-                await client.query("BEGIN");
-                for (i = 0; i < application.competenceList.length; i++) {
-                    let addCompetenceProfileQuery = {
-                        text: "INSERT INTO person (person_id,competence_id,years_of_experience) VALUES($1,$2,$3) RETURNING *",
-                        values: [user.personID, application.competenceList[i].competenceID, application.competenceList[i].numberOfYears]
-                    }
-                    await client.query(addCompetenceProfileQuery);
-                }
-                for (i = 0; i < application.availability.length; i++) {
-                    let addAvailabilityQuery = {
-                        text: "INSERT INTO availability (person_id,from_date,to_date) VALUES($1,$2,$3) RETURNING *",
-                        values: [user.personID, application.availability[i].startDate, application.availability[i].endDate]
-                    }
-                    await client.query(addAvailabilityQuery);
-                }
-                const addApplicatonQuery = {
-                    text: "INSERT INTO application (person_id,time_of_submission,status) VALUES($1,$2,$3) RETURING *",
-                    values: [user.personID, Date.now(), 0]
-                }
-                await client.query(addApplicatonQuery);
-                await client.query("COMMIT");
-                
-            } catch (e) {
-                await client.query("ROLLBACK");
-                console.error(e)
-
-            } finally {
-                client.release();
+    const client = await pool.connect()
+    try {
+        await client.query("BEGIN");
+        for (i = 0; i < application.competence.length; i++) {
+            let addCompetenceProfileQuery = {
+                text: "INSERT INTO competence_profile (person_id,competence_id,years_of_experience) VALUES($1,$2,$3) RETURNING *",
+                values: [user.personID, application.competence[i].competenceID, application.competence[i].numberOfYears]
             }
-        // .catch(e => console.error(e.stack));
+            await client.query(addCompetenceProfileQuery);
+        }
+        for (i = 0; i < application.availability.length; i++) {
+            let addAvailabilityQuery = {
+                text: "INSERT INTO availability (person_id,from_date,to_date) VALUES($1,$2,$3) RETURNING *",
+                values: [user.personID, application.availability[i].startDate, application.availability[i].endDate]
+            }
+            await client.query(addAvailabilityQuery);
+        }
+        const addApplicatonQuery = {
+            text: "INSERT INTO application (person_id,time_of_submission,status) VALUES($1,$2,$3)",
+            values: [user.personID, '2020-01-30', 0]
+        }
+        await client.query(addApplicatonQuery);
+        await client.query("COMMIT");
+
+    } catch (e) {
+        await client.query("ROLLBACK");
+        console.error(e)
+
+    } finally {
+        client.release();
+    }
+    // .catch(e => console.error(e.stack));
     // });
 }
 function updateApplicationStatus(application_id, status) {
@@ -267,7 +264,7 @@ function updateApplicationStatus(application_id, status) {
             values: [status, application_id]
 
         }
-        client.query(getUserQuery, (err, res) => {
+        client.query(updateApplicationStatusQuery, (err, res) => {
             client.end();
             if (res.rowCount == '1') {
                 resolve()

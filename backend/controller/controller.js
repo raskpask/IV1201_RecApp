@@ -43,7 +43,7 @@ async function getApplication(req) {
 }
 async function createApplication(req) {
     const token = requestHandler.extractToken(req);
-    const application = requestHandler.extractApplication(req);
+    const application = await requestHandler.extractApplication(req);
     const user = await userDAO.getUser(token);
     return await userDAO.createApplication(application, user);
 }

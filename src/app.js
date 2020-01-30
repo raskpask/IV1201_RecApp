@@ -46,6 +46,7 @@ class App extends Component {
                 ],
                 apply: {
                     buttonCompetences: "Competence:",
+                    buttonDefaultValue: "Pick a competence",
                     buttonAddCompetence: "Add competence",
                     textYearsOfExperience: "Years of experience:",
                     availabilityButton: "Add availibility",

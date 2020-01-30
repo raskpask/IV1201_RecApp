@@ -19,12 +19,14 @@ class User extends Component {
                 firstName: "",
                 lastName: ""
             },
-            submitted: false
+            application: ""
         }
     }
     componentDidMount = async () => {
         const user = await (await axios.get('/api/user')).data.user;
-        this.setState({ user: user })
+        const application = await axios.get('api/application');
+        console.log(application)
+        this.setState({ user: user, application: application })
     }
     updateUser = async () => {
         try {
@@ -47,6 +49,25 @@ class User extends Component {
         }
     }
     renderUser = () => {
+        return (
+            <Fragment>
+                
+                <Card className="userInfo">
+                    <Card.Header>
+                        {this.props.info.user[6].name}{this.state.user.firstName} {this.state.user.lastName}!
+
+                    </Card.Header>
+                    <ListGroup variant="flush">
+
+                        <ListGroup.Item>{this.props.info.user[0].name}{this.state.user.username}</ListGroup.Item>
+                        <ListGroup.Item>{this.props.info.user[2].name}{this.state.user.email}</ListGroup.Item>
+                        <ListGroup.Item>{this.props.info.user[3].name}{this.state.user.date}</ListGroup.Item>
+                    </ListGroup>
+                </Card>
+            </Fragment>
+        )
+    }
+    renderApplication(){
         return (
             <Fragment>
                 
