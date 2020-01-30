@@ -14,7 +14,13 @@
 .marginLeft{
     margin-left: 1vw;
 }
-.table{
-    margin-top: 5vw;
-    width: 50%;
+.tableAvailability{
+    margin: 5vw 2vw 5vw 0vw;
+    /* padding-right: 5vw; */
+    /* width: 50%; */
+}
+.tableCompetence{
+    margin: 5vw 1vw 5vw 2vw;
+    /* padding-left: 5vw; */
+    /* width: 50%; */
 }

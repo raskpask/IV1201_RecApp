@@ -25,9 +25,10 @@ function extractToken(req) {
 }
 async function extractApplication(req) {
     const body = req.body;
-    let listCompetenceID = body.competence ? body.competence : [];
+    console.log(body)
+    console.log(body.competence[0].competenceName + " "+ body.availability)
+    let competenceList = body.competence ? body.competence : [];
     let availability = body.availability;
-    let name = body.name ? body.name : "";
     let applicationDate = body.applicationDate;
     const date = new Date();
     if (!body.competence) {
@@ -48,7 +49,10 @@ async function extractApplication(req) {
             endDate: date.getFullYear()+2000 +"-01-01"
         }
     }
-    return new Application(availability, applicationDate, listCompetenceID,name);
+    console.log("Done list:"+availability +  " "+ competenceList)
+    const app = new Application(availability, applicationDate, competenceList);
+    app.display();
+    return JSON.stringify(app)
 }
 module.exports = {
     extractCredentials,

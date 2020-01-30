@@ -49,6 +49,7 @@ class App extends Component {
                     buttonAddCompetence: "Add competence",
                     textYearsOfExperience: "Years of experience:",
                     availabilityButton: "Add availibility",
+                    sumbitApplication: "Submit application",
                     tableCompetence: [
                         "Competence",
                         "Years of experience"

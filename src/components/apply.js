@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Dropdown, InputGroup, DropdownButton, FormControl, Button, Table } from 'react-bootstrap';
+import { Dropdown, InputGroup, DropdownButton, FormControl, Button, Table, Col, Row } from 'react-bootstrap';
 import { DateRangePicker } from 'react-dates';
 import Moment from 'moment';
 
@@ -61,13 +61,12 @@ class Apply extends Component {
         let list = this.state.availability;
         const period = this.state.availabilityCounter;
         list.push(newAvailability);
-        this.setState({ availability: list, startDate: "", endDate: "",availabilityCounter: period+1 });
+        this.setState({ availability: list, startDate: "", endDate: "", availabilityCounter: period + 1 });
     }
     renderAvailability() {
         return (
             <Fragment>
                 <DateRangePicker
-
                     displayFormat={() => "DD/MM/YYYY"}
                     startDate={this.state.startDate}
                     // startDateId="your_unique_start_date_id" 
@@ -83,6 +82,7 @@ class Apply extends Component {
             </Fragment>
         )
     }
+
     renderCompetences() {
         return (
             <Fragment>
@@ -112,44 +112,67 @@ class Apply extends Component {
     renderSummary() {
         return (
             <Fragment>
-                <Table striped bordered hover className="table">
-                    <thead>
-                        <tr>
-                            <th>{this.props.info.apply.tableCompetence[0]}</th>
-                            <th>{this.props.info.apply.tableCompetence[1]}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {this.state.addedCompetences.map((competence, key) =>
+                <Col>
+                    <Table striped bordered hover className="tableAvailability">
+                        <thead>
                             <tr>
-                                <td> {competence.competenceName}</td>
-                                <td> {competence.numberOfYears}</td>
+                                <th>{this.props.info.apply.tableCompetence[0]}</th>
+                                <th>{this.props.info.apply.tableCompetence[1]}</th>
                             </tr>
-                        )}
+                        </thead>
+                        <tbody>
+                            {this.state.addedCompetences.map((competence, key) =>
+                                <tr>
+                                    <td> {competence.competenceName}</td>
+                                    <td> {competence.numberOfYears}</td>
+                                </tr>
+                            )}
 
-                    </tbody>
-                </Table>
-                <Table striped bordered hover >
-                    <thead>
-                        <tr>
-                            <th>{this.props.info.apply.tableAvailability[0]}</th>
-                            <th>{this.props.info.apply.tableAvailability[1]}</th>
-                            <th>{this.props.info.apply.tableAvailability[2]}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {this.state.availability.map((availability, key) =>
+                        </tbody>
+                    </Table>
+                </Col>
+                <Col>
+                    <Table striped bordered hover className="tableCompetence">
+                        <thead>
                             <tr>
-                                <td> {this.props.info.apply.tableAvailability[3]}{availability.period}</td>
-                                <td> {availability.startDate}</td>
-                                <td> {availability.endDate}</td>
+                                <th>{this.props.info.apply.tableAvailability[0]}</th>
+                                <th>{this.props.info.apply.tableAvailability[1]}</th>
+                                <th>{this.props.info.apply.tableAvailability[2]}</th>
                             </tr>
-                        )}
+                        </thead>
+                        <tbody>
+                            {this.state.availability.map((availability, key) =>
+                                <tr>
+                                    <td> {this.props.info.apply.tableAvailability[3]}{availability.period}</td>
+                                    <td> {availability.startDate}</td>
+                                    <td> {availability.endDate}</td>
+                                </tr>
+                            )}
 
-                    </tbody>
-                </Table>
+                        </tbody>
+                    </Table>
+                </Col>
             </Fragment>
         );
+    }
+    renderSumbit() {
+        return (
+            <Fragment>
+                <Button variant="primary" className="m-auto"
+                onClick={() => this.submitApplication()}
+                >
+                    {this.props.info.apply.sumbitApplication}
+                </Button>
+            </Fragment>
+        )
+    }
+    submitApplication = async () =>{
+        const application ={
+            competence: this.state.addedCompetences,
+            availability: this.state.availability, 
+        }
+        const res = await axios.post('/api/application',application);
+        console.log(res)
     }
     componentDidMount = async () => {
         const competences = await (await axios.get('/api/competence')).data;
@@ -160,9 +183,23 @@ class Apply extends Component {
     render() {
         return (
             <div>
-                {this.renderCompetences()}
-                {this.renderAvailability()}
-                {this.renderSummary()}
+                <Row>
+                    {this.renderCompetences()}
+                </Row>
+                <Row>
+                    <Col></Col>
+                    <Col>
+                        {this.renderAvailability()}
+                    </Col>
+                    <Col></Col>
+
+                </Row>
+                <Row>
+                    {this.renderSummary()}
+                </Row>
+                <Row>
+                    {this.renderSumbit()}
+                </Row>
             </div >
         );
     };

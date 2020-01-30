@@ -168,6 +168,7 @@ function getPrivilegeLevel(token) {
 
 function getApplication(privilegeLevel, token, application) {
     return new Promise(function (resolve, reject) {
+        console.log(application)
         client = connect();
         let getApplicationQuery = {
             text:
@@ -208,19 +209,28 @@ function getApplication(privilegeLevel, token, application) {
         });
     });
 }
-function createApplication(application, token) {
-    return new Promise(function (resolve, reject) {
-        const user = this.getUser(token);
-        const pool = new Pool();
+async function createApplication(application, user) {
+    // return new Promise(function (resolve, reject) {
+        console.log(application)
+        const app = JSON.parse(application)
+        const pool = new Pool({
+            // connectionString: process.env.DATABASE_URL,
+            user: "wlmremkduaitnk",
+            password: "83a43bfb610544a9c62da56a7144bafb13a726bf63a91e7ec454178a9623b479",
+            database: "d38bijitre5o3s",
+            port: 5432,
+            host: "ec2-54-247-92-167.eu-west-1.compute.amazonaws.com",
+            ssl: true
+        })
 
-        (async () => {
+        
             const client = await pool.connect()
             try {
                 await client.query("BEGIN");
-                for (i = 0; i < application.competence.length; i++) {
+                for (i = 0; i < application.competenceList.length; i++) {
                     let addCompetenceProfileQuery = {
                         text: "INSERT INTO person (person_id,competence_id,years_of_experience) VALUES($1,$2,$3) RETURNING *",
-                        values: [user.personID, application.competence[i].id, application.competence[i].years]
+                        values: [user.personID, application.competenceList[i].competenceID, application.competenceList[i].numberOfYears]
                     }
                     await client.query(addCompetenceProfileQuery);
                 }
@@ -235,18 +245,18 @@ function createApplication(application, token) {
                     text: "INSERT INTO application (person_id,time_of_submission,status) VALUES($1,$2,$3) RETURING *",
                     values: [user.personID, Date.now(), 0]
                 }
-                await client.query(addApplicationQuery);
+                await client.query(addApplicatonQuery);
                 await client.query("COMMIT");
-                resolve();
+                
             } catch (e) {
                 await client.query("ROLLBACK");
-                reject(e);
+                console.error(e)
 
             } finally {
                 client.release();
             }
-        })().catch(e => console.error(e.stack));
-    });
+        // .catch(e => console.error(e.stack));
+    // });
 }
 function updateApplicationStatus(application_id, status) {
     return new Promise(function (resolve, reject) {
