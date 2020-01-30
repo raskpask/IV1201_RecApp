@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import Button from 'react-bootstrap/Button';
-import { Form, Card, ListGroup } from 'react-bootstrap';
+import { Form, Card, ListGroup, Col, Row, Button, Table } from 'react-bootstrap';
 
 import axios from 'axios';
 
@@ -19,12 +18,23 @@ class User extends Component {
                 firstName: "",
                 lastName: ""
             },
-            application: ""
+            application: [
+                {
+                startdate: "",
+                enddate: "",
+                competence: "",
+                years_of_experience: "",
+                firstname: "",
+                lastname: "",
+                name: "",
+                time_of_submission: ""
+            }
+            ] 
         }
     }
     componentDidMount = async () => {
         const user = await (await axios.get('/api/user')).data.user;
-        const application = await axios.get('api/application');
+        const application = (await axios.get('api/application')).data;
         console.log(application)
         this.setState({ user: user, application: application })
     }
@@ -51,38 +61,59 @@ class User extends Component {
     renderUser = () => {
         return (
             <Fragment>
-                
-                <Card className="userInfo">
-                    <Card.Header>
-                        {this.props.info.user[6].name}{this.state.user.firstName} {this.state.user.lastName}!
+                <Row>
+                    <Col md="auto">
+                        {this.renderUserInfo()}
+                    </Col>
+                    <Col md="auto">
+                        {this.renderApplication()}
+                    </Col>
+                </Row>
 
-                    </Card.Header>
-                    <ListGroup variant="flush">
-
-                        <ListGroup.Item>{this.props.info.user[0].name}{this.state.user.username}</ListGroup.Item>
-                        <ListGroup.Item>{this.props.info.user[2].name}{this.state.user.email}</ListGroup.Item>
-                        <ListGroup.Item>{this.props.info.user[3].name}{this.state.user.date}</ListGroup.Item>
-                    </ListGroup>
-                </Card>
             </Fragment>
         )
     }
-    renderApplication(){
+    renderUserInfo() {
         return (
-            <Fragment>
-                
-                <Card className="userInfo">
-                    <Card.Header>
-                        {this.props.info.user[6].name}{this.state.user.firstName} {this.state.user.lastName}!
+            <Card className="userInfo">
+                <Card.Header>
+                    {this.props.info.user[6].name}{this.state.user.firstName} {this.state.user.lastName}!
 
                     </Card.Header>
-                    <ListGroup variant="flush">
+                <ListGroup variant="flush">
 
-                        <ListGroup.Item>{this.props.info.user[0].name}{this.state.user.username}</ListGroup.Item>
-                        <ListGroup.Item>{this.props.info.user[2].name}{this.state.user.email}</ListGroup.Item>
-                        <ListGroup.Item>{this.props.info.user[3].name}{this.state.user.date}</ListGroup.Item>
-                    </ListGroup>
-                </Card>
+                    <ListGroup.Item>{this.props.info.user[0].name}{this.state.user.username}</ListGroup.Item>
+                    <ListGroup.Item>{this.props.info.user[2].name}{this.state.user.email}</ListGroup.Item>
+                    <ListGroup.Item>{this.props.info.user[3].name}{this.state.user.date}</ListGroup.Item>
+                </ListGroup>
+            </Card>
+        )
+    }
+    renderApplication() {
+        return (
+            <Fragment>
+                <Table striped bordered hover className="tableCompetence">
+                        <thead>
+                            <tr>
+                                <th>{this.props.info.user[7].availability}</th>
+                                <th>{this.props.info.user[7].competence}</th>
+                                <th>{this.props.info.user[7].yearsOfExperience}</th>
+                                <th>{this.props.info.user[7].dateOfSubmission}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {this.state.application.map((application, key) =>
+                                <tr>
+                                    <td> {application.startdate.split('T')[0]} {this.props.info.user[7].to} {application.enddate.split('T')[0]}</td>
+                                    <td> {application.name}</td>
+                                    <td> {application.years_of_experience}</td>
+                                    <td> {application.time_of_submission.split('T')[0]}</td>
+                                </tr>
+                            )}
+
+                        </tbody>
+                    </Table>
+
             </Fragment>
         )
     }

@@ -90,6 +90,13 @@ class App extends Component {
                     },
                     {
                         name: "Welcome "
+                    },
+                    {
+                        availability: "Availability",
+                        competence: "Competence",
+                        yearsOfExperience: "Years of experience",
+                        to: "to",
+                        dateOfSubmission: "Date of submission"
                     }
                 ]
             }

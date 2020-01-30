@@ -180,7 +180,7 @@ function getApplication(privilegeLevel, token, application) {
         client = connect();
         let getApplicationQuery = {
             text:
-                "SELECT application.application_id, person.name, person.surname, competence.name, competence_profile.years_of_experience, availability.to_date AS startDate, availability.from_date AS endDate, application.time_of_submission, application.status " +
+                "SELECT application.application_id, person.name AS firstname, person.surname, competence.name, competence_profile.years_of_experience, availability.to_date AS startDate, availability.from_date AS endDate, application.time_of_submission, application.status " +
                 "FROM application " +
                 "INNER JOIN availability ON availability.person_id = application.person_id " +
                 "INNER JOIN person ON person.person_id = application.person_id " +
@@ -198,29 +198,21 @@ function getApplication(privilegeLevel, token, application) {
             getApplicationQuery.text.concat(" AND person.token = ($7)")
             getApplicationQuery.values.push(token)
         }
-
         // get status, job application, competence with year, availability, person name *
         client.query(getApplicationQuery, (err, res) => {
-            // console.log(err)
             if (err) {
                 reject(err);
             } else if (res.rows[0] != null) {
-                //         const rawUser = res.rows[0].person.split('(')[1].split(',');
-                //         client.end()
-                // console.log(res.rows)
-                console.log(res.rows)
+                client.end()
                 resolve(res.rows)
             }
-            //     client.end();
-            //     reject();
-            // });
+            client.end()
             resolve();
         });
     });
 }
 async function createApplication(application, user) {
     // return new Promise(function (resolve, reject) {
-
     const client = await pool.connect()
     try {
         await client.query("BEGIN");
@@ -252,8 +244,6 @@ async function createApplication(application, user) {
     } finally {
         client.release();
     }
-    // .catch(e => console.error(e.stack));
-    // });
 }
 function updateApplicationStatus(application_id, status) {
     return new Promise(function (resolve, reject) {
