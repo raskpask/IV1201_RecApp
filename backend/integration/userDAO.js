@@ -143,6 +143,10 @@ function getUser(token) {
             values: [token]
         }
         client.query(getUserQuery, (err, res) => {
+            if(!res || !res.rows){
+                client.end();
+                reject("Server error when requesting the user\n" + err);
+            } 
             if (res.rows[0] != null) {
                 const rawUser = res.rows[0].person.split('(')[1].split(',');
                 // console.log("token: "+token)
