@@ -37,19 +37,50 @@
 					"raw": "{\n\t\"username\": \"raskpask\",\n\t\"password\": \"abc123\"\n}"
 				},
 				"url": {
-					"raw": "https://iv1201-rec-app.herokuapp.com/api/authentication",
-					"protocol": "https",
+					"raw": "localhost:8080/api/authentication",
 					"host": [
-						"iv1201-rec-app",
-						"herokuapp",
-						"com"
+						"localhost"
 					],
+					"port": "8080",
 					"path": [
 						"api",
 						"authentication"
 					]
 				},
 				"description": "Tests a login"
+			},
+			"response": []
+		},
+		{
+			"name": "GetUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "96084cdf-18e6-4df9-a691-da8d267b08ad",
+						"exec": [
+							"pm.test(\"Body contains user string\", function () {",
+							"    pm.expect(pm.response.text()).to.include('{\"user\":{\"username\":\"raskpask\"');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/user",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"user"
+					]
+				}
 			},
 			"response": []
 		},
@@ -84,13 +115,11 @@
 					"raw": "{\n\t\"username\": \"\",\n\t\"password\": \"\"\n}"
 				},
 				"url": {
-					"raw": "https://iv1201-rec-app.herokuapp.com/api/authentication",
-					"protocol": "https",
+					"raw": "localhost:8080/api/authentication",
 					"host": [
-						"iv1201-rec-app",
-						"herokuapp",
-						"com"
+						"localhost"
 					],
+					"port": "8080",
 					"path": [
 						"api",
 						"authentication"
@@ -120,13 +149,11 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "https://iv1201-rec-app.herokuapp.com/api/authentication",
-					"protocol": "https",
+					"raw": "localhost:8080/api/authentication",
 					"host": [
-						"iv1201-rec-app",
-						"herokuapp",
-						"com"
+						"localhost"
 					],
+					"port": "8080",
 					"path": [
 						"api",
 						"authentication"
@@ -156,7 +183,141 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "https://iv1201-rec-app.herokuapp.com/api/authentication",
+					"raw": "localhost:8080/api/authentication",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"authentication"
+					]
+				},
+				"description": "Test logging out the user logged in in the successful test 1"
+			},
+			"response": []
+		},
+		{
+			"name": "GetUserNoCookie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "96084cdf-18e6-4df9-a691-da8d267b08ad",
+						"exec": [
+							"pm.test(\"Body contains user string\", function () {",
+							"    pm.expect(pm.response.text()).to.include('Bad Request');",
+							"});",
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/user",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CheckIfExistingUsernameIsAvailable",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "21c84215-b638-4e1b-9e42-0e0a8de8879d",
+						"exec": [
+							"",
+							"pm.test(\"Body matches string 'Username taken'\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Username taken\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"raskpask\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/api/username",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"username"
+					]
+				},
+				"description": "Checks if a username already in the database exists"
+			},
+			"response": []
+		},
+		{
+			"name": "CheckCompetences",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "21c84215-b638-4e1b-9e42-0e0a8de8879d",
+						"exec": [
+							"",
+							"pm.test(\"Body contains competences'\", function () {",
+							"    pm.expect(pm.response.text()).to.include('[\"1\",\"Korvgrillning\",\"2\",\"Karuselldrift\",');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://iv1201-rec-app.herokuapp.com/api/competence",
 					"protocol": "https",
 					"host": [
 						"iv1201-rec-app",
@@ -165,10 +326,109 @@
 					],
 					"path": [
 						"api",
-						"authentication"
+						"competence"
 					]
 				},
-				"description": "Test logging out the user logged in in the successful test 1"
+				"description": "Checks if a username already in the database exists"
+			},
+			"response": []
+		},
+		{
+			"name": "CheckSQLInjection",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "21c84215-b638-4e1b-9e42-0e0a8de8879d",
+						"exec": [
+							"",
+							"pm.test(\"Body matches string 'Username not taken'\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Username not taken\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"1 OR 1=1\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/api/username",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"username"
+					]
+				},
+				"description": "Checks if a username already in the database exists"
+			},
+			"response": []
+		},
+		{
+			"name": "CheckIfNonExistantUsernameExists",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "02967c3e-c218-48c7-b7fe-68e6d56fcfae",
+						"exec": [
+							"pm.test(\"Body matches string 'Username not taken'\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Username not taken\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"jhgfdghjkljhgfdrtgyuhjkiuhtygfrdtgyuhjihygtfrdftgyuh\"\n}"
+				},
+				"url": {
+					"raw": "https://iv1201-rec-app.herokuapp.com/api/username",
+					"protocol": "https",
+					"host": [
+						"iv1201-rec-app",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"username"
+					]
+				},
+				"description": "Checks if a username that does not exist in the database exists."
 			},
 			"response": []
 		}
