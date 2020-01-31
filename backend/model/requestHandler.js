@@ -21,11 +21,13 @@ function extractToken(req) {
     if (!cookieHeader) {
         return null
     }
-    return cookieHeader ? cookieHeader.split('=')[1] : null;
+    const token = cookieHeader.split('authToken=');
+    return token[1] ? token[1] : null;
+    
 }
 async function extractApplication(req) {
     const body = req.body;
-    console.log(body)
+    // console.log(body)
     // console.log(body.competence[0].competenceName + " "+ body.availability)
     let competenceList = body.competence ? body.competence : [];
     let availability = body.availability;

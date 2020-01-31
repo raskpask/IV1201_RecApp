@@ -59,6 +59,9 @@ async function getCompetence(req) {
     const token = requestHandler.extractToken(req)
     return await userDAO.getCompetence(token);
 }
+function getToken(req){
+    return requestHandler.extractToken(req);
+}
 
 module.exports = {
     registerUser,
@@ -71,4 +74,5 @@ module.exports = {
     deAuthenticateUser,
     getCompetence,
     checkIfUsernameIsAvailable,
+    getToken,
 }

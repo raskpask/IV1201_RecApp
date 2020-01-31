@@ -1,5 +1,6 @@
 const { Pool, Client } = require('pg')
 const User = require('../model/user');
+const DbResponseHandler = require('../model/dbResponsehandler');
 
 const pool = new Pool({
     // connectionString: process.env.DATABASE_URL,
@@ -24,6 +25,7 @@ function connect() {
     client.connect();
     return client
 }
+
 
 
 function registerUser(user) {
@@ -53,7 +55,7 @@ function updateUser(user, token) {
             text: "UPDATE person SET (email,name,password,role_id,ssn,surname,username) VALUES($1,$2,$3,$4,$5,$6,$7) WHERE token = $8",
             values: [user.email, user.firstName, user.password, 2, user.date, user.lastName, user.username, token]
         }
-        console.log(query)
+        // console.log(query)
         client.query(query, (err, res) => {
             // console.log(res.rows[0])
             if (res == null || res.rows == null || res.rows[0] == null) {
@@ -165,11 +167,12 @@ function getPrivilegeLevel(token) {
         }
         client = connect();
         const getPrivilegeLevelQuery = {
-            text: "SELECT role_id FROM person WHERE token=$1",
+            text: "SELECT role_id, person_id FROM person WHERE token=$1",
             values: [token]
         }
         client.query(getPrivilegeLevelQuery, (err, res) => {
             if (res.rows[0] != null) {
+                // console.log(res.rows[0])
                 resolve(res.rows[0]);
             }
             client.end()
@@ -180,34 +183,43 @@ function getPrivilegeLevel(token) {
 
 function getApplication(privilegeLevel, token, application) {
     return new Promise(function (resolve, reject) {
-        console.log(application)
+        // console.log(application)
+        console.log("Pri lvl: "+privilegeLevel.role_id)
         client = connect();
         let getApplicationQuery = {
             text:
-                "SELECT application.application_id, person.name AS firstname, person.surname, competence.name, competence_profile.years_of_experience, availability.to_date AS startDate, availability.from_date AS endDate, application.time_of_submission, application.status " +
+                "SELECT application.application_id, person.name AS firstname, person.surname, person.ssn, competence.name, competence_profile.years_of_experience, availability.to_date AS startDate, availability.from_date AS endDate, application.time_of_submission, application.status " +
                 "FROM application " +
                 "INNER JOIN availability ON availability.person_id = application.person_id " +
                 "INNER JOIN person ON person.person_id = application.person_id " +
                 "INNER JOIN competence_profile ON competence_profile.person_id = application.person_id " +
                 "INNER JOIN competence ON competence.competence_id = competence_profile.competence_id " +
-                "WHERE competence.competence_id IN " + '(' + application.competence.join() + ')' +
+                "WHERE competence.competence_id IN " + '(' + application.competence.join() + ') ' +
                 "AND availability.from_date >= DATE($1) " +
                 "AND availability.to_date <= DATE($2) " +
                 "AND(person.name LIKE ($3) OR person.surname LIKE ($4)) " +
                 "AND DATE(application.time_of_submission) >= DATE($5) " +
-                "AND DATE(application.time_of_submission) <= DATE($6)",
-            values: [application.availability.startDate, application.availability.endDate, application.name + "%", application.name + "%", application.applicationDate.startDate, application.applicationDate.endDate]
+                "AND DATE(application.time_of_submission) <= DATE($6) " +
+                "AND person.person_id >= ($7)" +
+                "AND person.person_id <= ($8)",
+            values: [application.availability.startDate, application.availability.endDate, application.name + "%", application.name + "%", application.applicationDate.startDate, application.applicationDate.endDate,0,999999999999999]
         }
-        if (privilegeLevel == 2) {
-            getApplicationQuery.text.concat(" AND person.token = ($7)")
-            getApplicationQuery.values.push(token)
+        if (privilegeLevel.role_id == 2) {
+            // getApplicationQuery.text.concat(" AND person.token = ($7)")
+            getApplicationQuery.values[6] = privilegeLevel.person_id;
+            getApplicationQuery.values[7] = privilegeLevel.person_id;
+
         }
+        console.log(getApplicationQuery)
         // get status, job application, competence with year, availability, person name *
         client.query(getApplicationQuery, (err, res) => {
+            console.log(res)
             if (err) {
+                console.log(err)
                 reject(err);
             } else if (res.rows[0] != null) {
                 client.end()
+                console.log(res.rows)
                 resolve(res.rows)
             }
             client.end()
