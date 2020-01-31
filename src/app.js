@@ -10,6 +10,7 @@ import Home from './components/home';
 import Register from './components/register';
 import User from './components/user';
 import Apply from './components/apply';
+import ListApplications from './components/listApplications';
 
 import './resources/css/register.css';
 
@@ -44,6 +45,11 @@ class App extends Component {
                         placeholder: "Enter last name"
                     }
                 ],
+                listApplications: {
+                    firstName: "First name",
+                    lastName: "Last name",
+                    applicationDate: "Application date" 
+                },
                 apply: {
                     buttonCompetences: "Competence:",
                     buttonDefaultValue: "Pick a competence",
@@ -95,7 +101,7 @@ class App extends Component {
                         availability: "Availability",
                         competence: "Competence",
                         yearsOfExperience: "Years of experience",
-                        to: "to",
+                        to: " to ",
                         dateOfSubmission: "Date of submission: ",
                         status: "Status: ",
                         lastEdited: "Last edited:  ",
@@ -121,6 +127,9 @@ class App extends Component {
                 <BrowserRouter>
                     <Route exact path="/home"
                         render={(props) => <Home info={this.state.eng} />}
+                    />
+                    <Route exact path="/listApplications"
+                        render={(props) => <ListApplications info={this.state.eng} />}
                     />
                     <Route exact path="/apply"
                         render={(props) => <Apply info={this.state.eng} />}

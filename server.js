@@ -39,6 +39,7 @@ app.get('/api/user', async (req, res) => {
   try {
     const user = await controller.getUser(req);
     res.cookie('authToken', controller.getToken(req),{ expires: new Date(Date.now() + 1800000)});
+    res.cookie('privilegeLevel', user.privilegeLevel ,{ expires: new Date(Date.now() + 1800000)});
     res.send(JSON.stringify({ user: user }));
     // console.log(user);
 
@@ -76,6 +77,7 @@ app.delete('/api/authentication', async (req, res) => {
   try {
     await controller.deAuthenticateUser(req);
     res.clearCookie('authToken');
+    res.clearCookie('privilegeLevel')
     res.send();
   } catch (error) {
     console.error(error)

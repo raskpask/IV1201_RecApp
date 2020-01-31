@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Col, Row, Table, Nav, Card } from 'react-bootstrap';
+import { Col, Row, Table, Nav, Card, Container } from 'react-bootstrap';
 
 
 import '../../resources/css/application.css';
@@ -47,7 +47,7 @@ class Application extends Component {
                 </thead>
                 <tbody>
                     {this.props.application.availability.map((application, key) =>
-                        <tr>{application.startDate.split('T')[0]} {this.props.info.user[7].to} {application.endDate.split('T')[0]}</tr>
+                        <tr key={key}>{application.startDate.split('T')[0]}{this.props.info.user[7].to}{application.endDate.split('T')[0]}</tr>
                     )}
                 </tbody>
             </Table>
@@ -64,9 +64,9 @@ class Application extends Component {
                 </thead>
                 <tbody>
                     {this.props.application.competence.map((application, key) =>
-                        <tr>
-                            <td> {application.name}</td>
-                            <td> {application.yearsOfExperience}</td>
+                        <tr key={key}>
+                            <td key={"name: " + key}> {application.name}</td>
+                            <td key={"experience: " + key}> {application.yearsOfExperience}</td>
                         </tr>
                     )}
                 </tbody>
@@ -75,30 +75,30 @@ class Application extends Component {
     }
     renderInfo() {
         return (
-            <Fragment>
+            <Container className="textSize">
                 <Row>
-                    <Col md='4'>
-                        {this.props.info.user[7].firstName}{this.props.application.firstName}
+                    <Col >
+                        <span className="boldText">{this.props.info.user[7].firstName}</span><span className="value">{this.props.application.firstName}</span>
                     </Col>
-                    <Col md='3'>
-                        {this.props.info.user[7].lastName}{this.props.application.lastName}
+                    <Col >
+                        {this.props.info.user[7].lastName}<span className="value">{this.props.application.lastName}</span>
                     </Col>
-                    <Col md='5 '>
-                        {this.props.info.user[7].dateOfBirth}{this.props.application.dateOfBirth}
+                    <Col >
+                        {this.props.info.user[7].dateOfBirth}<span className="value">{this.props.application.dateOfBirth}</span>
                     </Col>
                 </Row>
                 <Row>
-                    <Col md='5'>
-                        {this.props.info.user[7].dateOfSubmission}{this.props.application.dateOfSubmission.split('T')[0]}
+                    <Col >
+                        {this.props.info.user[7].dateOfSubmission}<span className="value">{this.props.application.dateOfSubmission.split('T')[0]}</span>
                     </Col>
-                    <Col md='3'>
-                        {this.props.info.user[7].lastEdited}{this.props.application.lastEdited.split('T')[0]}
+                    <Col >
+                        {this.props.info.user[7].lastEdited}<span className="value">{this.props.application.lastEdited.split('T')[0]}</span>
                     </Col>
-                    <Col md='4'>
-                        {this.props.info.user[7].status}{this.getStatus(this.props.application.status)}
+                    <Col >
+                        {this.props.info.user[7].status}<span className="value">{this.getStatus(this.props.application.status)}</span>
                     </Col>
                 </Row>
-            </Fragment>
+            </Container>
         )
     }
     getStatus(status) {

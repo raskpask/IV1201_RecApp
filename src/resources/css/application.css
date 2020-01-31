@@ -1,9 +1,15 @@
 .textSize{
     text-align: left;
-    font-size: 2vw;
+    font-size: 1.2vw;
     
 }
 .card{
     margin: 10%;
     /* border: 1px solid; */
+}
+.boldText{
+    /* font-weight:bold; */
+}
+.value{
+    font-weight: bold;
 }

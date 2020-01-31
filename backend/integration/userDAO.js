@@ -145,7 +145,7 @@ function getUser(token) {
             values: [token]
         }
         client.query(getUserQuery, (err, res) => {
-            if(!res || !res.rows || !res.rows[0]){
+            if(res === null || res.rows === null || !res.rows[0] === null){
                 client.end();
                 reject("Server error when requesting the user\n" + err);
             } 
@@ -183,8 +183,8 @@ function getPrivilegeLevel(token) {
 
 function getApplication(privilegeLevel, token, application) {
     return new Promise(function (resolve, reject) {
-        console.log(application)
-        console.log("Pri lvl: "+privilegeLevel.role_id)
+        // console.log(application)
+        // console.log("Pri lvl: "+privilegeLevel.role_id)
         client = connect();
         let getApplicationQuery = {
             text:
@@ -213,7 +213,7 @@ function getApplication(privilegeLevel, token, application) {
         // console.log(getApplicationQuery)
         // get status, job application, competence with year, availability, person name *
         client.query(getApplicationQuery, (err, res) => {
-            console.log(res.rows)
+
             if (err) {
                 console.log(err)
                 reject(err);

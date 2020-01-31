@@ -21,8 +21,9 @@ function extractToken(req) {
     if (!cookieHeader) {
         return null
     }
-    const token = cookieHeader.split('authToken=');
-    return token[1] ? token[1] : null;
+    const token = cookieHeader.split('authToken=')[1].split(';')[0];
+    // console.log(token)
+    return token ? token : null;
     
 }
 async function extractApplication(req) {

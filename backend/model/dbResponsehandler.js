@@ -1,11 +1,11 @@
 function extractApplication(rows) {
-    console.log(rows)
+    // console.log(rows)
     let applicationID = rows[0].application_id;
     let applicationList = [];
     let indexCompetence = 0;
     let indexAvailability = 0;
     let tempApplication = {
-        lastEdited: (rows[0].last_edited === null) ? "-" :rows[0].last_edited,
+        lastEdited: (rows[0].last_edited === null) ? "-" : rows[0].last_edited,
         dateOfSubmission: rows[0].time_of_submission,
         status: rows[0].status,
         firstName: rows[0].firstname,
@@ -27,13 +27,15 @@ function extractApplication(rows) {
     };
     rows.forEach(element => {
         if (checkIfNotExistsInCompetence(element.name, tempApplication.competence)) {
-            // console.log("adds to list")
-            tempApplication.competence[indexCompetence] = { name: element.name, yearsOfExperience: element.years_of_experience };
+            console.log("adds to list:")
+            console.log(element.name)
             indexCompetence++;
+            tempApplication.competence[indexCompetence] = { name: element.name, yearsOfExperience: element.years_of_experience };
+            console.log(tempApplication.competence)
         }
         if (checkIfNotExistsInAvailability(element.startdate, element.enddate, tempApplication.availability)) {
-            tempApplication.availability[indexAvailability] = { startDate: element.startdate, endDate: element.enddate };
             indexAvailability++;
+            tempApplication.availability[indexAvailability] = { startDate: element.startdate, endDate: element.enddate };
         }
         if (!(element.application_id === applicationID)) {
             applicationList.push(tempApplication);
@@ -42,10 +44,25 @@ function extractApplication(rows) {
             tempApplication.lastName = element.surname;
             tempApplication.dateOfBirth = element.ssn;
             tempApplication.status = element.status;
-            tempApplication.lastEdited = (element.last_edited === null) ? "-": element.last_edited;
+            tempApplication.lastEdited = (element.last_edited === null) ? "-" : element.last_edited;
             applicationID = element.application_id;
-            tempApplication.competence = [];
-            tempApplication.availability = [];
+            indexAvailability = 0;
+            indexCompetence = 0;
+            console.log(element)
+            tempApplication.competence = [
+                {
+                    name: element.name,
+                    yearsOfExperience: element.years_of_experience
+                }
+            ];
+            tempApplication.availability = [
+                {
+                    startDate: element.startdate,
+                    endDate: element.enddate
+                }
+            ];
+            console.log(tempApplication.competence)
+            console.log(tempApplication.availability)
         }
 
     });
@@ -54,20 +71,27 @@ function extractApplication(rows) {
 }
 function checkIfNotExistsInCompetence(name, list) {
     // console.log(name)
-    // console.log(list)
-    list.forEach(element => {
+    console.log(list)
+    for (let element of list) {
+        console.log("compare element: "+element)
+        console.log(element)
+        console.log("compare: " + element.name + " " + name)
         if (name === element.name) {
             // console.log("does exist")
-            return false;
+            return false
         }
-    })
+    }
+    return true;
 }
 function checkIfNotExistsInAvailability(startDate, endDate, list) {
-    list.forEach(element => {
-        if (startDate === element.startDate || endDate === element.endDate) {
+    for (let element of list) {
+        // console.log("compare: "+JSON.stringify(startDate).split("GMT")[0].split('T')[0] +" "+ JSON.stringify(element.startDate).split("GMT")[0].split('T')[0])
+        if (JSON.stringify(startDate).split("GMT")[0].split('T')[0] === JSON.stringify(element.startDate).split("GMT")[0].split('T')[0] || endDate == element.endDate) {
+            // console.log("equal")
             return false;
         }
-    })
+    }
+    return true;
 }
 module.exports = {
     extractApplication,
