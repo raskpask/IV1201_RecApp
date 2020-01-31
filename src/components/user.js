@@ -1,15 +1,19 @@
 import React, { Component, Fragment } from 'react';
-import { Form, Card, ListGroup, Col, Row, Button, Table } from 'react-bootstrap';
+import { Form, Card, ListGroup, Button } from 'react-bootstrap';
+
 
 import axios from 'axios';
+import Application from './fragments/application';
 
 import '../resources/css/register.css';
 import '../resources/css/user.css';
+
 
 class User extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            renderApplication: "",
             user: {
                 username: "",
                 password: "",
@@ -20,23 +24,35 @@ class User extends Component {
             },
             application: [
                 {
-                startdate: "",
-                enddate: "",
-                competence: "",
-                years_of_experience: "",
-                firstname: "",
-                lastname: "",
-                name: "",
-                time_of_submission: ""
-            }
-            ] 
+                    firstName: "",
+                    lastName: "",
+                    dateOfBirth: "",
+                    lastEdited: "",
+                    dateOfSubmission: "",
+                    status: "",
+                    competence: [
+                        {
+                            name: "",
+                            yearsOfExperience: ""
+                        }
+                    ],
+                    availability: [
+                        {
+                            startDate: "",
+                            endDate: ""
+                        }
+
+                    ]
+                }
+            ]
         }
     }
+
     componentDidMount = async () => {
         const user = await (await axios.get('/api/user')).data.user;
         const application = (await axios.get('api/application')).data;
-        console.log(application)
         this.setState({ user: user, application: application })
+        this.setState({renderApplication: this.renderApplication()})
     }
     updateUser = async () => {
         try {
@@ -61,15 +77,7 @@ class User extends Component {
     renderUser = () => {
         return (
             <Fragment>
-                <Row>
-                    <Col md="auto">
-                        {this.renderUserInfo()}
-                    </Col>
-                    <Col md="auto">
-                        {this.renderApplication()}
-                    </Col>
-                </Row>
-
+                {this.state.renderApplication}
             </Fragment>
         )
     }
@@ -92,28 +100,7 @@ class User extends Component {
     renderApplication() {
         return (
             <Fragment>
-                <Table striped bordered hover className="tableCompetence">
-                        <thead>
-                            <tr>
-                                <th>{this.props.info.user[7].availability}</th>
-                                <th>{this.props.info.user[7].competence}</th>
-                                <th>{this.props.info.user[7].yearsOfExperience}</th>
-                                <th>{this.props.info.user[7].dateOfSubmission}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {this.state.application.map((application, key) =>
-                                <tr>
-                                    <td> {application.startdate.split('T')[0]} {this.props.info.user[7].to} {application.enddate.split('T')[0]}</td>
-                                    <td> {application.name}</td>
-                                    <td> {application.years_of_experience}</td>
-                                    <td> {application.time_of_submission.split('T')[0]}</td>
-                                </tr>
-                            )}
-
-                        </tbody>
-                    </Table>
-
+                <Application info={this.props.info} application={this.state.application[0]} />
             </Fragment>
         )
     }

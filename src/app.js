@@ -96,7 +96,18 @@ class App extends Component {
                         competence: "Competence",
                         yearsOfExperience: "Years of experience",
                         to: "to",
-                        dateOfSubmission: "Date of submission"
+                        dateOfSubmission: "Date of submission: ",
+                        status: "Status: ",
+                        lastEdited: "Last edited:  ",
+                        firstName: "First name: ",
+                        lastName: "Last name: ",
+                        dateOfBirth: "Date of birth: "
+                    },
+                    {
+                        status0: "Unhandled",
+                        status1: "Accepted",
+                        status2: "Rejected",
+                        statuselse: "Status Loading/Error"
                     }
                 ]
             }

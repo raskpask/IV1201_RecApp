@@ -1,6 +1,6 @@
 const { Pool, Client } = require('pg')
 const User = require('../model/user');
-const DbResponseHandler = require('../model/dbResponsehandler');
+const dbResponseHandler = require('../model/dbResponsehandler');
 
 const pool = new Pool({
     // connectionString: process.env.DATABASE_URL,
@@ -145,7 +145,7 @@ function getUser(token) {
             values: [token]
         }
         client.query(getUserQuery, (err, res) => {
-            if(!res || !res.rows){
+            if(!res || !res.rows || !res.rows[0]){
                 client.end();
                 reject("Server error when requesting the user\n" + err);
             } 
@@ -183,12 +183,12 @@ function getPrivilegeLevel(token) {
 
 function getApplication(privilegeLevel, token, application) {
     return new Promise(function (resolve, reject) {
-        // console.log(application)
+        console.log(application)
         console.log("Pri lvl: "+privilegeLevel.role_id)
         client = connect();
         let getApplicationQuery = {
             text:
-                "SELECT application.application_id, person.name AS firstname, person.surname, person.ssn, competence.name, competence_profile.years_of_experience, availability.to_date AS startDate, availability.from_date AS endDate, application.time_of_submission, application.status " +
+                "SELECT application.application_id, person.name AS firstname, application.status , application.last_edited , person.surname, person.ssn, competence.name, competence_profile.years_of_experience, availability.to_date AS startDate, availability.from_date AS endDate, application.time_of_submission, application.status " +
                 "FROM application " +
                 "INNER JOIN availability ON availability.person_id = application.person_id " +
                 "INNER JOIN person ON person.person_id = application.person_id " +
@@ -210,17 +210,18 @@ function getApplication(privilegeLevel, token, application) {
             getApplicationQuery.values[7] = privilegeLevel.person_id;
 
         }
-        console.log(getApplicationQuery)
+        // console.log(getApplicationQuery)
         // get status, job application, competence with year, availability, person name *
         client.query(getApplicationQuery, (err, res) => {
-            console.log(res)
+            console.log(res.rows)
             if (err) {
                 console.log(err)
                 reject(err);
             } else if (res.rows[0] != null) {
+                const applicationList = dbResponseHandler.extractApplication(res.rows)
                 client.end()
-                console.log(res.rows)
-                resolve(res.rows)
+                console.log(applicationList)
+                resolve(applicationList)
             }
             client.end()
             resolve();

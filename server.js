@@ -91,8 +91,7 @@ app.get('/api/application', async (req, res) => {
     if (application == "no access") {
       res.sendStatus(401)
     } else {
-      console.log("Server file: "+ application)
-      res.send(application);
+      res.send(JSON.stringify(application));
     }
   } catch (error) {
     console.error(error);
