@@ -220,7 +220,7 @@ function getApplication(privilegeLevel, token, application) {
             } else if (res.rows[0] != null) {
                 const applicationList = dbResponseHandler.extractApplication(res.rows)
                 client.end()
-                console.log(applicationList)
+                // console.log(applicationList)
                 resolve(applicationList)
             }
             client.end()

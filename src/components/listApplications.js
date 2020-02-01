@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Table } from 'react-bootstrap';
+import Popup from "reactjs-popup";
 
 import '../resources/css/register.css';
 import axios from 'axios';
@@ -8,37 +9,55 @@ class ListApplications extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            application:[
-            {
-                firstName: "",
-                lastName: "",
-                dateOfBirth: "",
-                lastEdited: "",
-                dateOfSubmission: "",
-                status: "",
-                competence: [
-                    {
-                        name: "",
-                        yearsOfExperience: ""
-                    }
-                ],
-                availability: [
-                    {
-                        startDate: "",
-                        endDate: ""
-                    }
+            showUser: "",
+            appNumber: "",
+            application: [
+                {
+                    firstName: "",
+                    lastName: "",
+                    dateOfBirth: "",
+                    lastEdited: "",
+                    dateOfSubmission: "",
+                    status: "",
+                    competence: [
+                        {
+                            name: "",
+                            yearsOfExperience: ""
+                        }
+                    ],
+                    availability: [
+                        {
+                            startDate: "",
+                            endDate: ""
+                        }
 
-                ]
-            }
+                    ]
+                }
             ]
         }
     }
-    componentDidMount = async () =>{
-        const res =await axios.get('/api/application').data;
-        console.log(res);
+    componentDidMount = async () => {
+        this.getApplications()
     }
-    renderTable(){
-        return(
+    getApplications = () => {
+        axios
+            .get('/api/application')
+            .then(res =>
+
+                this.setState({ application: this.parseApplications(res.data) }
+                ))
+            .catch(err => console.log(err))
+    }
+    parseApplications(applications) {
+        let listOfApplications = [];
+        for (let app of applications) {
+            listOfApplications.push(JSON.parse(app));
+        }
+        return listOfApplications
+    }
+    renderTable() {
+        console.log(this.state.application)
+        return (
             <Table striped bordered hover>
                 <thead>
                     <tr>
@@ -51,19 +70,34 @@ class ListApplications extends Component {
                 <tbody>
                     {this.state.application.map((application, key) =>
                         <tr key={key}>
-                            <td key={"name: " + key}> {application.firstName}</td>
-                            <td key={"lastName: " + key}> {application.lastName}</td>
-                            <td key={"applicationDate: " + key}> {application.dateOfSubmission}</td>
+                            <td key={"name: " + key} >{application.firstName}{this.renderFullApplication()}</td>
+                            <td key={"lastName: " + key} > {application.lastName}</td>
+                            <td key={"applicationDate: " + key} > {application.dateOfSubmission}</td>
                         </tr>
                     )}
                 </tbody>
             </Table>
         )
     }
+    renderFullApplication(number) {
+        return (
+            <Popup trigger={<button>Trigger</button>} position="top left">
+                {close => (
+                    <div>
+                        Content here
+        <a className="close" onClick={close}>
+                            &times;
+        </a>
+                    </div>
+                )}
+            </Popup>
+        );
+    }
     render() {
         return (
             <div>
                 {this.renderTable()}
+                
             </div >
         );
     };
