@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import { Table } from 'react-bootstrap';
+import { Table, Button } from 'react-bootstrap';
 import Popup from "reactjs-popup";
 
 import '../resources/css/register.css';
+import '../resources/css/listApplications.css';
+import Application from './fragments/application';
 import axios from 'axios';
 
 class ListApplications extends Component {
@@ -70,7 +72,7 @@ class ListApplications extends Component {
                 <tbody>
                     {this.state.application.map((application, key) =>
                         <tr key={key}>
-                            <td key={"name: " + key} >{application.firstName}{this.renderFullApplication()}</td>
+                            <td key={"name: " + key} >{this.renderFullApplication(application)}</td>
                             <td key={"lastName: " + key} > {application.lastName}</td>
                             <td key={"applicationDate: " + key} > {application.dateOfSubmission}</td>
                         </tr>
@@ -79,17 +81,15 @@ class ListApplications extends Component {
             </Table>
         )
     }
-    renderFullApplication(number) {
+    // <Application info={this.props.info} application={application} />
+    renderFullApplication(application) {
         return (
-            <Popup trigger={<button>Trigger</button>} position="top left">
-                {close => (
-                    <div>
-                        Content here
-        <a className="close" onClick={close}>
-                            &times;
-        </a>
-                    </div>
-                )}
+            <Popup modal trigger={<a>{application.firstName}</a>}>
+            
+                <Application info={this.props.info} application={application} />
+                <Button>Close</Button>
+                <Button>Accept</Button>
+                <Button>Reject</Button>
             </Popup>
         );
     }
@@ -97,7 +97,7 @@ class ListApplications extends Component {
         return (
             <div>
                 {this.renderTable()}
-                
+
             </div >
         );
     };
