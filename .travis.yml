@@ -12,7 +12,8 @@ before_script:
   - node --version
   - npm --version
   - node_modules/.bin/newman --version
+  - npm start &
 
 script:
-  - npm start
+
   - node_modules/.bin/newman run tests/IV1201_API_test.postman_collection.json -e tests/IV1201_API_test.postman_collection.json --color auto --disable-unicode
