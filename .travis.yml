@@ -4,7 +4,7 @@ node_js:
 
 addons:
   hosts:
-    - travis.dev
+    - localhost
 install:
   - npm install newman
 

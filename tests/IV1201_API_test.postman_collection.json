@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "1127d2b9-9e95-43cc-bd75-d88365bf5733",
+		"_postman_id": "f8bbe0b6-946a-4366-a4e5-6ab04a8d9aa3",
 		"name": "IV1201_API_test",
 		"description": "Testing the API created for the application built in the course IV1201 at KTH",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -70,6 +70,10 @@
 			"request": {
 				"method": "GET",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "localhost:8080/api/user",
 					"host": [
@@ -148,10 +152,17 @@
 			"request": {
 				"method": "DELETE",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
-					"raw": "localhost:8080/api/authentication",
+					"raw": "127.0.0.1:8080/api/authentication",
 					"host": [
-						"localhost"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "8080",
 					"path": [
@@ -182,6 +193,10 @@
 			"request": {
 				"method": "DELETE",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "localhost:8080/api/authentication",
 					"host": [
@@ -219,6 +234,10 @@
 			"request": {
 				"method": "GET",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "localhost:8080/api/user",
 					"host": [
