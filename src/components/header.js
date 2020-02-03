@@ -86,8 +86,7 @@ class Header extends Component {
             <React.Fragment>
                 <Navbar.Brand>Recruitment app</Navbar.Brand>
                 <Nav className="mr-auto">
-                    <Nav.Link href="/home">Home</Nav.Link>
-                    <Nav.Link href="/apply">Apply</Nav.Link>
+                    <Nav.Link href="/home">Home</Nav.Link>  
                     <Nav.Link href="/listApplications">Applications</Nav.Link>
                 </Nav>
             </React.Fragment>

@@ -145,10 +145,10 @@ function getUser(token) {
             values: [token]
         }
         client.query(getUserQuery, (err, res) => {
-            if(res === null || res.rows === null || !res.rows[0] === null){
+            if (res === null || res.rows === null || !res.rows[0] === null) {
                 client.end();
                 reject("Server error when requesting the user\n" + err);
-            } 
+            }
             if (res.rows[0] != null) {
                 const rawUser = res.rows[0].person.split('(')[1].split(',');
                 // console.log("token: "+token)
@@ -159,6 +159,12 @@ function getUser(token) {
             reject("User could not be found")
         });
     });
+}
+function notVaildResponse(res) {
+    if (res === undefined) {
+        return false;
+    }
+    return true
 }
 function getPrivilegeLevel(token) {
     return new Promise(function (resolve, reject) {
@@ -171,12 +177,19 @@ function getPrivilegeLevel(token) {
             values: [token]
         }
         client.query(getPrivilegeLevelQuery, (err, res) => {
-            if (res.rows[0] != null) {
-                // console.log(res.rows[0])
-                resolve(res.rows[0]);
+            if (notVaildResponse()) {
+                client.end()
+                reject("User could not be found");
+            } else {
+                // console.log(res)
+                if (res.rows[0] != null) {
+                    // console.log(res.rows[0])
+                    client.end()
+                    resolve(res.rows[0]);
+                }
+                client.end()
+                reject("User could not be found")
             }
-            client.end()
-            reject("User could not be found")
         });
     });
 }
@@ -185,6 +198,12 @@ function getApplication(privilegeLevel, token, application) {
     return new Promise(function (resolve, reject) {
         // console.log(application)
         // console.log("Pri lvl: "+privilegeLevel.role_id)
+        // console.log(application.competence)
+        let competenceIDList = [];
+        for (let competence in application.competence) {
+            // console.log(application.competence[competence].competence_id)
+            competenceIDList.push(application.competence[competence].competence_id)
+        }
         client = connect();
         let getApplicationQuery = {
             text:
@@ -194,7 +213,7 @@ function getApplication(privilegeLevel, token, application) {
                 "INNER JOIN person ON person.person_id = application.person_id " +
                 "INNER JOIN competence_profile ON competence_profile.person_id = application.person_id " +
                 "INNER JOIN competence ON competence.competence_id = competence_profile.competence_id " +
-                "WHERE competence.competence_id IN " + '(' + application.competence.join() + ') ' +
+                "WHERE competence.competence_id IN " + '(' + competenceIDList.join() + ') ' +
                 "AND availability.from_date >= DATE($1) " +
                 "AND availability.to_date <= DATE($2) " +
                 "AND(person.name LIKE ($3) OR person.surname LIKE ($4)) " +
@@ -202,7 +221,7 @@ function getApplication(privilegeLevel, token, application) {
                 "AND DATE(application.time_of_submission) <= DATE($6) " +
                 "AND person.person_id >= ($7)" +
                 "AND person.person_id <= ($8)",
-            values: [application.availability.startDate, application.availability.endDate, application.name + "%", application.name + "%", application.applicationDate.startDate, application.applicationDate.endDate,0,999999999999999]
+            values: [application.availability.startDate, application.availability.endDate, application.name + "%", application.name + "%", application.applicationDate.startDate, application.applicationDate.endDate, 0, 999999999999999]
         }
         if (privilegeLevel.role_id == 2) {
             // getApplicationQuery.text.concat(" AND person.token = ($7)")
@@ -262,21 +281,28 @@ async function createApplication(application, user) {
         client.release();
     }
 }
-function updateApplicationStatus(application_id, status) {
+function updateApplicationStatus(status, applicationID) {
     return new Promise(function (resolve, reject) {
         client = connect();
-        // // console.log("token: "+token)
         const updateApplicationStatusQuery = {
             text: "UPDATE application SET status = $1 WHERE application_id = $2",
-            values: [status, application_id]
+            values: [status, applicationID]
 
         }
+        console.log(updateApplicationStatusQuery)
+        
         client.query(updateApplicationStatusQuery, (err, res) => {
-            client.end();
-            if (res.rowCount == '1') {
-                resolve()
+            if (notVaildResponse()) {
+                client.end();
+                reject("DB response error")
+            } else {
+                console.log(res)
+                client.end();
+                if (res.rowCount == '1') {
+                    resolve()
+                }
+                reject();
             }
-            reject();
         });
     });
 }
@@ -287,18 +313,23 @@ function getCompetence(token) {
             text: "SELECT * FROM competence",
         }
         client.query(getCompetenceQuery, (err, res) => {
-            if (res.rows[0] != null) {
-                let competences = [];
-                for (i = 0; i < res.rows.length; i++) {
-                    competences.push(res.rows[i].competence_id);
-                    competences.push(res.rows[i].name);
-                }
-                // console.log(res.rows[0])
-                resolve(competences);
+            let competences = [];
+            if (res === undefined) {
                 client.end()
+                reject("Error while getting the competences")
+            } else {
+                // console.log(res)
+                client.end()
+                resolve(res.rows);
             }
-            client.end()
-            reject("Could not be found")
+            // if (res.rows[0] != null) {
+            // for (let row in res) {
+            //     console.log(row)
+            //     competences.push({id: row.competence_id, name: row.name});
+            // }
+            // console.log(res.rows[0])
+
+            // }
         });
     });
 }

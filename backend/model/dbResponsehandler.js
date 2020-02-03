@@ -1,7 +1,7 @@
 
 
 function extractApplication(rows) {
-    console.log(rows)
+    // console.log(rows)
     let applicationID = rows[0].application_id;
     let applicationList = [];
     let indexCompetence = 0;
@@ -14,6 +14,7 @@ function extractApplication(rows) {
         firstName: rows[0].firstname,
         lastName: rows[0].surname,
         dateOfBirth: rows[0].ssn,
+        id: rows[0].application_id,
         competence: [
             {
                 name: rows[0].name,
@@ -41,16 +42,17 @@ function extractApplication(rows) {
             tempApplication.availability[indexAvailability] = { startDate: element.startdate, endDate: element.enddate };
         }
         if (!(element.application_id === applicationID)) {
-            console.log("Adding: ")
-            console.log(tempApplication)
+            // console.log("Adding: ")
+            // console.log(tempApplication)
             applicationList.push(JSON.stringify(tempApplication));
-            console.log("After adding the list looks like this: ")
-            console.log(applicationList)
+            // console.log("After adding the list looks like this: ")
+            // console.log(applicationList)
             tempApplication.dateOfSubmission = (JSON.stringify(element.time_of_submission)).split('T')[0].split('"')[1]
             tempApplication.firstName = element.firstname;
             tempApplication.lastName = element.surname;
             tempApplication.dateOfBirth = element.ssn;
             tempApplication.status = element.status;
+            tempApplication.id = element.application_id;
             tempApplication.lastEdited = (element.last_edited === null) ? "-" : element.last_edited;
             applicationID = element.application_id;
             // indexApplicationList++;
@@ -74,13 +76,13 @@ function extractApplication(rows) {
         }
 
     });
-    console.log("List looks like this before last push:")
-    console.log(applicationList)
-    console.log("Adding: ")
-    console.log(tempApplication)
+    // console.log("List looks like this before last push:")
+    // console.log(applicationList)
+    // console.log("Adding: ")
+    // console.log(tempApplication)
     applicationList.push(JSON.stringify(tempApplication));
-    console.log("sending:")
-    console.log(applicationList)
+    // console.log("sending:")
+    // console.log(applicationList)
     return applicationList;
 }
 function checkIfNotExistsInCompetence(name, list) {

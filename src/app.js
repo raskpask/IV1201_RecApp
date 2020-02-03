@@ -48,7 +48,20 @@ class App extends Component {
                 listApplications: {
                     firstName: "First name",
                     lastName: "Last name",
-                    applicationDate: "Application date" 
+                    applicationDate: "Application date",
+                    moreInfo: "Application info",
+                    info: "Info",
+                    competences: "Competences",
+                    applicationPeriod: "Application period",
+                    from: "From: ",
+                    to: "To: ",
+                    availability: "Availability",
+                    name: "Name",
+                    accept: "Accept",
+                    reject: "Reject",
+                    close: "Close",
+                    application: "Application"
+                     
                 },
                 apply: {
                     buttonCompetences: "Competence:",

@@ -17,7 +17,7 @@ class Application extends Component {
         return (
             <Fragment>
                 <Card className="card">
-                    <Card.Header>
+                    <Card.Header className="header">
                         <Nav variant="pills" >
                             <Nav.Item>
                                 <Nav.Link onClick={() => this.setState({ bodyContent: this.renderInfo() })}>Info</Nav.Link>
@@ -83,9 +83,15 @@ class Application extends Component {
                     <Col >
                         {this.props.info.user[7].lastName}<span className="value">{this.props.application.lastName}</span>
                     </Col>
+                </Row>
+                <Row>
                     <Col >
                         {this.props.info.user[7].dateOfBirth}<span className="value">{this.props.application.dateOfBirth}</span>
                     </Col>
+                    <Col >
+                        {this.props.info.user[7].status}<span className="value">{this.getStatus(this.props.application.status)}</span>
+                    </Col>
+
                 </Row>
                 <Row>
                     <Col >
@@ -93,9 +99,6 @@ class Application extends Component {
                     </Col>
                     <Col >
                         {this.props.info.user[7].lastEdited}<span className="value">{this.props.application.lastEdited.split('T')[0]}</span>
-                    </Col>
-                    <Col >
-                        {this.props.info.user[7].status}<span className="value">{this.getStatus(this.props.application.status)}</span>
                     </Col>
                 </Row>
             </Container>

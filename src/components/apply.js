@@ -34,6 +34,11 @@ class Apply extends Component {
             submitted: ""
         }
     }
+    componentDidMount = async () => {
+        const competences = await (await axios.get('/api/competence')).data;
+        console.log(competences);
+        this.setState({ competences: competences, competence: this.props.info.apply.buttonDefaultValue })
+    }
     renderNumbers() {
         return (
             <Fragment>
@@ -89,10 +94,11 @@ class Apply extends Component {
             <Fragment>
                 <InputGroup className="mb-3 addForm">
                     <DropdownButton variant="primary" title={this.props.info.apply.buttonCompetences + " " + this.state.competence} className="paddingRight"
-                        onClick={event => this.setState({ competence: event.target.name, competenceID: event.target.id })}>
+                    >
                         {this.state.competences.map((competence, key) =>
-                            <Dropdown.Item key={key} id={Math.round(key / 2)} name={competence}>
-                                {isNaN(competence) ? competence : ""}
+                            <Dropdown.Item key={key} id={key} name={competence.name}
+                                onClick={event => this.setState({ competence: event.target.name, competenceID: event.target.id })}>
+                                {competence.name}
                             </Dropdown.Item>
                         )}
                     </DropdownButton>
@@ -173,13 +179,9 @@ class Apply extends Component {
             availability: this.state.availability,
         }
         const res = await axios.post('/api/application', application);
-        if(res.status === 200){
-            this.setState({submitted: true})
+        if (res.status === 200) {
+            this.setState({ submitted: true })
         }
-    }
-    componentDidMount = async () => {
-        const competences = await (await axios.get('/api/competence')).data;
-        this.setState({ competences: competences, competence: this.props.info.apply.buttonDefaultValue })
     }
     renderFullApplyPage() {
         return (
@@ -204,8 +206,8 @@ class Apply extends Component {
             </Fragment>
         )
     }
-    renderFullOkPage(){
-        return(
+    renderFullOkPage() {
+        return (
             <Fragment>
                 Application received!
             </Fragment>

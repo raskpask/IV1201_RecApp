@@ -38,7 +38,7 @@ async function extractApplication(req) {
     const date = new Date();
     if (!body.competence) {
         const competences = await userDAO.getCompetence()
-        for (i = 0; i < competences.length; i += 2) {
+        for (i = 0; i < competences.length; i ++) {
             competenceList.push(competences[i]);
         }
     }

@@ -53,7 +53,7 @@ async function updateApplicationStatus(req) {
         if (privilegeLevel == "no access" || privilegeLevel > 1) {
             return "no access";
         }
-    return await userDAO.updateApplicationStatus(req.body.status);
+    return await userDAO.updateApplicationStatus(req.body.status,req.body.id);
 }
 async function getCompetence(req) {
     const token = requestHandler.extractToken(req)
