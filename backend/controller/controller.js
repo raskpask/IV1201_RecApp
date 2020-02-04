@@ -22,7 +22,7 @@ async function getUser(req) {
     return await userDAO.getUser(requestHandler.extractToken(req));
 }
 async function checkIfUsernameIsAvailable(req) {
-    return await userDAO.checkIfUsernameIsAvailable.getUser(requestHandler.extractUsername(req));
+    return await userDAO.checkIfUsernameIsAvailable(requestHandler.extractUsername(req));
 }
 async function updateUser(req) {
     const updateUser = requestHandler.extractUser(req);
@@ -43,8 +43,9 @@ async function getApplication(req) {
 }
 async function createApplication(req) {
     const token = requestHandler.extractToken(req);
-    const application = requestHandler.extractApplication(req);
-    return await userDAO.getApplication(application, token);
+    const application = await requestHandler.extractApplication(req);
+    const user = await userDAO.getUser(token);
+    return await userDAO.createApplication(application, user);
 }
 async function updateApplicationStatus(req) {
     const token = requestHandler.extractToken(req)
@@ -52,11 +53,14 @@ async function updateApplicationStatus(req) {
         if (privilegeLevel == "no access" || privilegeLevel > 1) {
             return "no access";
         }
-    return await userDAO.updateApplicationStatus(req.body.status);
+    return await userDAO.updateApplicationStatus(req.body.status,req.body.id);
 }
 async function getCompetence(req) {
     const token = requestHandler.extractToken(req)
     return await userDAO.getCompetence(token);
+}
+function getToken(req){
+    return requestHandler.extractToken(req);
 }
 
 module.exports = {
@@ -70,4 +74,5 @@ module.exports = {
     deAuthenticateUser,
     getCompetence,
     checkIfUsernameIsAvailable,
+    getToken,
 }

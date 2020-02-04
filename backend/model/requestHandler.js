@@ -10,7 +10,7 @@ function extractCredentials(req) {
     return credentials
 }
 function extractUsername(req) {
-    return body.username;
+    return req.body.username;
 }
 function extractUser(req) {
     const body = req.body;
@@ -21,38 +21,52 @@ function extractToken(req) {
     if (!cookieHeader) {
         return null
     }
-    return cookieHeader ? cookieHeader.split('=')[1] : null;
+    const token = cookieHeader.split('authToken=')[1].split(';')[0];
+    // console.log(token)
+    return token ? token : null;
+
 }
 async function extractApplication(req) {
-    const body = req.body;
-    let listCompetenceID = body.competence ? body.competence : [];
-    let availability = body.availability;
-    let name = body.name ? body.name : "";
-    let applicationDate = body.applicationDate;
-    const date = new Date();
-    if (!body.competence) {
+    let availability = '';
+    let applicationDate = '';
+    let competenceList = [];
+    let name = '';
+    if (Boolean(req.query.application)){
+        application = JSON.parse(req.query.application);
+        // console.log(application)
+        if(application.applicationDate.startDate !=='' || application.applicationDate.endDate !==''){
+            applicationDate = application.applicationDate;
+        }
+        if(application.availability.startDate !=='' || application.availability.endDate !==''){
+            availability = application.availability;
+        }
+        competenceList = application.competence ? application.competence : [];
+        name = application.name ? application.name : "";
+    } else{
         const competences = await userDAO.getCompetence()
-        for (i = 0; i < competences.length; i += 2) {
-            listCompetenceID.push(competences[i]);
+        for (i = 0; i < competences.length; i++) {
+            competenceList.push(competences[i].competence_id);
         }
     }
+    const date = new Date();
     if (!availability) {
         availability = {
             startDate: '1970-01-01',
-            endDate: date.getFullYear()+2000 +"-01-01"
+            endDate: date.getFullYear() + 2000 + "-01-01"
         }
     }
     if (!applicationDate) {
         applicationDate = {
             startDate: '1970-01-01',
-            endDate: date.getFullYear()+2000 +"-01-01"
+            endDate: date.getFullYear() + 2000 + "-01-01"
         }
     }
-    return new Application(availability, applicationDate, listCompetenceID,name);
+    return new Application(availability, applicationDate, competenceList, name);
 }
 module.exports = {
     extractCredentials,
     extractUser,
     extractToken,
     extractApplication,
+    extractUsername,
 }

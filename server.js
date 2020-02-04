@@ -38,8 +38,11 @@ app.put('/api/user', async (req, res) => {
 app.get('/api/user', async (req, res) => {
   try {
     const user = await controller.getUser(req);
+    res.cookie('authToken', controller.getToken(req),{ expires: new Date(Date.now() + 1800000)});
+    res.cookie('privilegeLevel', user.privilegeLevel ,{ expires: new Date(Date.now() + 1800000)});
     res.send(JSON.stringify({ user: user }));
-    console.log(user);
+    // console.log(user);
+
   } catch (error) {
     console.error(error)
     res.sendStatus(400);
@@ -58,7 +61,7 @@ app.get('/api/username', async (req, res) => {
 
 app.post('/api/authentication', async (req, res) => {
   try {
-    console.log(req.body)
+    // console.log(req.body)
     const token = await controller.authenticateUser(req);
     
     res.cookie('authToken', token,{ expires: new Date(Date.now() + 1800000)});
@@ -74,6 +77,7 @@ app.delete('/api/authentication', async (req, res) => {
   try {
     await controller.deAuthenticateUser(req);
     res.clearCookie('authToken');
+    res.clearCookie('privilegeLevel')
     res.send();
   } catch (error) {
     console.error(error)
@@ -85,10 +89,11 @@ app.delete('/api/authentication', async (req, res) => {
 app.get('/api/application', async (req, res) => {
   try {
     const application = await controller.getApplication(req);
+    // console.log("Server sends: " + application)
     if (application == "no access") {
       res.sendStatus(401)
     } else {
-      res.send(application);
+      res.send(JSON.stringify(application));
     }
   } catch (error) {
     console.error(error);
@@ -118,6 +123,7 @@ app.put('/api/application', async (req, res) => {
 
 app.get('/api/competence', async (req, res) => {
   try {
+    res.cookie('authToken', controller.getToken(req),{ expires: new Date(Date.now() + 1800000)});
     res.send(JSON.stringify(await controller.getCompetence(req)));
   } catch (error) {
     console.error(error)

@@ -1,0 +1,18 @@
+.textSize{
+    text-align: left;
+    font-size: 1.2vw;
+    
+}
+.card{
+    /* margin: 10%; */
+    border: 0px solid;
+}
+.boldText{
+    /* font-weight:bold; */
+}
+.header{
+    background-color: white;
+}
+.value{
+    font-weight: bold;
+}

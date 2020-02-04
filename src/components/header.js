@@ -6,18 +6,18 @@ import axios from 'axios';
 import '../resources/css/header.css';
 
 class Header extends Component {
-    
-    
     constructor(props) {
         super(props);
         this.state = {
+            typeOfUser: this.renderBrand(),
             user: {
                 username: "",
                 password: "",
             },
-            submitted: false,
-            isLoggedIn: false 
         }
+    }
+    componentDidMount(){
+        this.setLoggedIn()
     }
     login = async () => {
         try {
@@ -25,31 +25,37 @@ class Header extends Component {
                 username: this.state.username,
                 password: this.state.password
             }
-            const response = await axios.post('/api/authentication', credentials)
-            // console.log(response.status)
-            if(response.status === 200){
-                // this.setState({ submitted: true })
-                this.forceUpdate()
+            const responseLogin = await axios.post('/api/authentication', credentials)
+            if (responseLogin.status === 200) {
+                await axios.get('/api/user');
+                this.setLoggedIn()
             }
-            
+
         } catch (error) {
             console.log(error)
         }
     }
     logout = async () => {
-        const response =await axios.delete('/api/authentication')
-        if(response.status === 200){
+        const response = await axios.delete('/api/authentication')
+        if (response.status === 200) {
+            window.location.href = "/";
             this.forceUpdate()
         }
-        // this.setState({ isloggedIn: false })
+    }
+    setLoggedIn() {
+        const privilegeLevel = document.cookie.split('privilegeLevel=')[1];
+        if (privilegeLevel === '1') {
+            this.setState({ typeOfUser: this.renderBrandLoginRecruiter() })
+        } else if(privilegeLevel === '2'){
+            this.setState({ typeOfUser: this.renderBrandLogin() })
+        } else{
+            this.setState({ typeOfUser: this.renderBrand() })
+        }
     }
     isLoggedIn() {
-        // console.log(document.cookie)
-        // token = document.cookie.split('authorization=')[1]
-        if (!document.cookie) {
+        if (!document.cookie.split('authToken=')[1]) {
             return false
         }
-        // this.setState({isLoggedIn: true});
         return true
     }
     renderBrand() {
@@ -63,13 +69,24 @@ class Header extends Component {
             </React.Fragment>
         )
     }
-    renderBrandLogin(){
+    renderBrandLogin() {
         return (
             <React.Fragment>
                 <Navbar.Brand>Recruitment app</Navbar.Brand>
                 <Nav className="mr-auto">
                     <Nav.Link href="/home">Home</Nav.Link>
                     <Nav.Link href="/apply">Apply</Nav.Link>
+                </Nav>
+            </React.Fragment>
+        )
+    }
+    renderBrandLoginRecruiter() {
+        return (
+            <React.Fragment>
+                <Navbar.Brand>Recruitment app</Navbar.Brand>
+                <Nav className="mr-auto">
+                    <Nav.Link href="/home">Home</Nav.Link>  
+                    <Nav.Link href="/listApplications">Applications</Nav.Link>
                 </Nav>
             </React.Fragment>
         )
@@ -95,7 +112,7 @@ class Header extends Component {
         return (
             <Nav className="ml-auto">
                 <Nav.Link className="userText" href="/user"> Your Profile</Nav.Link>
-                <Nav.Link onClick={() => this.logout()} >Logout</Nav.Link>
+                <Nav.Link onClick={() => this.logout()}>Logout</Nav.Link>
             </Nav>
         )
     }
@@ -103,7 +120,7 @@ class Header extends Component {
         return (
             <div>
                 <Navbar bg="dark" variant="dark">
-                    {this.isLoggedIn() ? this.renderBrandLogin() : this.renderBrand()}
+                    {this.state.typeOfUser}
                     {this.isLoggedIn() ? this.renderUser() : this.renderLogin()}
                 </Navbar>
             </div>

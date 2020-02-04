@@ -1,5 +1,6 @@
 module.exports = class Application{
-    constructor(availability, applicationDate,competence,name){
+    constructor(applicationID, availability, applicationDate,competence,name){
+        this.applicationID = applicationID;
         this.availability = availability;
         this.competence = competence;
         this.applicationDate = applicationDate;
