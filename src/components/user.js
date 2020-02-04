@@ -14,6 +14,7 @@ class User extends Component {
         super(props);
         this.state = {
             renderApplication: "",
+            typeOfUser: "",
             user: {
                 username: "",
                 password: "",
@@ -53,6 +54,25 @@ class User extends Component {
         const application = (await axios.get('api/application')).data;
         this.setState({ user: user, application: application })
         this.setState({renderApplication: this.renderApplication()})
+        console.log(this.state.application)
+        const privilegeLevel = document.cookie.split('privilegeLevel=')[1];
+        if (privilegeLevel === '1') {
+            this.setState({ typeOfUser: this.renderUserInfo() })
+        } else if(privilegeLevel === '2'){
+            this.setState({ typeOfUser: this.renderApplication()})
+        } else{
+            this.setState({ typeOfUser: this.renderUserNotLoggedIn() })
+        }
+    }
+    privilege(){
+        const privilegeLevel = document.cookie.split('privilegeLevel=')[1];
+        if (privilegeLevel === '1') {
+            this.setState({ typeOfUser: this.renderUserInfo() })
+        } else if(privilegeLevel === '2'){
+            this.setState({ typeOfUser: this.renderAppli()})
+        } else{
+            this.setState({ typeOfUser: this.renderUserNotLoggedIn() })
+        }
     }
     updateUser = async () => {
         try {
@@ -77,7 +97,7 @@ class User extends Component {
     renderUser = () => {
         return (
             <Fragment>
-                {this.state.renderApplication}
+                {this.renderApplication()}
             </Fragment>
         )
     }
@@ -141,16 +161,21 @@ class User extends Component {
             <Button className="userButton" onClick={() => this.updateUser()} variant="primary">User</Button>
         </Form>)
     }
-    renderUserComplete() {
+    renderUserNotLoggedIn() {
         return (
             <h1>User not logged in</h1>
+        )
+    }
+    renderRecruiter(){
+        return(
+            <h1>The user does not have an application</h1>
         )
     }
 
     render() {
         return (
             <div>
-                {this.renderUser()}
+                {this.state.typeOfUser}
             </div >
         );
     };

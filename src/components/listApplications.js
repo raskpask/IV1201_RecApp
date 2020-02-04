@@ -1,5 +1,5 @@
-import React, { Component, Fragment, useState } from 'react';
-import { Table, Button, FormControl, Form, NavDropdown, Nav, Navbar, InputGroup, Dropdown, Modal, Col, Row } from 'react-bootstrap';
+import React, { Component, Fragment } from 'react';
+import { Table, Button, FormControl, Form, Nav, Modal, Col, Row } from 'react-bootstrap';
 import { DateRangePicker } from 'react-dates';
 
 import '../resources/css/register.css';
@@ -12,7 +12,7 @@ class ListApplications extends Component {
         super(props)
         this.state = {
             show: false,
-            showUser: false,
+            showUser: [],
             startDate: "",
             endDate: "",
             submissionEndDate: "",
@@ -52,8 +52,29 @@ class ListApplications extends Component {
         this.getApplicationsAndCompetences();
     }
     sendFilter = () => {
-        console.log(this.state.filteredCompetences);
-        this.setState({ show: false })
+        let competences = this.state.filteredCompetences.filter(Boolean);
+        const application = {
+            availability: {
+                startDate: this.state.startDate ? this.state.startDate.format('YYYY-MM-DD') : "",
+                endDate: this.state.endDate ? this.state.endDate.format('YYYY-MM-DD') : ""
+            },
+            applicationDate: {
+                startDate: this.state.submissionStartDate ? this.state.submissionStartDate.format('YYYY-MM-DD') : "",
+                endDate: this.state.submissionEndDate ? this.state.submissionEndDate.format('YYYY-MM-DD') : ""
+            },
+            competence: competences,
+            name: this.state.filterName
+        }
+        // console.log("Before request: ")
+        // console.log(application)
+        axios
+            .get('/api/application', { params: { application } })
+            .then(res => {
+                this.setState({ application: this.parseApplications(res.data) })
+                this.setState({ show: false })
+                // console.log(res.data)
+            })
+            .catch(err => console.log(err))
     }
     getApplicationsAndCompetences = () => {
         axios
@@ -63,10 +84,9 @@ class ListApplications extends Component {
                     .get('/api/competence')
                     .then(res => {
                         this.setState({ competences: res.data })
-                        this.state.competences.map(competence =>
-                            {this.state.filteredCompetences[competence.competence_id]=true}
-                            )
-                        console.log(this.state.competences)
+                        this.state.competences.map(competence => { this.state.filteredCompetences[competence.competence_id] = competence.competence_id }
+                        )
+                        // console.log(this.state.competences)
                     })
                     .catch(err => console.log(err))
                 this.setState({ application: this.parseApplications(res.data) })
@@ -82,7 +102,8 @@ class ListApplications extends Component {
         return listOfApplications
     }
     renderTable() {
-        // console.log(this.state.application)
+        console.log("Start of table render")
+        console.log(this.state.application)
         return (
             <Table striped bordered hover>
                 <thead>
@@ -96,15 +117,15 @@ class ListApplications extends Component {
                 </thead>
                 <tbody>
                     {this.state.application.map((application, key) =>
-                        <tr key={key} className="pressForInfo">
-                            <td key={"name: " + key} className="pressForInfo" >{this.renderFullApplication(application, application.firstName, false)}</td>
-                            <td key={"lastName: " + key} > {this.renderFullApplication(application, application.lastName, false)}</td>
-                            <td key={"applicationDate: " + key} > {this.renderFullApplication(application, application.dateOfSubmission, false)}</td>
-                            <td key={"moreInfo: " + key} > {this.renderFullApplication(application, this.props.info.listApplications.info, true)}</td>
+                        < tr key = { key } className = "pressForInfo" >
+                        <td key={"name: " + key} className="pressForInfo" >{application.firstName}</td>
+                        <td key={"lastName: " + key} > {application.lastName}</td>
+                        <td key={"applicationDate: " + key} > {application.dateOfSubmission}</td>
+                        <td key={"moreInfo: " + key} > {this.renderFullApplication(application, this.props.info.listApplications.info, true)}</td>
                         </tr>
-                    )}
+                )}
                 </tbody>
-            </Table>
+            </Table >
         )
     }
     // <Application info={this.props.info} application={application} />
@@ -116,15 +137,21 @@ class ListApplications extends Component {
             .catch(err =>
                 console.error(err))
     }
+    showInfo(id,state){
+        let list = this.state.showUser;
+        list[id] = state;
+        this.setState({showUser:list})
+        console.log(this.state.showUser)
+    }
     renderFullApplication(application, name, button) {
         return (
             <Fragment>
-                {button ? <Button variant="primary" className="ml-auto" onClick={() => this.setState({ showUser: true })}>{name}</Button> : <a className=" ml-auto" onClick={() => this.setState({ showUser: true })}>{name}</a>}
-
+                <Button variant="primary" className="ml-auto" id={application.id} onClick={() => this.showInfo(application.id,true)}>{name}</Button>
+                {console.log(application.id)}
                 <Modal
                     centered
-                    show={this.state.showUser}
-                    onHide={() => this.setState({ showUser: false })}
+                    show={this.state.showUser[application.id]}
+                    onHide={() => this.showInfo(application.id,false) }
                     animation={true}
                     size='xl'
                 >
@@ -135,7 +162,7 @@ class ListApplications extends Component {
                         <Application info={this.props.info} application={application} />
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={() => this.setState({ showUser: false })} className="margin">{this.props.info.listApplications.close}</Button>
+                        <Button variant="secondary" onClick={() => this.showInfo(application.id,false)} className="margin">{this.props.info.listApplications.close}</Button>
                         <Button onClick={() => this.changeApplicationStatus(1, application.id)} className="margin">{this.props.info.listApplications.accept}</Button>
                         <Button onClick={() => this.changeApplicationStatus(2, application.id)} className="margin">{this.props.info.listApplications.reject}</Button>
                     </Modal.Footer>
@@ -170,26 +197,32 @@ class ListApplications extends Component {
             </Nav>
         )
     }
+    setCheckbox(competenceID, key) {
+        let list = this.state.filteredCompetences;
+        list[key] = competenceID;
+        this.setState({ filteredCompetences: list });
+        // console.log(this.state.filteredCompetences)
+    }
+
     renderSearch() {
         return (
             <Fragment>
                 <Row>
                     <Col>
                         <h3>Competences</h3>
-                        {this.state.competences.map(competence =>
-                            <InputGroup className="mb-3">
-                                <InputGroup.Prepend>
-                                    <InputGroup.Checkbox
-                                        defaultChecked={true}
-                                        onChange={() => this.state.filteredCompetences[competence.competence_id] ? this.state.filteredCompetences[competence.competence_id]=false : this.state.filteredCompetences[competence.competence_id]=true}
+                        <Form>
+                            <div className="mb-3">
+                                {this.state.competences.map((competence, key) =>
 
-
+                                    <Form.Check
+                                        defaultChecked={null !== (this.state.filteredCompetences[key + 1])}
+                                        id={key}
+                                        label={competence.name}
+                                        onChange={() => (null === this.state.filteredCompetences[key + 1]) ? this.setCheckbox(competence.competence_id, key + 1) : this.setCheckbox(null, key + 1)}
                                     />
-                                </InputGroup.Prepend>
-                                <InputGroup.Text>{competence.name}</InputGroup.Text>
-                            </InputGroup>
-                        )}
-
+                                )}
+                            </div>
+                        </Form>
                     </Col>
                     <Col>
                         <h3>Availability</h3>

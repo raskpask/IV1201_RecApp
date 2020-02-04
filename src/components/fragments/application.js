@@ -11,7 +11,9 @@ class Application extends Component {
             bodyContent: this.renderInfo(),
         }
     }
-
+componentDidMount(){
+    console.log(this.props)
+}
 
     renderApplication() {
         return (

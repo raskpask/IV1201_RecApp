@@ -202,7 +202,7 @@ function getApplication(privilegeLevel, token, application) {
         let competenceIDList = [];
         for (let competence in application.competence) {
             // console.log(application.competence[competence].competence_id)
-            competenceIDList.push(application.competence[competence].competence_id)
+            competenceIDList.push(application.competence[competence])
         }
         client = connect();
         let getApplicationQuery = {
@@ -239,6 +239,7 @@ function getApplication(privilegeLevel, token, application) {
             } else if (res.rows[0] != null) {
                 const applicationList = dbResponseHandler.extractApplication(res.rows)
                 client.end()
+                // console.log("End of request")
                 // console.log(applicationList)
                 resolve(applicationList)
             }
@@ -289,14 +290,14 @@ function updateApplicationStatus(status, applicationID) {
             values: [status, applicationID]
 
         }
-        console.log(updateApplicationStatusQuery)
+        // console.log(updateApplicationStatusQuery)
         
         client.query(updateApplicationStatusQuery, (err, res) => {
             if (notVaildResponse()) {
                 client.end();
                 reject("DB response error")
             } else {
-                console.log(res)
+                // console.log(res)
                 client.end();
                 if (res.rowCount == '1') {
                     resolve()
