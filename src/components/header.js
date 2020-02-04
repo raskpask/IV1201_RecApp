@@ -43,7 +43,6 @@ class Header extends Component {
         }
     }
     setLoggedIn() {
-
         const privilegeLevel = document.cookie.split('privilegeLevel=')[1];
         if (privilegeLevel === '1') {
             this.setState({ typeOfUser: this.renderBrandLoginRecruiter() })

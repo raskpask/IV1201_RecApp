@@ -31,6 +31,7 @@ class User extends Component {
                     lastEdited: "",
                     dateOfSubmission: "",
                     status: "",
+                    id: "",
                     competence: [
                         {
                             name: "",
@@ -51,8 +52,8 @@ class User extends Component {
 
     componentDidMount = async () => {
         const user = await (await axios.get('/api/user')).data.user;
-        const application = (await axios.get('api/application')).data;
-        this.setState({ user: user, application: application })
+        const application = (await axios.get('api/application')).data[0];
+        this.setState({ user: user, application: JSON.parse(application) })
         this.setState({renderApplication: this.renderApplication()})
         console.log(this.state.application)
         const privilegeLevel = document.cookie.split('privilegeLevel=')[1];
@@ -120,7 +121,7 @@ class User extends Component {
     renderApplication() {
         return (
             <Fragment>
-                <Application info={this.props.info} application={this.state.application[0]} />
+                <Application info={this.props.info} application={this.state.application} />
             </Fragment>
         )
     }
