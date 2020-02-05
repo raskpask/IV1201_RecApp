@@ -263,7 +263,7 @@ class ListApplications extends Component {
     }
     render() {
         return (
-            <div>
+            <div className="marginTop">
                 {this.renderFilter()}
                 {/* {this.renderSearch()} */}
                 {this.renderTable()}

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Navbar, FormControl, Form, Button, Nav, NavDropdown } from 'react-bootstrap';
+import Cookies from 'universal-cookie';
 
 import axios from 'axios';
 
@@ -16,8 +17,11 @@ class Header extends Component {
             },
         }
     }
-    componentDidMount() {
-        this.setLoggedIn()
+    setLanguage(lang) {
+        const cookies = new Cookies();
+        cookies.set('lang', lang, { path: '/' });
+        console.log(cookies.get('lang'));
+        this.props.app.forceUpdate()
     }
     login = async () => {
         try {
@@ -28,7 +32,7 @@ class Header extends Component {
             const responseLogin = await axios.post('/api/authentication', credentials)
             if (responseLogin.status === 200) {
                 await axios.get('/api/user');
-                this.setLoggedIn()
+                this.forceUpdate()
             }
 
         } catch (error) {
@@ -42,14 +46,19 @@ class Header extends Component {
             this.forceUpdate()
         }
     }
-    setLoggedIn() {
-        const privilegeLevel = document.cookie.split('privilegeLevel=')[1];
+    chooseUserLevel(){
+        let privilegeLevel = document.cookie.split('privilegeLevel=')[1];
+        
+        if(Boolean(privilegeLevel)){
+            privilegeLevel = privilegeLevel.split(';')[0];
+        }
+        console.log(privilegeLevel)
         if (privilegeLevel === '1') {
-            this.setState({ typeOfUser: this.renderBrandLoginRecruiter() })
+            return this.renderBrandLoginRecruiter()
         } else if (privilegeLevel === '2') {
-            this.setState({ typeOfUser: this.renderBrandLogin() })
+            return this.renderBrandLogin()
         } else {
-            this.setState({ typeOfUser: this.renderBrand() })
+            return this.renderBrand()
         }
     }
     isLoggedIn() {
@@ -123,16 +132,16 @@ class Header extends Component {
     renderlanguage() {
         return (
             <NavDropdown title={this.props.info.header.language} id="basic-nav-dropdown" >
-                <NavDropdown.Item >{this.props.info.header.swe}</NavDropdown.Item>
-                <NavDropdown.Item >{this.props.info.header.eng}</NavDropdown.Item>
+                <NavDropdown.Item onClick={() => this.setLanguage('swe')}>{this.props.info.header.swe}</NavDropdown.Item>
+                <NavDropdown.Item onClick={() => this.setLanguage('eng')}>{this.props.info.header.eng}</NavDropdown.Item>
             </NavDropdown>
         )
     }
     render() {
         return (
             <div>
-                <Navbar bg="dark" variant="dark">
-                    {this.state.typeOfUser}
+                <Navbar bg="dark" variant="dark" fixed="top">
+                    {this.chooseUserLevel()}
                     {this.isLoggedIn() ? this.renderUser() : this.renderLogin()}
                 </Navbar>
             </div>

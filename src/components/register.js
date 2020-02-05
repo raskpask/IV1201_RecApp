@@ -95,7 +95,7 @@ class Register extends Component {
       return (
         <div>
           <Form noValidate className="registerForm" validated={this.state.user.validated} onSubmit={this.handleSubmit}>
-            <h1>Register</h1>
+            <h1>{ this.props.info.register.register}</h1>
             <Form.Group>
               <Form.Label>{ this.props.info.register.firstName.name}</Form.Label>
                 <Form.Control
@@ -205,7 +205,7 @@ class Register extends Component {
 
     render() {
         return (
-            <div>
+            <div className="marginTop">
                 {this.state.submitted ? this.renderRegisterComplete() : this.renderRegisterForm()}
             </div >
         );

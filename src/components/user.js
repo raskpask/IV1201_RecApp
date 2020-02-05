@@ -120,9 +120,9 @@ class User extends Component {
     }
     renderApplication() {
         return (
-            <Fragment>
+            <div className="marginTop">
                 <Application info={this.props.info} application={this.state.application} />
-            </Fragment>
+            </div>
         )
     }
     renderUserForm = () => {
