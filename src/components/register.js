@@ -11,16 +11,17 @@ class Register extends Component {
         super(props);
         this.state = {
             user: {
-                username: { value: '', name: this.props.info.register[0].name, isValid: false, isInvalid: false, valueHasChanged: false, message: '' },
-                password: { value: '', name: this.props.info.register[1].name,isValid: false, isInvalid: false, valueHasChanged: false, message: '' },
-                confirmPassword: { value: '', name: this.props.info.register[2].name, isValid: false, isInvalid: false, message: '' },
-                email: { value: '', name: this.props.info.register[3].name, isValid: false, isInvalid: false, message: '' },
-                date: { value: '', name: this.props.info.register[4].name, isValid: false, isInvalid: false, message: '' },
-                firstName: { value: '', name: this.props.info.register[5].name, isValid: false, isInvalid: false, message: '' },
-                lastName: { value: '', name: this.props.info.register[6].name, isValid: false, isInvalid: false, message: '' },
+                username: { value: '', name: this.props.info.register.username.name, isValid: false, isInvalid: false, valueHasChanged: false, message: '' },
+                password: { value: '', name: this.props.info.register.password.name,isValid: false, isInvalid: false, valueHasChanged: false, message: '' },
+                confirmPassword: { value: '', name: this.props.info.register.password.name, isValid: false, isInvalid: false, message: '' },
+                email: { value: '', name:  this.props.info.register.email.name, isValid: false, isInvalid: false, message: '' },
+                date: { value: '', name:  this.props.info.register.date.name, isValid: false, isInvalid: false, message: '' },
+                firstName: { value: '', name:  this.props.info.register.firstName.name, isValid: false, isInvalid: false, message: '' },
+                lastName: { value: '', name:  this.props.info.register.lastName.name, isValid: false, isInvalid: false, message: '' },
                 validated: false
             },
-            submitted: false
+            submitted: false,
+
         }
     }
     //Used for checking validation after a onChange event
@@ -96,7 +97,7 @@ class Register extends Component {
           <Form noValidate className="registerForm" validated={this.state.user.validated} onSubmit={this.handleSubmit}>
             <h1>Register</h1>
             <Form.Group>
-              <Form.Label>{this.props.info.register[5].name}</Form.Label>
+              <Form.Label>{ this.props.info.register.firstName.name}</Form.Label>
                 <Form.Control
                     value={firstName.value}
                     onChange={this.onChange}
@@ -104,13 +105,13 @@ class Register extends Component {
                     name="firstName"
                     isInvalid={firstName.isInvalid}
                     isValid={firstName.isValid}
-                    placeholder={this.props.info.register[5].placeholder}/>
+                    placeholder={ this.props.info.register.firstName.placeholder}/>
                 <Form.Control.Feedback type="invalid">
                   {firstName.message}
                 </Form.Control.Feedback>
             </Form.Group>
             <Form.Group>
-              <Form.Label>{this.props.info.register[6].name}</Form.Label>
+              <Form.Label>{ this.props.info.register.lastName.name}</Form.Label>
                 <Form.Control
                     value={lastName.value}
                     onChange={this.onChange}
@@ -118,13 +119,13 @@ class Register extends Component {
                     name="lastName"
                     isInvalid={lastName.isInvalid}
                     isValid={lastName.isValid}
-                    placeholder={this.props.info.register[6].placeholder}/>
+                    placeholder={ this.props.info.register.lastName.placeholder}/>
                 <Form.Control.Feedback type="invalid">
                   {lastName.message}
                 </Form.Control.Feedback>
             </Form.Group>
             <Form.Group>
-              <Form.Label>{this.props.info.register[3].name}</Form.Label>
+              <Form.Label>{ this.props.info.register.email.name}</Form.Label>
                 <Form.Control
                     value={email.value}
                     onChange={this.onChange}
@@ -132,13 +133,13 @@ class Register extends Component {
                     name="email"
                     isInvalid={email.isInvalid}
                     isValid={email.isValid}
-                    placeholder={this.props.info.register[3].placeholder}/>
+                    placeholder={ this.props.info.register.email.placeholder}/>
                 <Form.Control.Feedback type="invalid">
                   {email.message}
                 </Form.Control.Feedback>
             </Form.Group>
             <Form.Group>
-              <Form.Label>{this.props.info.register[4].name}</Form.Label>
+              <Form.Label>{ this.props.info.register.date.name}</Form.Label>
               <Form.Control
                   value={date.value}
                   onChange={this.onChange}
@@ -146,13 +147,13 @@ class Register extends Component {
                   name="date"
                   isInvalid={date.isInvalid}
                   isValid={date.isValid}
-                  placeholder={this.props.info.register[4].placeholder}/>
+                  placeholder={ this.props.info.register.firstName.placeholder}/>
               <Form.Control.Feedback type="invalid">
                 {date.message}
               </Form.Control.Feedback>
             </Form.Group>
             <Form.Group>
-              <Form.Label>{this.props.info.register[0].name}</Form.Label>
+              <Form.Label>{ this.props.info.register.username.name}</Form.Label>
                 <Form.Control
                     value={username.value}
                     onChange={this.onChange}
@@ -160,13 +161,13 @@ class Register extends Component {
                     name="username"
                     isInvalid={username.isInvalid}
                     isValid={username.isValid}
-                    placeholder={this.props.info.register[0].placeholder}/>
+                    placeholder={ this.props.info.register.username.placeholder}/>
                 <Form.Control.Feedback type="invalid">
                   {username.message}
                 </Form.Control.Feedback>
             </Form.Group>
             <Form.Group>
-              <Form.Label>{this.props.info.register[1].name}</Form.Label>
+              <Form.Label>{ this.props.info.register.password.name}</Form.Label>
                 <Form.Control
                     value={password.value}
                     onChange={this.onChange}
@@ -174,7 +175,7 @@ class Register extends Component {
                     name="password"
                     isInvalid={password.isInvalid}
                     isValid={password.isValid}
-                    placeholder={this.props.info.register[1].placeholder}/>
+                    placeholder={ this.props.info.register.password.placeholder}/>
                 <Form.Control.Feedback type="invalid">
                   {password.message}
                 </Form.Control.Feedback>
@@ -187,7 +188,7 @@ class Register extends Component {
                     name="confirmPassword"
                     isInvalid={confirmPassword.isInvalid}
                     isValid={confirmPassword.isValid}
-                    placeholder={this.props.info.register[2].placeholder}/>
+                    placeholder={ this.props.info.register.password.placeholder}/>
                 <Form.Control.Feedback type="invalid">
                   {confirmPassword.message}
                 </Form.Control.Feedback>

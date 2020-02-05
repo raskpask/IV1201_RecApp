@@ -19,32 +19,32 @@ class App extends Component {
         super(props);
         this.state = {
             eng: {
-                register: [
-                    {
+                register: {
+                    username: {
                         name: "Username",
                         placeholder: "Enter username"
                     },
-                    {
+                    password: {
                         name: "Password",
                         placeholder: "Enter Password",
                     },
-                    {
+                    email: {
                         name: "Email",
                         placeholder: "Enter Email"
                     },
-                    {
+                    date: {
                         name: "Date of birth",
                         placeholder: "Enter date of birth"
                     },
-                    {
+                    firstName: {
                         name: "First Name",
                         placeholder: "Enter first name"
                     },
-                    {
+                    lastName: {
                         name: "Last Name",
                         placeholder: "Enter last name"
                     }
-                ],
+                },
                 validationError: {
                     emptyField:{
                       message: "Please fill in this field"
