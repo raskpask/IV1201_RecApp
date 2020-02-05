@@ -83,10 +83,13 @@ class ListApplications extends Component {
                 axios
                     .get('/api/competence')
                     .then(res => {
+                        let competenceList = [];
                         this.setState({ competences: res.data })
-                        this.state.competences.map(competence => { this.state.filteredCompetences[competence.competence_id] = competence.competence_id }
+                        this.state.competences.map(competence => 
+                            competenceList[competence.competence_id] = competence.competence_id
                         )
-                        // console.log(this.state.competences)
+                        this.setState({filteredCompetences: competenceList});
+
                     })
                     .catch(err => console.log(err))
                 this.setState({ application: this.parseApplications(res.data) })
@@ -117,13 +120,13 @@ class ListApplications extends Component {
                 </thead>
                 <tbody>
                     {this.state.application.map((application, key) =>
-                        < tr key = { key } className = "pressForInfo" >
-                        <td key={"name: " + key} className="pressForInfo" >{application.firstName}</td>
-                        <td key={"lastName: " + key} > {application.lastName}</td>
-                        <td key={"applicationDate: " + key} > {application.dateOfSubmission}</td>
-                        <td key={"moreInfo: " + key} > {this.renderFullApplication(application, this.props.info.listApplications.info, true)}</td>
+                        < tr key={key} className="pressForInfo" >
+                            <td key={"name: " + key} className="pressForInfo" >{application.firstName}</td>
+                            <td key={"lastName: " + key} > {application.lastName}</td>
+                            <td key={"applicationDate: " + key} > {application.dateOfSubmission}</td>
+                            <td key={"moreInfo: " + key} > {this.renderFullApplication(application, this.props.info.listApplications.info, true)}</td>
                         </tr>
-                )}
+                    )}
                 </tbody>
             </Table >
         )
@@ -137,21 +140,21 @@ class ListApplications extends Component {
             .catch(err =>
                 console.error(err))
     }
-    showInfo(id,state){
+    showInfo(id, state) {
         let list = this.state.showUser;
         list[id] = state;
-        this.setState({showUser:list})
-        console.log(this.state.showUser)
+        this.setState({ showUser: list })
+        // console.log(this.state.showUser)
     }
     renderFullApplication(application, name, button) {
         return (
             <Fragment>
-                <Button variant="primary" className="ml-auto" id={application.id} onClick={() => this.showInfo(application.id,true)}>{name}</Button>
+                <Button variant="primary" className="ml-auto" id={application.id} onClick={() => this.showInfo(application.id, true)}>{name}</Button>
                 {console.log(application.id)}
                 <Modal
                     centered
                     show={this.state.showUser[application.id]}
-                    onHide={() => this.showInfo(application.id,false) }
+                    onHide={() => this.showInfo(application.id, false)}
                     animation={true}
                     size='xl'
                 >
@@ -162,7 +165,7 @@ class ListApplications extends Component {
                         <Application info={this.props.info} application={application} />
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={() => this.showInfo(application.id,false)} className="margin">{this.props.info.listApplications.close}</Button>
+                        <Button variant="secondary" onClick={() => this.showInfo(application.id, false)} className="margin">{this.props.info.listApplications.close}</Button>
                         <Button onClick={() => this.changeApplicationStatus(1, application.id)} className="margin">{this.props.info.listApplications.accept}</Button>
                         <Button onClick={() => this.changeApplicationStatus(2, application.id)} className="margin">{this.props.info.listApplications.reject}</Button>
                     </Modal.Footer>
