@@ -1,11 +1,9 @@
-import React from 'react';
-
 //Shit to do:
 
 const validator = (changedValueName,userState,errorMessages) => {
   //changedValueName will be "null" if it is a form submittion that is being validated
   let isFormSubmit = false;
-  if(changedValueName == null){
+  if(changedValueName === null){
     isFormSubmit = true;
   }
   //We set the "valueHasChanged" on the changed element to true
@@ -51,7 +49,7 @@ const validator = (changedValueName,userState,errorMessages) => {
 }
 const checkFirstName = (firstName, isFormSubmit, errorMessages) =>{
   if(!firstName.valueHasChanged && !isFormSubmit) return firstName;
-  if (firstName.value == "") {
+  if (firstName.value === "") {
     firstName = setInvalid(firstName, errorMessages.emptyField.message);
   }else if(isNotUnicode(firstName.value)){
     firstName = setInvalid(firstName, errorMessages.notUnicode.message);
@@ -63,7 +61,7 @@ const checkFirstName = (firstName, isFormSubmit, errorMessages) =>{
 }
 const checkLastName = (lastName, isFormSubmit, errorMessages) =>{
   if(!lastName.valueHasChanged && !isFormSubmit) return lastName;
-  if (lastName.value == "") {
+  if (lastName.value === "") {
     lastName = setInvalid(lastName, errorMessages.emptyField.message);
   }else if(isNotUnicode(lastName.value)){
     lastName = setInvalid(lastName, errorMessages.notUnicode.message);
@@ -75,7 +73,7 @@ const checkLastName = (lastName, isFormSubmit, errorMessages) =>{
 }
 const checkEmail = (email, isFormSubmit, errorMessages) =>{
     if(!email.valueHasChanged && !isFormSubmit) return email;
-    if (email.value == "") {
+    if (email.value === "") {
       email = setInvalid(email, errorMessages.emptyField.message);
     }else if(!isEmail(email.value)){
       email = setInvalid(email, errorMessages.notValidField.message.replace("FIELD", email.name));
@@ -89,7 +87,7 @@ const checkEmail = (email, isFormSubmit, errorMessages) =>{
 }
 const checkDate = (date, isFormSubmit, errorMessages) =>{
   if(!date.valueHasChanged && !isFormSubmit) return date;
-  if (date.value == "") {
+  if (date.value === "") {
     date = setInvalid(date, errorMessages.emptyField.message);
   }else if(isFutureDate(date.value)){
     date = setInvalid(date, errorMessages.notValidField.message.replace("FIELD", date.name));
@@ -103,7 +101,7 @@ const checkUsername = (username, isFormSubmit, errorMessages) =>{
   //if username has not been changed then we do not validate(unless it is a form submittion)
   if(!username.valueHasChanged && !isFormSubmit) return username;
   //Empty field
-  if (username.value == "") {
+  if (username.value === "") {
     username = setInvalid(username, errorMessages.emptyField.message);
   }else if(!maxLength(username.value, usernameMaxLength)){
     username = setInvalid(username, errorMessages.toLongField.message.replace("FIELD", username.name).replace("MAXNUM", usernameMaxLength));
@@ -118,7 +116,7 @@ const checkUsername = (username, isFormSubmit, errorMessages) =>{
 const checkPassword = (password, isFormSubmit, errorMessages) =>{
   const passwordMinLength = 7;
   if(!password.valueHasChanged && !isFormSubmit) return password;
-  if (password.value == "") {
+  if (password.value === "") {
     password = setInvalid(password, errorMessages.emptyField.message);
   }else if(!minLength(password.value, passwordMinLength)){
     password = setInvalid(password, errorMessages.toShortField.message.replace("FIELD", password.name).replace("MINNUM", passwordMinLength));
@@ -132,9 +130,9 @@ const checkPassword = (password, isFormSubmit, errorMessages) =>{
 }
 const checkConfirmPassword = (confirmPassword, password, isFormSubmit, errorMessages) =>{
   if(!confirmPassword.valueHasChanged && !isFormSubmit) return confirmPassword;
-  if (confirmPassword.value == "") {
+  if (confirmPassword.value === "") {
     confirmPassword = setInvalid(confirmPassword, errorMessages.emptyField.message);
-  }else if(confirmPassword.value == password.value){
+  }else if(confirmPassword.value === password.value){
     confirmPassword = setValid(confirmPassword, "")
   }else if(isNotUnicode(confirmPassword.value)){
     confirmPassword = setInvalid(confirmPassword, errorMessages.notUnicode.message);
@@ -157,7 +155,7 @@ const maxLength = (value, length) =>{
   return true;
 }
 const isEmail = (value) =>{
-  var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(value).toLowerCase());
 }
 const isFutureDate = (date) =>{
