@@ -45,6 +45,21 @@ class App extends Component {
                         placeholder: "Enter last name"
                     }
                 },
+                header: {
+                    home: "Home",
+                    applications: "Applications",
+                    apply: "Apply",
+                    login: "Login",
+                    logout: "Logout",
+                    language: "Language",
+                    register: "Register",
+                    username: "Useranme",
+                    password: "Password",
+                    profile: "Your profile",
+                    swe: "SWE",
+                    eng: "ENG"
+
+                },
                 validationError: {
                     emptyField:{
                       message: "Please fill in this field"
@@ -159,7 +174,7 @@ class App extends Component {
     render() {
         return (
             <div className="App" >
-                <Header />
+                <Header info={this.state.eng}/>
                 <BrowserRouter>
                     <Route exact path="/home"
                         render={(props) => <Home info={this.state.eng} />}
