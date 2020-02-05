@@ -45,6 +45,29 @@ class App extends Component {
                         placeholder: "Enter last name"
                     }
                 ],
+                validationError: {
+                    emptyField:{
+                      message: "Please fill in this field"
+                    },
+                    noMatchPassword:{
+                      message:"Passwords do not match"
+                    },
+                    toLongField:{
+                      message:"FIELD is to long(maximum is MAXNUM characters)"
+                    },
+                    toShortField:{
+                      message:"FIELD is to short(minimum is MINNUM characters)"
+                    },
+                    notValidField:{
+                      message:"Please enter a valid FIELD"
+                    },
+                    invalidCharacters:{
+                      message:"FIELD contains invalid characters"
+                    },
+                    notUnicode:{
+                      message:"Please only use Unicode characters"
+                    }
+                },
                 listApplications: {
                     firstName: "First name",
                     lastName: "Last name",

@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-
+import InputGroup from 'react-bootstrap/InputGroup';
 import axios from 'axios';
 
+import { validator } from '../model/formValidation';
 import '../resources/css/register.css';
 
 class Register extends Component {
@@ -11,17 +12,64 @@ class Register extends Component {
         super(props);
         this.state = {
             user: {
-                username: "",
-                password: "",
-                email: "",
-                date: "",
-                firstName: "",
-                lastName: ""
+                username: { value: '', name: this.props.info.register[0].name, isValid: false, isInvalid: false, valueHasChanged: false, message: '' },
+                password: { value: '', name: this.props.info.register[1].name,isValid: false, isInvalid: false, valueHasChanged: false, message: '' },
+                confirmPassword: { value: '', name: this.props.info.register[2].name, isValid: false, isInvalid: false, message: '' },
+                email: { value: '', name: this.props.info.register[3].name, isValid: false, isInvalid: false, message: '' },
+                date: { value: '', name: this.props.info.register[4].name, isValid: false, isInvalid: false, message: '' },
+                firstName: { value: '', name: this.props.info.register[5].name, isValid: false, isInvalid: false, message: '' },
+                lastName: { value: '', name: this.props.info.register[6].name, isValid: false, isInvalid: false, message: '' },
+                validated: false
             },
             submitted: false
         }
     }
+    //Used for checking validation after a onChange event
+    checkValidation = (type, state) =>{
+      const validState = validator(type, state.user, this.props.info.validationError);
+      this.setState({
+        ...this.state,
+        user:{
+          ...this.state.user,
+          ...validState
+        }
+      })
+    }
+    //Called from the subbmitt button
+    handleSubmit = (event) => {
+      event.preventDefault();
+      const validState = validator(null, this.state.user, this.props.info.validationError);
+      this.setState({
+        ...this.state,
+        user:{
+          ...validState
+        }
+      })
+      if(validState.validated){
+        //this console log can be removed
+        console.log("Success form submission!");
+        this.registerUser();
+      }else{
+        //this console log can be removed
+        console.log("Unsuccessfull form submission");
+      }
+    }
+    onChange = (e) => {
+      const state = {
+        ...this.state,
+        user:{
+          ...this.state.user,
+          [e.target.name]: {
+            ...this.state.user[e.target.name],
+            value: e.target.value,
+          }
+        }
+      }
+      this.setState(state);
+      this.checkValidation(e.target.name, state);
+    }
 
+    //Function that registers the user(calls API)
     registerUser = async () => {
         try {
             const user = {
@@ -41,43 +89,113 @@ class Register extends Component {
         } catch (error) {
             console.log(error);
         }
-    }
+      }
     renderRegisterForm = () => {
-        return (<Form className="registerForm">
+      const { username, password, confirmPassword, email, date, firstName, lastName} = this.state.user;
+      return (
+        <div>
+          <Form noValidate className="registerForm" validated={this.state.user.validated} onSubmit={this.handleSubmit}>
             <h1>Register</h1>
-            <Form.Label>{this.props.info.register[0].name}</Form.Label>
-            <Form.Control
-                value={this.state.username}
-                onChange={event => this.setState({ username: event.target.value })}
-                type="username"
-                placeholder={this.props.info.register[0].placeholder} />
-            <Form.Label>{this.props.info.register[1].name}</Form.Label>
-            <Form.Control
-                type="password"
-                onChange={event => this.setState({ password: event.target.value })}
-                placeholder={this.props.info.register[1].placeholder} />
-            <Form.Label>{this.props.info.register[2].name}</Form.Label>
-            <Form.Control
-                type="email"
-                onChange={event => this.setState({ email: event.target.value })}
-                placeholder={this.props.info.register[2].placeholder} />
-            <Form.Label>{this.props.info.register[3].name}</Form.Label>
-            <Form.Control
-                type="date"
-                onChange={event => this.setState({ date: event.target.value })}
-                placeholder={this.props.info.register[3].placeholder} />
-            <Form.Label>{this.props.info.register[4].name}</Form.Label>
-            <Form.Control
-                type="name"
-                onChange={event => this.setState({ firstName: event.target.value })}
-                placeholder={this.props.info.register[4].placeholder} />
-            <Form.Label>{this.props.info.register[5].name}</Form.Label>
-            <Form.Control
-                type="name"
-                onChange={event => this.setState({ lastName: event.target.value })}
-                placeholder={this.props.info.register[5].placeholder} />
-            <Button className="registerButton" onClick={() => this.registerUser()} variant="primary">Register</Button>
-        </Form>)
+            <Form.Group>
+              <Form.Label>{this.props.info.register[5].name}</Form.Label>
+                <Form.Control
+                    value={firstName.value}
+                    onChange={this.onChange}
+                    type="text"
+                    name="firstName"
+                    isInvalid={firstName.isInvalid}
+                    isValid={firstName.isValid}
+                    placeholder={this.props.info.register[5].placeholder}/>
+                <Form.Control.Feedback type="invalid">
+                  {firstName.message}
+                </Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>{this.props.info.register[6].name}</Form.Label>
+                <Form.Control
+                    value={lastName.value}
+                    onChange={this.onChange}
+                    type="text"
+                    name="lastName"
+                    isInvalid={lastName.isInvalid}
+                    isValid={lastName.isValid}
+                    placeholder={this.props.info.register[6].placeholder}/>
+                <Form.Control.Feedback type="invalid">
+                  {lastName.message}
+                </Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>{this.props.info.register[3].name}</Form.Label>
+                <Form.Control
+                    value={email.value}
+                    onChange={this.onChange}
+                    type="text"
+                    name="email"
+                    isInvalid={email.isInvalid}
+                    isValid={email.isValid}
+                    placeholder={this.props.info.register[3].placeholder}/>
+                <Form.Control.Feedback type="invalid">
+                  {email.message}
+                </Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>{this.props.info.register[4].name}</Form.Label>
+              <Form.Control
+                  value={date.value}
+                  onChange={this.onChange}
+                  type="date"
+                  name="date"
+                  isInvalid={date.isInvalid}
+                  isValid={date.isValid}
+                  placeholder={this.props.info.register[4].placeholder}/>
+              <Form.Control.Feedback type="invalid">
+                {date.message}
+              </Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>{this.props.info.register[0].name}</Form.Label>
+                <Form.Control
+                    value={username.value}
+                    onChange={this.onChange}
+                    type="text"
+                    name="username"
+                    isInvalid={username.isInvalid}
+                    isValid={username.isValid}
+                    placeholder={this.props.info.register[0].placeholder}/>
+                <Form.Control.Feedback type="invalid">
+                  {username.message}
+                </Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>{this.props.info.register[1].name}</Form.Label>
+                <Form.Control
+                    value={password.value}
+                    onChange={this.onChange}
+                    type="password"
+                    name="password"
+                    isInvalid={password.isInvalid}
+                    isValid={password.isValid}
+                    placeholder={this.props.info.register[1].placeholder}/>
+                <Form.Control.Feedback type="invalid">
+                  {password.message}
+                </Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group>
+                <Form.Control
+                    value={confirmPassword.value}
+                    onChange={this.onChange}
+                    type="password"
+                    name="confirmPassword"
+                    isInvalid={confirmPassword.isInvalid}
+                    isValid={confirmPassword.isValid}
+                    placeholder={this.props.info.register[2].placeholder}/>
+                <Form.Control.Feedback type="invalid">
+                  {confirmPassword.message}
+                </Form.Control.Feedback>
+            </Form.Group>
+            <Button className="registerButton" type="submit" variant="primary">Register</Button>
+          </Form>
+        </div>)
     }
     renderRegisterComplete() {
         return (
