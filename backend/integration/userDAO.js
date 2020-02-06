@@ -1,6 +1,14 @@
 const { Pool, Client } = require('pg')
 const User = require('../model/user');
 const dbResponseHandler = require('../model/dbResponsehandler');
+const dbError = require('../error/dbErrors');
+
+function notVaildResponse(res) {
+    if (res === undefined) {
+        return true;
+    }
+    return false
+}
 
 const pool = new Pool({
     // connectionString: process.env.DATABASE_URL,
@@ -36,15 +44,20 @@ function registerUser(user) {
             values: [user.email, user.firstName, user.password, 2, user.date, user.lastName, user.username]
         }
         client.query(query, (err, res) => {
-            // console.log(res.rows[0].username)
-            if (res == null || res.rows == null || res.rows[0] == null) {
-                reject("Error with inserting into db")
+            if(err){
+                if(err.code === '23505'){
+                    reject(new Error(dbError.errorCodes.DUPLICATE_USER_ERROR))    
+                }
+            }
+            if (notVaildResponse(res)) {
+                client.end()
+                reject( new Error(dbError.errorCodes.INTSERTING_USER_ERROR))
             } else if (res.rows[0].username == user.username) {
                 client.end()
                 resolve(200)
             }
             client.end()
-            reject("Some error while inserting person")
+            reject( new Error(dbError.errorCodes.USER_ERROR))
         });
     });
 }
@@ -55,17 +68,16 @@ function updateUser(user, token) {
             text: "UPDATE person SET (email,name,password,role_id,ssn,surname,username) VALUES($1,$2,$3,$4,$5,$6,$7) WHERE token = $8",
             values: [user.email, user.firstName, user.password, 2, user.date, user.lastName, user.username, token]
         }
-        // console.log(query)
         client.query(query, (err, res) => {
-            // console.log(res.rows[0])
-            if (res == null || res.rows == null || res.rows[0] == null) {
-                reject("Error with inserting into db")
+            if (notVaildResponse(res)) {
+                client.end()
+                reject( new Error(dbError.errorCodes.UPDATE_USER_ERROR))
             } else if (res.rows[0].username == user.username) {
                 client.end()
                 resolve(200)
             }
             client.end()
-            reject("Some error while inserting person")
+            reject( new Error(dbError.errorCodes.UPDATE_USER_ERROR))
         });
     });
 }
@@ -77,15 +89,15 @@ function authenticateUser(credentials) {
             values: [credentials.username]
         }
         client.query(query, (err, res) => {
-            if (res == null || res.rows == null || res.rows[0] == null) {
-                reject("Wrong username/password")
-                // Throw error here
+            if (notVaildResponse(res)) {
+                client.end()
+                reject( new Error(dbError.errorCodes.LOGIN_ERROR))
             } else if (res.rows[0].password === credentials.password) {
                 client.end()
                 return resolve();
             }
             client.end()
-            reject()
+            reject( new Error(dbError.errorCodes.LOGIN_ERROR))
         })
     });
 }
@@ -105,15 +117,14 @@ function changeAuthToken(credentials, token) {
             }
         }
         client.query(updateTokenQuery, (err, res) => {
-            if (res) {
-
-                if (res.rowCount == '1') {
-                    client.end()
-                    resolve(token)
-                }
+            if (notVaildResponse(res)) {
+                client.end()
+                reject( new Error(dbError.errorCodes.TOKEN_ERROR))
             }
-            client.end()
-            reject("Token could not be set")
+            if (res.rowCount == '1') {
+                client.end()
+                resolve(token)
+            }
         });
     });
 }
@@ -126,14 +137,16 @@ function checkIfUsernameIsAvailable(username) {
             values: [username]
         }
         client.query(getUserQuery, (err, res) => {
-            if (res.rows[0] == null) {
-                client.end()
-                resolve("Username not taken");
-            } else {
-                resolve("Username taken");
+            if (notVaildResponse(res)) {
+                if (res.rows[0] == null) {
+                    client.end()
+                    resolve("Username not taken");
+                } else {
+                    resolve("Username taken");
+                }
             }
             client.end()
-            reject("Internal error")
+            reject( new Error(dbError.errorCodes.UNKNOWN_ERROR))
         });
     });
 }
@@ -145,9 +158,9 @@ function getUser(token) {
             values: [token]
         }
         client.query(getUserQuery, (err, res) => {
-            if (res === null || res.rows === null || !res.rows[0] === null) {
+            if (notVaildResponse(res)) {
                 client.end();
-                reject("Server error when requesting the user\n" + err);
+                reject( new Error(dbError.errorCodes.GET_USER_ERROR));
             }
             if (res.rows[0] != null) {
                 const rawUser = res.rows[0].person.split('(')[1].split(',');
@@ -156,15 +169,9 @@ function getUser(token) {
                 resolve(new User(rawUser[7], rawUser[5], rawUser[4], rawUser[3], rawUser[1], rawUser[2], rawUser[0], rawUser[6]));
             }
             client.end()
-            reject("User could not be found")
+            reject( new Error(dbError.errorCodes.NO_USER_ERROR))
         });
     });
-}
-function notVaildResponse(res) {
-    if (res === undefined) {
-        return false;
-    }
-    return true
 }
 function getPrivilegeLevel(token) {
     return new Promise(function (resolve, reject) {
@@ -177,9 +184,9 @@ function getPrivilegeLevel(token) {
             values: [token]
         }
         client.query(getPrivilegeLevelQuery, (err, res) => {
-            if (notVaildResponse()) {
+            if (notVaildResponse(res)) {
                 client.end()
-                reject("User could not be found");
+                reject( new Error(dbError.errorCodes.GET_USER_ERROR));
             } else {
                 // console.log(res)
                 if (res.rows[0] != null) {
@@ -188,7 +195,7 @@ function getPrivilegeLevel(token) {
                     resolve(res.rows[0]);
                 }
                 client.end()
-                reject("User could not be found")
+                reject( new Error(dbError.errorCodes.GET_USER_ERROR))
             }
         });
     });
@@ -234,53 +241,59 @@ function getApplication(privilegeLevel, token, application) {
         client.query(getApplicationQuery, (err, res) => {
 
             if (err) {
-                console.log(err)
-                reject(err);
-            } else if (res.rows[0] != null) {
-                const applicationList = dbResponseHandler.extractApplication(res.rows)
+                console.error(err)
+                reject( new Error(dbError.errorCodes.APPLICATION_ERROR));
+            } else if (notVaildResponse(res)) {
                 client.end()
-                // console.log("End of request")
-                // console.log(applicationList)
-                resolve(applicationList)
+                reject( new Error(dbError.errorCodes.UNKNOWN_ERROR));
             }
+            const applicationList = dbResponseHandler.extractApplication(res.rows)
             client.end()
-            resolve();
+            // console.log("End of request")
+            // console.log(applicationList)
+            resolve(applicationList)
         });
     });
 }
 async function createApplication(application, user) {
-    // return new Promise(function (resolve, reject) {
-    const client = await pool.connect()
-    try {
-        await client.query("BEGIN");
-        for (i = 0; i < application.competence.length; i++) {
-            let addCompetenceProfileQuery = {
-                text: "INSERT INTO competence_profile (person_id,competence_id,years_of_experience) VALUES($1,$2,$3) RETURNING *",
-                values: [user.personID, application.competence[i].competenceID, application.competence[i].numberOfYears]
+    return new Promise(async function (resolve, reject) {
+        const client = await pool.connect()
+        try {
+            await client.query("BEGIN");
+            for (i = 0; i < application.competence.length; i++) {
+                let addCompetenceProfileQuery = {
+                    text: "INSERT INTO competence_profile (person_id,competence_id,years_of_experience) VALUES($1,$2,$3) RETURNING *",
+                    values: [user.personID, application.competence[i].competenceID, application.competence[i].numberOfYears]
+                }
+                await client.query(addCompetenceProfileQuery);
             }
-            await client.query(addCompetenceProfileQuery);
-        }
-        for (i = 0; i < application.availability.length; i++) {
-            let addAvailabilityQuery = {
-                text: "INSERT INTO availability (person_id,from_date,to_date) VALUES($1,$2,$3) RETURNING *",
-                values: [user.personID, application.availability[i].startDate, application.availability[i].endDate]
+            for (i = 0; i < application.availability.length; i++) {
+                let addAvailabilityQuery = {
+                    text: "INSERT INTO availability (person_id,from_date,to_date) VALUES($1,$2,$3) RETURNING *",
+                    values: [user.personID, application.availability[i].startDate, application.availability[i].endDate]
+                }
+                await client.query(addAvailabilityQuery);
             }
-            await client.query(addAvailabilityQuery);
-        }
-        const addApplicatonQuery = {
-            text: "INSERT INTO application (person_id,time_of_submission,status) VALUES($1,$2,$3)",
-            values: [user.personID, '2020-01-30', 0]
-        }
-        await client.query(addApplicatonQuery);
-        await client.query("COMMIT");
+            const addApplicatonQuery = {
+                text: "INSERT INTO application (person_id,time_of_submission,status) VALUES($1,$2,$3)",
+                values: [user.personID, '2020-01-30', 0]
+            }
+            await client.query(addApplicatonQuery);
+            await client.query("COMMIT");
+            resolve("OK")
 
-    } catch (e) {
-        await client.query("ROLLBACK");
-        console.error(e)
+        } catch (e) {
+            await client.query("ROLLBACK");
+            if(e.code === 23505){
+                reject( new Error(dbError.errorCodes.DUPLICATE_APPLICATION_ERROR))
+            }
+            reject( new Error(dbError.errorCodes.CREATE_APPLICATION_ERROR))
+            console.error(e)
 
-    } finally {
-        client.release();
-    }
+        } finally {
+            client.release();
+        }
+    });
 }
 function updateApplicationStatus(status, applicationID) {
     return new Promise(function (resolve, reject) {
@@ -291,18 +304,18 @@ function updateApplicationStatus(status, applicationID) {
 
         }
         // console.log(updateApplicationStatusQuery)
-        
+
         client.query(updateApplicationStatusQuery, (err, res) => {
-            if (notVaildResponse()) {
+            if (notVaildResponse(res)) {
                 client.end();
-                reject("DB response error")
+                reject( new Error(dbError.errorCodes.UPDATE_APPLCIATION_ERROR))
             } else {
                 // console.log(res)
                 client.end();
                 if (res.rowCount == '1') {
-                    resolve()
+                    resolve("OK")
                 }
-                reject();
+                reject( new Error(dbError.errorCodes.UPDATE_APPLCIATION_ERROR));
             }
         });
     });
@@ -314,23 +327,15 @@ function getCompetence(token) {
             text: "SELECT * FROM competence",
         }
         client.query(getCompetenceQuery, (err, res) => {
-            let competences = [];
-            if (res === undefined) {
+            if (notVaildResponse(res)) {
                 client.end()
-                reject("Error while getting the competences")
+                reject( new Error(dbError.errorCodes.GET_COMPETENCE_ERROR))
             } else {
-                // console.log(res)
                 client.end()
                 resolve(res.rows);
             }
-            // if (res.rows[0] != null) {
-            // for (let row in res) {
-            //     console.log(row)
-            //     competences.push({id: row.competence_id, name: row.name});
-            // }
-            // console.log(res.rows[0])
-
-            // }
+            client.end()
+            reject( new Error(dbError.errorCodes.UNKNOWN_ERROR));
         });
     });
 }

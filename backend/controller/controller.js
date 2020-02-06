@@ -1,10 +1,9 @@
 const userDAO = require('../integration/userDAO');
-const validation = require('../model/requestValidation');
+
 const requestHandler = require('../model/requestHandler');
 const authToken = require('../model/authToken');
 
 async function registerUser(req) {
-    await validation.userInput(req);
     const registerUser = requestHandler.extractUser(req);
     return await userDAO.registerUser(registerUser);
 }

@@ -85,10 +85,10 @@ class ListApplications extends Component {
                     .then(res => {
                         let competenceList = [];
                         this.setState({ competences: res.data })
-                        this.state.competences.map(competence => 
+                        this.state.competences.map(competence =>
                             competenceList[competence.competence_id] = competence.competence_id
                         )
-                        this.setState({filteredCompetences: competenceList});
+                        this.setState({ filteredCompetences: competenceList });
 
                     })
                     .catch(err => console.log(err))
@@ -243,6 +243,7 @@ class ListApplications extends Component {
                     <Col>
                         <h3>Submission date</h3>
                         <DateRangePicker
+                            isOutsideRange={function noRefCheck() { }}
                             displayFormat={() => "DD/MM/YYYY"}
                             startDate={this.state.submissionStartDate}
                             // startDateId="your_unique_start_date_id" 

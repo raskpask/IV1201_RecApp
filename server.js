@@ -10,6 +10,7 @@ app.use(express.static(__dirname));
 app.use(express.static(path.join(__dirname, 'build')));
 
 const controller = require('./backend/controller/controller');
+const dbErrors = require('./backend/error/dbErrors');
 
 
 app.post('/api/user', async (req, res) => {
@@ -17,19 +18,19 @@ app.post('/api/user', async (req, res) => {
     const statusCode = await controller.registerUser(req);
     res.status(statusCode);
   } catch (error) {
-    console.error(error);
-    res.status(400)
+    dbErrors.respondError(error.message,res)
+    // res.status(400)
   }
   res.send();
 });
 
 app.put('/api/user', async (req, res) => {
-  const body = req.body;
   try {
     const statusCode = await controller.updateUser(req);
     res.status(statusCode);
   } catch (error) {
-    console.error(error);
+    dbErrors.respondError(error.message,res)
+    console.error(error.message);
     res.status(400)
   }
   res.send();
@@ -44,6 +45,7 @@ app.get('/api/user', async (req, res) => {
     // console.log(user);
 
   } catch (error) {
+    dbErrors.respondError(error.message,res)
     console.error(error)
     res.sendStatus(400);
   }
@@ -53,6 +55,7 @@ app.get('/api/username', async (req, res) => {
   try {
     res.send(await controller.checkIfUsernameIsAvailable(req));
   } catch (e) {
+    dbErrors.respondError(e.message,res)
     console.error(e);
     res.sendStatus(500);
   }
@@ -67,6 +70,7 @@ app.post('/api/authentication', async (req, res) => {
     res.cookie('authToken', token,{ expires: new Date(Date.now() + 1800000)});
 
   } catch (error) {
+    dbErrors.respondError(error.message,res)
     console.error(error);
     res.status(401);
   }
@@ -80,10 +84,10 @@ app.delete('/api/authentication', async (req, res) => {
     res.clearCookie('privilegeLevel')
     res.send();
   } catch (error) {
+    dbErrors.respondError(error.message,res)
     console.error(error)
     res.status(401);
   }
-  res.sendStatus(500)
 })
 
 app.get('/api/application', async (req, res) => {
@@ -96,6 +100,7 @@ app.get('/api/application', async (req, res) => {
       res.send(JSON.stringify(application));
     }
   } catch (error) {
+    dbErrors.respondError(error.message,res)
     console.error(error);
     res.status(400);
   }
@@ -105,6 +110,7 @@ app.post('/api/application', async (req, res) => {
   try {
     const application = controller.createApplication(req);
   } catch (error) {
+    dbErrors.respondError(error.message,res)
     console.error(error);
     res.status(400);
   }
@@ -114,7 +120,11 @@ app.post('/api/application', async (req, res) => {
 app.put('/api/application', async (req, res) => {
   try {
     const application = await controller.updateApplicationStatus(req);
+    if(application === "OK"){
+      res.send()
+    }
   } catch (error) {
+    dbErrors.respondError(error.message,res)
     console.error(error);
     res.status(500);
   }
@@ -126,6 +136,7 @@ app.get('/api/competence', async (req, res) => {
     res.cookie('authToken', controller.getToken(req),{ expires: new Date(Date.now() + 1800000)});
     res.send(JSON.stringify(await controller.getCompetence(req)));
   } catch (error) {
+    dbErrors.respondError(error.message,res)
     console.error(error)
     res.sendStatus(500);
   }
