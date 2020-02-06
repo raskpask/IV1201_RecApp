@@ -28,6 +28,12 @@ function extractToken(req) {
     return token ? token : null;
 
 }
+async function extractCreateApplication(req){
+    //insert vaildation here
+    const competenceList = req.body.competence;
+    const availability = req.body.availability;
+    return new Application(availability, new Date(), competenceList, null)
+}
 async function extractApplication(req) {
     let availability = '';
     let applicationDate = '';
@@ -63,6 +69,10 @@ async function extractApplication(req) {
             endDate: date.getFullYear() + 2000 + "-01-01"
         }
     }
+    // console.log(availability)
+    // console.log(applicationDate)
+    // console.log(competenceList)
+    // console.log(name)
     return new Application(availability, applicationDate, competenceList, name);
 }
 module.exports = {
@@ -71,4 +81,5 @@ module.exports = {
     extractToken,
     extractApplication,
     extractUsername,
+    extractCreateApplication,
 }

@@ -15,7 +15,8 @@ errorCodes = {
     GET_COMPETENCE_ERROR: 'Error while getting the competences.',
     WRONG_REGISTER_INPUT: 'The input from the user is incorrect',
     DUPLICATE_USER_ERROR: 'The user already exists try another username',
-    DUPLICATE_APPLICATION_ERROR: 'The user already as an applicationa',
+    DUPLICATE_APPLICATION_ERROR: 'The user already as an application',
+    NO_APPLICATION_ERROR: 'Could not find application',
 }
 function respondError(error, res) {
     console.error(error)
@@ -80,7 +81,11 @@ function respondError(error, res) {
             res.status(400);
             res.send(errorCodes.DUPLICATE_APPLICATION_ERROR);
             break;
-            
+        case errorCodes.NO_APPLICATION_ERROR:
+            res.status(400);
+            res.send(errorCodes.NO_APPLICATION_ERROR);
+            break;
+
         default:
             res.status(500);
             res.send('Something went wrong on the server');

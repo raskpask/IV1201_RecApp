@@ -204,6 +204,8 @@ function getPrivilegeLevel(token) {
 function getApplication(privilegeLevel, token, application) {
     return new Promise(function (resolve, reject) {
         // console.log(application)
+        // console.log(privilegeLevel)
+        // console.log(application)
         // console.log("Pri lvl: "+privilegeLevel.role_id)
         // console.log(application.competence)
         let competenceIDList = [];
@@ -238,15 +240,22 @@ function getApplication(privilegeLevel, token, application) {
         }
         // console.log(getApplicationQuery)
         // get status, job application, competence with year, availability, person name *
-        client.query(getApplicationQuery, (err, res) => {
 
-            if (err) {
+        client.query(getApplicationQuery, (err, res) => {
+            // console.log("Adding to db")
+            // console.log(res.rows)
+            if (err ) {
                 console.error(err)
                 reject( new Error(dbError.errorCodes.APPLICATION_ERROR));
+                return;
+            } else if (res.rows.length == 0){
+                reject(new Error(dbError.errorCodes.NO_APPLICATION_ERROR));
+                return;
             } else if (notVaildResponse(res)) {
                 client.end()
                 reject( new Error(dbError.errorCodes.UNKNOWN_ERROR));
             }
+            // console.log(res.rows.length)
             const applicationList = dbResponseHandler.extractApplication(res.rows)
             client.end()
             // console.log("End of request")
@@ -284,11 +293,11 @@ async function createApplication(application, user) {
 
         } catch (e) {
             await client.query("ROLLBACK");
-            if(e.code === 23505){
-                reject( new Error(dbError.errorCodes.DUPLICATE_APPLICATION_ERROR))
+            if(e.code == '23505'){
+                reject(new Error(dbError.errorCodes.DUPLICATE_APPLICATION_ERROR))
             }
-            reject( new Error(dbError.errorCodes.CREATE_APPLICATION_ERROR))
-            console.error(e)
+            reject(new Error(dbError.errorCodes.CREATE_APPLICATION_ERROR))
+            // console.error(e)
 
         } finally {
             client.release();

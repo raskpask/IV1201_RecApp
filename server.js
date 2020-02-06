@@ -108,13 +108,12 @@ app.get('/api/application', async (req, res) => {
 
 app.post('/api/application', async (req, res) => {
   try {
-    const application = controller.createApplication(req);
+    const application = await controller.createApplication(req);
+    res.send("Application was created");
   } catch (error) {
     dbErrors.respondError(error.message,res)
-    console.error(error);
-    res.status(400);
+
   }
-  res.send();
 });
 
 app.put('/api/application', async (req, res) => {
