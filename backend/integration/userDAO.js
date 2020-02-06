@@ -283,9 +283,11 @@ async function createApplication(application, user) {
                 }
                 await client.query(addAvailabilityQuery);
             }
+            let date = new Date()
+            date = JSON.stringify(date).split('T')[0].split('"')[1]
             const addApplicatonQuery = {
                 text: "INSERT INTO application (person_id,time_of_submission,status) VALUES($1,$2,$3)",
-                values: [user.personID, '2020-01-30', 0]
+                values: [user.personID, date, 0]
             }
             await client.query(addApplicatonQuery);
             await client.query("COMMIT");

@@ -32,7 +32,7 @@ async function extractCreateApplication(req){
     //insert vaildation here
     const competenceList = req.body.competence;
     const availability = req.body.availability;
-    return new Application(availability, new Date(), competenceList, null)
+    return new Application(availability, null , competenceList, null)
 }
 async function extractApplication(req) {
     let availability = '';
