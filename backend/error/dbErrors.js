@@ -8,8 +8,8 @@ errorCodes = {
         code: 'UNKNOWN_ERROR',
         message:'Some internal error occured'
     },
-    INTSERTING_USER_ERROR: {
-        code: 'INTSERTING_USER_ERROR',
+    INSERTING_USER_ERROR: {
+        code: 'INSERTING_USER_ERROR',
         message:'Problem when the user was to be insterted to the database.'
     },
     USER_ERROR: {
@@ -56,7 +56,7 @@ errorCodes = {
         code: 'GET_COMPETENCE_ERROR',
         message:'Error while getting the competences.'
     },
-    WRONG_REGISTER_INPUT: {
+    WRONG_REGISTER_INPUT_ERROR: {
         code: 'WRONG_REGISTER_INPUT',
         message:'The input from the user is incorrect'
     },
@@ -76,69 +76,69 @@ errorCodes = {
 function respondError(error, res) {
     console.error(error)
     switch (error) {
-        case errorCodes.CONNECTION_ERROR:
+        case errorCodes.CONNECTION_ERROR.code:
             res.status(503);
-            res.send(CONNECTION_ERROR);
+            res.send(CONNECTION_ERROR.code);
             break;
-        case errorCodes.INTSERTING_USER_ERROR:
+        case errorCodes.INSERTING_USER_ERROR.code:
             res.status(503);
             res.send('DB error');
             break;
-        case errorCodes.UNKNOWN_ERROR:
+        case errorCodes.UNKNOWN_ERROR.code:
             res.status(500);
             res.send('Internal server error');
             break;
-        case errorCodes.USER_ERROR:
+        case errorCodes.USER_ERROR.code:
             res.status(503);
-            res.send(errorCodes.USER_ERROR);
+            res.send(errorCodes.USER_ERROR.code);
             break;
-        case errorCodes.UPDATE_USER_ERROR:
+        case errorCodes.UPDATE_USER_ERROR.code:
             res.status(503);
-            res.send(errorCodes.UPDATE_USER_ERROR);
+            res.send(errorCodes.UPDATE_USER_ERROR.code);
             break;
-        case errorCodes.LOGIN_ERROR:
+        case errorCodes.LOGIN_ERROR.code:
             res.status(401);
-            res.send(errorCodes.LOGIN_ERROR);
+            res.send(errorCodes.LOGIN_ERROR.code);
             break;
-        case errorCodes.GET_USER_ERROR:
+        case errorCodes.GET_USER_ERROR.code:
             res.status(400);
-            res.send(errorCodes.GET_USER_ERROR);
+            res.send(errorCodes.GET_USER_ERROR.code);
             break;
-        case errorCodes.NO_USER_ERROR:
+        case errorCodes.NO_USER_ERROR.code:
             res.status(400);
-            res.send(errorCodes.NO_USER_ERROR);
+            res.send(errorCodes.NO_USER_ERROR.code);
             break;
-        case errorCodes.NO_ACCESS_ERROR:
+        case errorCodes.NO_ACCESS_ERROR.code:
             res.status(403);
-            res.send(errorCodes.NO_ACCESS_ERROR);
+            res.send(errorCodes.NO_ACCESS_ERROR.code);
             break;
-        case errorCodes.APPLICATION_ERROR:
+        case errorCodes.APPLICATION_ERROR.code:
             res.status(500);
-            res.send(errorCodes.APPLICATION_ERROR);
+            res.send(errorCodes.APPLICATION_ERROR.code);
             break;
-        case errorCodes.UPDATE_APPLCIATION_ERROR:
+        case errorCodes.UPDATE_APPLCIATION_ERROR.code:
             res.status(500);
-            res.send(errorCodes.UPDATE_APPLCIATION_ERROR);
+            res.send(errorCodes.UPDATE_APPLCIATION_ERROR.code);
             break;
-        case errorCodes.GET_COMPETENCE_ERROR:
+        case errorCodes.GET_COMPETENCE_ERROR.code:
             res.status(500);
-            res.send(errorCodes.GET_COMPETENCE_ERROR);
+            res.send(errorCodes.GET_COMPETENCE_ERROR.code);
             break;
-        case errorCodes.WRONG_REGISTER_INPUT:
+        case errorCodes.WRONG_REGISTER_INPUT_ERROR.code:
             res.status(400);
-            res.send(errorCodes.WRONG_REGISTER_INPUT);
+            res.send(errorCodes.WRONG_REGISTER_INPUT_ERROR.code);
             break;
-        case errorCodes.DUPLICATE_USER_ERROR:
+        case errorCodes.DUPLICATE_USER_ERROR.code:
             res.status(400);
-            res.send(errorCodes.DUPLICATE_USER_ERROR);
+            res.send(errorCodes.DUPLICATE_USER_ERROR.code);
             break;
-        case errorCodes.DUPLICATE_APPLICATION_ERROR:
+        case errorCodes.DUPLICATE_APPLICATION_ERROR.code:
             res.status(400);
-            res.send(errorCodes.DUPLICATE_APPLICATION_ERROR);
+            res.send(errorCodes.DUPLICATE_APPLICATION_ERROR.code);
             break;
-        case errorCodes.NO_APPLICATION_ERROR:
+        case errorCodes.NO_APPLICATION_ERROR.code:
             res.status(400);
-            res.send(errorCodes.NO_APPLICATION_ERROR);
+            res.send(errorCodes.NO_APPLICATION_ERROR.code);
             break;
         default:
             res.status(500);

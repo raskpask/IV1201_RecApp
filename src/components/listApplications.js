@@ -6,6 +6,7 @@ import '../resources/css/register.css';
 import '../resources/css/listApplications.css';
 import Application from './fragments/application';
 import axios from 'axios';
+import Access from './fragments/access';
 
 class ListApplications extends Component {
     constructor(props) {
@@ -105,8 +106,6 @@ class ListApplications extends Component {
         return listOfApplications
     }
     renderTable() {
-        console.log("Start of table render")
-        console.log(this.state.application)
         return (
             <Table striped bordered hover>
                 <thead>
@@ -150,7 +149,6 @@ class ListApplications extends Component {
         return (
             <Fragment>
                 <Button variant="primary" className="ml-auto" id={application.id} onClick={() => this.showInfo(application.id, true)}>{name}</Button>
-                {console.log(application.id)}
                 <Modal
                     centered
                     show={this.state.showUser[application.id]}
@@ -265,6 +263,7 @@ class ListApplications extends Component {
     render() {
         return (
             <div className="marginTop">
+                <Access access='1' info={this.props.info.access}/>
                 {this.renderFilter()}
                 {/* {this.renderSearch()} */}
                 {this.renderTable()}

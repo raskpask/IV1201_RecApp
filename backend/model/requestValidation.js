@@ -8,7 +8,7 @@ function registerInput(req) {
         if (checkUsername(body.username) && checkPassword(body.password) && checkEmail(body.email) && checkDate(body.date) && checkName(body.firstName) && checkName(body.lastName)) {
             return true;
         }
-        throw Error(dbError.errorCodes.WRONG_REGISTER_INPUT);
+        throw Error(dbError.errorCodes.WRONG_REGISTER_INPUT_ERROR);
 }
 function checkUsername(username) {
     const regEx = /([0-9]|[a-z]|[A-Z])/g;
