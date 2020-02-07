@@ -85,7 +85,6 @@ function respondError(error, res) {
             res.status(400);
             res.send(errorCodes.NO_APPLICATION_ERROR);
             break;
-
         default:
             res.status(500);
             res.send('Something went wrong on the server');

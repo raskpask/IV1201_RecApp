@@ -44,20 +44,20 @@ function registerUser(user) {
             values: [user.email, user.firstName, user.password, 2, user.date, user.lastName, user.username]
         }
         client.query(query, (err, res) => {
-            if(err){
-                if(err.code === '23505'){
-                    reject(new Error(dbError.errorCodes.DUPLICATE_USER_ERROR))    
+            if (err) {
+                if (err.code === '23505') {
+                    reject(new Error(dbError.errorCodes.DUPLICATE_USER_ERROR))
                 }
             }
             if (notVaildResponse(res)) {
                 client.end()
-                reject( new Error(dbError.errorCodes.INTSERTING_USER_ERROR))
+                reject(new Error(dbError.errorCodes.INTSERTING_USER_ERROR))
             } else if (res.rows[0].username == user.username) {
                 client.end()
                 resolve(200)
             }
             client.end()
-            reject( new Error(dbError.errorCodes.USER_ERROR))
+            reject(new Error(dbError.errorCodes.USER_ERROR))
         });
     });
 }
@@ -71,13 +71,13 @@ function updateUser(user, token) {
         client.query(query, (err, res) => {
             if (notVaildResponse(res)) {
                 client.end()
-                reject( new Error(dbError.errorCodes.UPDATE_USER_ERROR))
+                reject(new Error(dbError.errorCodes.UPDATE_USER_ERROR))
             } else if (res.rows[0].username == user.username) {
                 client.end()
                 resolve(200)
             }
             client.end()
-            reject( new Error(dbError.errorCodes.UPDATE_USER_ERROR))
+            reject(new Error(dbError.errorCodes.UPDATE_USER_ERROR))
         });
     });
 }
@@ -89,15 +89,18 @@ function authenticateUser(credentials) {
             values: [credentials.username]
         }
         client.query(query, (err, res) => {
-            if (notVaildResponse(res)) {
-                client.end()
-                reject( new Error(dbError.errorCodes.LOGIN_ERROR))
-            } else if (res.rows[0].password === credentials.password) {
-                client.end()
-                return resolve();
+            console.log(res.rows.length)
+            if (res.rows.length === 1) {
+                if (notVaildResponse(res)) {
+                    client.end()
+                    reject(new Error(dbError.errorCodes.LOGIN_ERROR))
+                } else if (res.rows[0].password === credentials.password) {
+                    client.end()
+                    return resolve();
+                }
             }
             client.end()
-            reject( new Error(dbError.errorCodes.LOGIN_ERROR))
+            reject(new Error(dbError.errorCodes.LOGIN_ERROR))
         })
     });
 }
@@ -119,7 +122,7 @@ function changeAuthToken(credentials, token) {
         client.query(updateTokenQuery, (err, res) => {
             if (notVaildResponse(res)) {
                 client.end()
-                reject( new Error(dbError.errorCodes.TOKEN_ERROR))
+                reject(new Error(dbError.errorCodes.TOKEN_ERROR))
             }
             if (res.rowCount == '1') {
                 client.end()
@@ -146,7 +149,7 @@ function checkIfUsernameIsAvailable(username) {
                 }
             }
             client.end()
-            reject( new Error(dbError.errorCodes.UNKNOWN_ERROR))
+            reject(new Error(dbError.errorCodes.UNKNOWN_ERROR))
         });
     });
 }
@@ -160,7 +163,7 @@ function getUser(token) {
         client.query(getUserQuery, (err, res) => {
             if (notVaildResponse(res)) {
                 client.end();
-                reject( new Error(dbError.errorCodes.GET_USER_ERROR));
+                reject(new Error(dbError.errorCodes.GET_USER_ERROR));
             }
             if (res.rows[0] != null) {
                 const rawUser = res.rows[0].person.split('(')[1].split(',');
@@ -169,7 +172,7 @@ function getUser(token) {
                 resolve(new User(rawUser[7], rawUser[5], rawUser[4], rawUser[3], rawUser[1], rawUser[2], rawUser[0], rawUser[6]));
             }
             client.end()
-            reject( new Error(dbError.errorCodes.NO_USER_ERROR))
+            reject(new Error(dbError.errorCodes.NO_USER_ERROR))
         });
     });
 }
@@ -186,7 +189,7 @@ function getPrivilegeLevel(token) {
         client.query(getPrivilegeLevelQuery, (err, res) => {
             if (notVaildResponse(res)) {
                 client.end()
-                reject( new Error(dbError.errorCodes.GET_USER_ERROR));
+                reject(new Error(dbError.errorCodes.GET_USER_ERROR));
             } else {
                 // console.log(res)
                 if (res.rows[0] != null) {
@@ -195,7 +198,7 @@ function getPrivilegeLevel(token) {
                     resolve(res.rows[0]);
                 }
                 client.end()
-                reject( new Error(dbError.errorCodes.GET_USER_ERROR))
+                reject(new Error(dbError.errorCodes.GET_USER_ERROR))
             }
         });
     });
@@ -244,16 +247,16 @@ function getApplication(privilegeLevel, token, application) {
         client.query(getApplicationQuery, (err, res) => {
             // console.log("Adding to db")
             // console.log(res.rows)
-            if (err ) {
+            if (err) {
                 console.error(err)
-                reject( new Error(dbError.errorCodes.APPLICATION_ERROR));
+                reject(new Error(dbError.errorCodes.APPLICATION_ERROR));
                 return;
-            } else if (res.rows.length == 0){
+            } else if (res.rows.length == 0) {
                 reject(new Error(dbError.errorCodes.NO_APPLICATION_ERROR));
                 return;
             } else if (notVaildResponse(res)) {
                 client.end()
-                reject( new Error(dbError.errorCodes.UNKNOWN_ERROR));
+                reject(new Error(dbError.errorCodes.UNKNOWN_ERROR));
             }
             // console.log(res.rows.length)
             const applicationList = dbResponseHandler.extractApplication(res.rows)
@@ -295,7 +298,7 @@ async function createApplication(application, user) {
 
         } catch (e) {
             await client.query("ROLLBACK");
-            if(e.code == '23505'){
+            if (e.code == '23505') {
                 reject(new Error(dbError.errorCodes.DUPLICATE_APPLICATION_ERROR))
             }
             reject(new Error(dbError.errorCodes.CREATE_APPLICATION_ERROR))
@@ -319,14 +322,14 @@ function updateApplicationStatus(status, applicationID) {
         client.query(updateApplicationStatusQuery, (err, res) => {
             if (notVaildResponse(res)) {
                 client.end();
-                reject( new Error(dbError.errorCodes.UPDATE_APPLCIATION_ERROR))
+                reject(new Error(dbError.errorCodes.UPDATE_APPLCIATION_ERROR))
             } else {
                 // console.log(res)
                 client.end();
                 if (res.rowCount == '1') {
                     resolve("OK")
                 }
-                reject( new Error(dbError.errorCodes.UPDATE_APPLCIATION_ERROR));
+                reject(new Error(dbError.errorCodes.UPDATE_APPLCIATION_ERROR));
             }
         });
     });
@@ -340,13 +343,13 @@ function getCompetence(token) {
         client.query(getCompetenceQuery, (err, res) => {
             if (notVaildResponse(res)) {
                 client.end()
-                reject( new Error(dbError.errorCodes.GET_COMPETENCE_ERROR))
+                reject(new Error(dbError.errorCodes.GET_COMPETENCE_ERROR))
             } else {
                 client.end()
                 resolve(res.rows);
             }
             client.end()
-            reject( new Error(dbError.errorCodes.UNKNOWN_ERROR));
+            reject(new Error(dbError.errorCodes.UNKNOWN_ERROR));
         });
     });
 }

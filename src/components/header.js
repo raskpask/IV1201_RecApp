@@ -70,7 +70,6 @@ class Header extends Component {
     renderBrand() {
         return (
             <React.Fragment>
-                <Navbar.Brand>Recruitment app</Navbar.Brand>
                 <Nav className="mr-auto">
                     <Nav.Link href="/home">{this.props.info.header.home}</Nav.Link>
                     <Nav.Link href="/register">{this.props.info.header.register}</Nav.Link>
@@ -81,7 +80,6 @@ class Header extends Component {
     renderBrandLogin() {
         return (
             <React.Fragment>
-                <Navbar.Brand>Recruitment app</Navbar.Brand>
                 <Nav className="mr-auto">
                     <Nav.Link href="/home">{this.props.info.header.home}</Nav.Link>
                     <Nav.Link href="/apply">{this.props.info.header.apply}</Nav.Link>
@@ -92,7 +90,6 @@ class Header extends Component {
     renderBrandLoginRecruiter() {
         return (
             <React.Fragment>
-                <Navbar.Brand>Recruitment app</Navbar.Brand>
                 <Nav className="mr-auto">
                     <Nav.Link href="/home">{this.props.info.header.home}</Nav.Link>
                     <Nav.Link href="/listApplications">{this.props.info.header.applications}</Nav.Link>
@@ -140,7 +137,7 @@ class Header extends Component {
     render() {
         return (
             <div>
-                <Navbar bg="dark" variant="dark" fixed="top">
+                <Navbar bg="dark" variant="dark">
                     {this.chooseUserLevel()}
                     {this.isLoggedIn() ? this.renderUser() : this.renderLogin()}
                 </Navbar>

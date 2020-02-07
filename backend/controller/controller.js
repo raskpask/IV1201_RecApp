@@ -2,6 +2,7 @@ const userDAO = require('../integration/userDAO');
 
 const requestHandler = require('../model/requestHandler');
 const authToken = require('../model/authToken');
+const dbError = require('../error/dbErrors');
 
 async function registerUser(req) {
     const registerUser = requestHandler.extractUser(req);
@@ -33,7 +34,7 @@ async function getApplication(req) {
         const application = await requestHandler.extractApplication(req)
         let privilegeLevel = await userDAO.getPrivilegeLevel(token);
         if (privilegeLevel == "no access") {
-            return "no access";
+            throw new Error(dbError.errorCodes.NO_ACCESS_ERORR);
         }
         return await userDAO.getApplication(privilegeLevel, token, application);
     } catch (error) {
@@ -49,8 +50,8 @@ async function createApplication(req) {
 async function updateApplicationStatus(req) {
     const token = requestHandler.extractToken(req)
         let privilegeLevel = await userDAO.getPrivilegeLevel(token);
-        if (privilegeLevel == "no access" || privilegeLevel > 1) {
-            return "no access";
+        if (privilegeLevel == "no access" || privilegeLevel.role_id > 1) {
+            throw new Error(dbError.errorCodes.NO_ACCESS_ERORR);
         }
     return await userDAO.updateApplicationStatus(req.body.status,req.body.id);
 }
