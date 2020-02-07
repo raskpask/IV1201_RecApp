@@ -1,0 +1,26 @@
+.addForm{
+    padding: 5vw;
+}
+
+.paddingRight{
+    padding-right: 1vw;
+}
+.paddingLeft{
+    padding-left: 1vw;
+}
+.marginTextBox{
+    margin: 0 1vw 0 1vw;
+}
+.marginLeft{
+    margin-left: 1vw;
+}
+.tableAvailability{
+    margin: 5vw 2vw 5vw 0vw;
+    /* padding-right: 5vw; */
+    /* width: 50%; */
+}
+.tableCompetence{
+    margin: 5vw 1vw 5vw 2vw;
+    /* padding-left: 5vw; */
+    /* width: 50%; */
+}

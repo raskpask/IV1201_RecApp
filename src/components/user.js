@@ -1,16 +1,20 @@
 import React, { Component, Fragment } from 'react';
-import Button from 'react-bootstrap/Button';
-import { Form, Card, ListGroup } from 'react-bootstrap';
+import { Form, Card, ListGroup, Button } from 'react-bootstrap';
+
 
 import axios from 'axios';
+import Application from './fragments/application';
 
 import '../resources/css/register.css';
 import '../resources/css/user.css';
+
 
 class User extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            renderApplication: "",
+            typeOfUser: "",
             user: {
                 username: "",
                 password: "",
@@ -19,12 +23,57 @@ class User extends Component {
                 firstName: "",
                 lastName: ""
             },
-            submitted: false
+            application: [
+                {
+                    firstName: "",
+                    lastName: "",
+                    dateOfBirth: "",
+                    lastEdited: "",
+                    dateOfSubmission: "",
+                    status: "",
+                    id: "",
+                    competence: [
+                        {
+                            name: "",
+                            yearsOfExperience: ""
+                        }
+                    ],
+                    availability: [
+                        {
+                            startDate: "",
+                            endDate: ""
+                        }
+
+                    ]
+                }
+            ]
         }
     }
+
     componentDidMount = async () => {
         const user = await (await axios.get('/api/user')).data.user;
-        this.setState({ user: user })
+        const application = (await axios.get('api/application')).data[0];
+        this.setState({ user: user, application: JSON.parse(application) })
+        this.setState({renderApplication: this.renderApplication()})
+        console.log(this.state.application)
+        const privilegeLevel = document.cookie.split('privilegeLevel=')[1];
+        if (privilegeLevel === '1') {
+            this.setState({ typeOfUser: this.renderUserInfo() })
+        } else if(privilegeLevel === '2'){
+            this.setState({ typeOfUser: this.renderApplication()})
+        } else{
+            this.setState({ typeOfUser: this.renderUserNotLoggedIn() })
+        }
+    }
+    privilege(){
+        const privilegeLevel = document.cookie.split('privilegeLevel=')[1];
+        if (privilegeLevel === '1') {
+            this.setState({ typeOfUser: this.renderUserInfo() })
+        } else if(privilegeLevel === '2'){
+            this.setState({ typeOfUser: this.renderAppli()})
+        } else{
+            this.setState({ typeOfUser: this.renderUserNotLoggedIn() })
+        }
     }
     updateUser = async () => {
         try {
@@ -49,20 +98,31 @@ class User extends Component {
     renderUser = () => {
         return (
             <Fragment>
-                
-                <Card className="userInfo">
-                    <Card.Header>
-                        {this.props.info.user[6].name}{this.state.user.firstName} {this.state.user.lastName}!
+                {this.renderApplication()}
+            </Fragment>
+        )
+    }
+    renderUserInfo() {
+        return (
+            <Card className="userInfo">
+                <Card.Header>
+                    {this.props.info.user[6].name}{this.state.user.firstName} {this.state.user.lastName}!
 
                     </Card.Header>
-                    <ListGroup variant="flush">
+                <ListGroup variant="flush">
 
-                        <ListGroup.Item>{this.props.info.user[0].name}{this.state.user.username}</ListGroup.Item>
-                        <ListGroup.Item>{this.props.info.user[2].name}{this.state.user.email}</ListGroup.Item>
-                        <ListGroup.Item>{this.props.info.user[3].name}{this.state.user.date}</ListGroup.Item>
-                    </ListGroup>
-                </Card>
-            </Fragment>
+                    <ListGroup.Item>{this.props.info.user[0].name}{this.state.user.username}</ListGroup.Item>
+                    <ListGroup.Item>{this.props.info.user[2].name}{this.state.user.email}</ListGroup.Item>
+                    <ListGroup.Item>{this.props.info.user[3].name}{this.state.user.date}</ListGroup.Item>
+                </ListGroup>
+            </Card>
+        )
+    }
+    renderApplication() {
+        return (
+            <div className="marginTop">
+                <Application info={this.props.info} application={this.state.application} />
+            </div>
         )
     }
     renderUserForm = () => {
@@ -102,16 +162,21 @@ class User extends Component {
             <Button className="userButton" onClick={() => this.updateUser()} variant="primary">User</Button>
         </Form>)
     }
-    renderUserComplete() {
+    renderUserNotLoggedIn() {
         return (
             <h1>User not logged in</h1>
+        )
+    }
+    renderRecruiter(){
+        return(
+            <h1>The user does not have an application</h1>
         )
     }
 
     render() {
         return (
             <div>
-                {this.renderUser()}
+                {this.state.typeOfUser}
             </div >
         );
     };
