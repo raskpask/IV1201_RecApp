@@ -41,8 +41,9 @@ function getLanguage() {
             username: "Username",
             password: "Password",
             profile: "Your profile",
+            loading: "Loading...",
             swe: "SWE",
-            eng: "ENG"
+            eng: "ENG",
 
         },
         validationError: {

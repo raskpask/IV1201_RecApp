@@ -15,6 +15,10 @@ class Header extends Component {
                 username: "",
                 password: "",
             },
+            form:{
+                invalidLogin:false,
+                isLoading:false,
+            }
         }
     }
     setLanguage(lang) {
@@ -24,6 +28,12 @@ class Header extends Component {
         this.props.app.forceUpdate()
     }
     login = async () => {
+        this.setState({
+            form:{
+                invalidLogin:false,
+                isLoading:true
+            }
+          });
         try {
             const credentials = {
                 username: this.state.username,
@@ -37,7 +47,12 @@ class Header extends Component {
             }
 
         } catch (error) {
-            console.log(error)
+            this.setState({
+                form:{
+                    invalidLogin:true,
+                    isLoading:false
+                }
+              });
         }
     }
     logout = async () => {
@@ -103,15 +118,21 @@ class Header extends Component {
                 <Form inline className="ml-auto">
                     <FormControl
                         type="Username"
+                        isInvalid = {this.state.form.invalidLogin} 
                         placeholder={this.props.info.header.username}
                         onChange={event => this.setState({ username: event.target.value })}
                         className=" mr-sm-2" />
+
                     <FormControl
                         type="Password"
                         placeholder={this.props.info.header.password}
+                        isInvalid = {this.state.form.invalidLogin} 
                         onChange={event => this.setState({ password: event.target.value })}
                         className=" mr-sm-2" />
-                    <Button onClick={() => this.login()} variant="primary">{this.props.info.header.login}</Button>
+                    <Button onClick={() => this.login()} variant="primary" disabled={this.state.form.isLoading}>
+                        {this.state.form.isLoading ? this.props.info.header.loading : this.props.info.header.login}
+                    </Button>
+                    
                 </Form>
                 {this.renderlanguage()}
             </Nav>

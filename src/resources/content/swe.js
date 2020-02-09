@@ -41,8 +41,9 @@ function getLanguage() {
             username: "Användarnamn",
             password: "Lösenord",
             profile: "Min profil",
+            loading: "Laddar...",
             swe: "SWE",
-            eng: "ENG"
+            eng: "ENG",
 
         },
         validationError: {
