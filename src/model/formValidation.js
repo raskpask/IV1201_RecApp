@@ -107,6 +107,8 @@ const checkUsername = (username, isFormSubmit, errorMessages) =>{
     username = setInvalid(username, errorMessages.toLongField.message.replace("FIELD", username.name).replace("MAXNUM", usernameMaxLength));
   }else if(!isAlphaNumerical(username.value)){
     username = setInvalid(username, errorMessages.invalidCharacters.message.replace("FIELD", username.name));
+  }else if(username.alreadyTakenUsernames.includes(username.value)){
+    username = setInvalid(username, errorMessages.duplicateUsername.message);
   }
   else{
     username = setValid(username, "")

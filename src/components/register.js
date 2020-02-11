@@ -11,7 +11,7 @@ class Register extends Component {
     super(props);
     this.state = {
       user: {
-        username: { value: '', name: this.props.info.register.username.name, isValid: false, isInvalid: false, valueHasChanged: false, message: '' },
+        username: { value: '', name: this.props.info.register.username.name, isValid: false, isInvalid: false, valueHasChanged: false, message: '', alreadyTakenUsernames:[] },
         password: { value: '', name: this.props.info.register.password.name, isValid: false, isInvalid: false, valueHasChanged: false, message: '' },
         confirmPassword: { value: '', name: this.props.info.register.password.name, isValid: false, isInvalid: false, message: '' },
         email: { value: '', name: this.props.info.register.email.name, isValid: false, isInvalid: false, message: '' },
@@ -20,12 +20,15 @@ class Register extends Component {
         lastName: { value: '', name: this.props.info.register.lastName.name, isValid: false, isInvalid: false, message: '' },
         validated: false
       },
+      isLoading:false,
       submitted: false,
 
     }
   }
   //Used for checking validation after a onChange event
   checkValidation = (type, state) => {
+
+
     const validState = validator(type, state.user, this.props.info.validationError);
     this.setState({
       ...this.state,
@@ -71,26 +74,46 @@ class Register extends Component {
 
   //Function that registers the user(calls API)
   registerUser = async () => {
+    this.setState({
+      isLoading: true,
+      submitted: false,
+    });
+    const user = {
+      username: this.state.user.username.value,
+      password: this.state.user.password.value,
+      email: this.state.user.email.value,
+      date: this.state.user.date.value,
+      firstName: this.state.user.firstName.value,
+      lastName: this.state.user.lastName.value
+    }
     try {
-      console.log(this.state)
-      const user = {
-        username: this.state.user.username.value,
-        password: this.state.user.password.value,
-        email: this.state.user.email.value,
-        date: this.state.user.date.value,
-        firstName: this.state.user.firstName.value,
-        lastName: this.state.user.lastName.value
-      }
-      console.log(user)
       const response = await axios.post('/api/user', user);
 
       if (response.status === 200) {
         this.setState({ submitted: true });
       }
-
     } catch (error) {
-      console.log(error);
+      //The error can not be identified, so we will expect it to be a DUPLICATE_USER_ERROR error
+      const state = { 
+        ...this.state,
+        user: {
+          ...this.state.user,
+          username:{
+            ...this.state.user.username,
+            alreadyTakenUsernames:[
+              ...this.state.user.username.alreadyTakenUsernames,
+              this.state.user.username.value
+            ]
+          }
+        }
+      };
+      //we have to redo the validation to that the DUPLICATE_USER_ERROR will be shown
+      this.checkValidation(null,state);
+
     }
+    this.setState({
+      isLoading: false,
+    });
   }
   renderRegisterForm = () => {
     const { username, password, confirmPassword, email, date, firstName, lastName } = this.state.user;
@@ -162,11 +185,11 @@ class Register extends Component {
               onChange={this.onChange}
               type="text"
               name="username"
-              isInvalid={username.isInvalid}
-              isValid={username.isValid}
+              isInvalid={username.isInvalid }
+              isValid={ username.isValid }
               placeholder={this.props.info.register.username.placeholder} />
             <Form.Control.Feedback type="invalid">
-              {username.message}
+              { username.message }
             </Form.Control.Feedback>
           </Form.Group>
           <Form.Group>
@@ -196,7 +219,9 @@ class Register extends Component {
               {confirmPassword.message}
             </Form.Control.Feedback>
           </Form.Group>
-          <Button className="registerButton" type="submit" variant="primary">Register</Button>
+          <Button type="submit" variant="primary" disabled={this.state.isLoading}>
+            {this.state.isLoading ? this.props.info.general.loading : this.props.info.register.register}
+          </Button>
         </Form>
       </div>)
   }

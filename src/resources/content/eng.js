@@ -41,7 +41,6 @@ function getLanguage() {
             username: "Username",
             password: "Password",
             profile: "Your profile",
-            loading: "Loading...",
             swe: "SWE",
             eng: "ENG",
 
@@ -67,6 +66,9 @@ function getLanguage() {
             },
             notUnicode: {
                 message: "Please only use Unicode characters"
+            },
+            duplicateUsername: {
+                message: "This username already exists, try another username"
             }
         },
         listApplications: {
@@ -152,7 +154,10 @@ function getLanguage() {
                 status2: "Rejected",
                 statuselse: "Status Loading/Error"
             }
-        ]
+        ],
+        general:{
+            loading: "Loading...",
+        }
     }
     return lang;
 }

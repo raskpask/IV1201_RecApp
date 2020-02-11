@@ -47,6 +47,7 @@ class Header extends Component {
             }
 
         } catch (error) {
+            //The error can not be identified, so we will expect it to be a LOGIN_ERROR error
             this.setState({
                 form:{
                     invalidLogin:true,
@@ -130,7 +131,7 @@ class Header extends Component {
                         onChange={event => this.setState({ password: event.target.value })}
                         className=" mr-sm-2" />
                     <Button onClick={() => this.login()} variant="primary" disabled={this.state.form.isLoading}>
-                        {this.state.form.isLoading ? this.props.info.header.loading : this.props.info.header.login}
+                        {this.state.form.isLoading ? this.props.info.general.loading : this.props.info.header.login}
                     </Button>
                     
                 </Form>

@@ -41,7 +41,6 @@ function getLanguage() {
             username: "Användarnamn",
             password: "Lösenord",
             profile: "Min profil",
-            loading: "Laddar...",
             swe: "SWE",
             eng: "ENG",
 
@@ -152,7 +151,10 @@ function getLanguage() {
                 status2: "Avböjd",
                 statuselse: "Status Laddar/Fel"
             }
-        ]
+        ],
+        general:{
+            loading: "Laddar...",
+        }
     }
     return lang;
 }
