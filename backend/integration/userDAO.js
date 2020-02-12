@@ -140,16 +140,19 @@ function checkIfUsernameIsAvailable(username) {
             values: [username]
         }
         client.query(getUserQuery, (err, res) => {
-            if (notVaildResponse(res)) {
-                if (res.rows[0] == null) {
-                    client.end()
-                    resolve("Username not taken");
-                } else {
-                    resolve("Username taken");
-                }
+            if (err) {
+                reject(new Error(dbError.errorCodes.UNKNOWN_ERROR.code))
             }
-            client.end()
-            reject(new Error(dbError.errorCodes.UNKNOWN_ERROR.code))
+            if (notVaildResponse(res)) {
+                client.end()
+                reject(new Error(dbError.errorCodes.UNKNOWN_ERROR.code))
+            }
+            if (res.rows[0] == undefined) {
+                client.end()
+                resolve("Username not taken");
+            } else {
+                resolve("Username taken");
+            }
         });
     });
 }
