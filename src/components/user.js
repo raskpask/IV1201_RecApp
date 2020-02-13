@@ -4,6 +4,7 @@ import { Form, Card, ListGroup, Button } from 'react-bootstrap';
 
 import axios from 'axios';
 import Application from './fragments/application';
+import Access from './fragments/access';
 
 import '../resources/css/register.css';
 import '../resources/css/user.css';
@@ -176,6 +177,7 @@ class User extends Component {
     render() {
         return (
             <div>
+                <Access access='2' info={this.props.info.access}/>
                 {this.state.typeOfUser}
             </div >
         );

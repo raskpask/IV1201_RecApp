@@ -31,6 +31,7 @@ class Header extends Component {
             }
             const responseLogin = await axios.post('/api/authentication', credentials)
             if (responseLogin.status === 200) {
+                window.location.href = "/";
                 await axios.get('/api/user');
                 this.forceUpdate()
             }
@@ -52,7 +53,6 @@ class Header extends Component {
         if(Boolean(privilegeLevel)){
             privilegeLevel = privilegeLevel.split(';')[0];
         }
-        console.log(privilegeLevel)
         if (privilegeLevel === '1') {
             return this.renderBrandLoginRecruiter()
         } else if (privilegeLevel === '2') {
@@ -71,7 +71,7 @@ class Header extends Component {
         return (
             <React.Fragment>
                 <Nav className="mr-auto">
-                    <Nav.Link href="/home">{this.props.info.header.home}</Nav.Link>
+                    <Nav.Link href="/">{this.props.info.header.home}</Nav.Link>
                     <Nav.Link href="/register">{this.props.info.header.register}</Nav.Link>
                 </Nav>
             </React.Fragment>
@@ -81,7 +81,7 @@ class Header extends Component {
         return (
             <React.Fragment>
                 <Nav className="mr-auto">
-                    <Nav.Link href="/home">{this.props.info.header.home}</Nav.Link>
+                    <Nav.Link href="/">{this.props.info.header.home}</Nav.Link>
                     <Nav.Link href="/apply">{this.props.info.header.apply}</Nav.Link>
                 </Nav>
             </React.Fragment>
@@ -91,7 +91,7 @@ class Header extends Component {
         return (
             <React.Fragment>
                 <Nav className="mr-auto">
-                    <Nav.Link href="/home">{this.props.info.header.home}</Nav.Link>
+                    <Nav.Link href="/">{this.props.info.header.home}</Nav.Link>
                     <Nav.Link href="/listApplications">{this.props.info.header.applications}</Nav.Link>
                 </Nav>
             </React.Fragment>

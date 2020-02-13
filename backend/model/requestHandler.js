@@ -2,6 +2,8 @@ const User = require('./user');
 const Application = require('./application');
 const userDAO = require('../integration/userDAO');
 const validation = require('./requestValidation');
+const dbError = require('../error/dbErrors');
+
 function extractCredentials(req) {
     const body = req.body;
     const credentials = {
@@ -22,6 +24,9 @@ function extractToken(req) {
     cookieHeader = req.headers.cookie;
     if (!cookieHeader) {
         return null
+    }
+    if(cookieHeader.split('authToken=')[1].length <1){
+        throw new Error(dbError.errorCodes.NO_ACCESS_ERROR.code)
     }
     const token = cookieHeader.split('authToken=')[1].split(';')[0];
     // console.log(token)

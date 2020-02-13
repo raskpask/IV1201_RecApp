@@ -34,7 +34,7 @@ async function getApplication(req) {
         const application = await requestHandler.extractApplication(req)
         let privilegeLevel = await userDAO.getPrivilegeLevel(token);
         if (privilegeLevel == "no access") {
-            throw new Error(dbError.errorCodes.NO_ACCESS_ERORR);
+            throw new Error(dbError.errorCodes.NO_ACCESS_ERROR);
         }
         return await userDAO.getApplication(privilegeLevel, token, application);
     } catch (error) {
@@ -51,7 +51,7 @@ async function updateApplicationStatus(req) {
     const token = requestHandler.extractToken(req)
         let privilegeLevel = await userDAO.getPrivilegeLevel(token);
         if (privilegeLevel == "no access" || privilegeLevel.role_id > 1) {
-            throw new Error(dbError.errorCodes.NO_ACCESS_ERORR);
+            throw new Error(dbError.errorCodes.NO_ACCESS_ERROR.code);
         }
     return await userDAO.updateApplicationStatus(req.body.status,req.body.id);
 }

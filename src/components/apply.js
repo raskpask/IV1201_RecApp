@@ -3,6 +3,8 @@ import { Dropdown, InputGroup, DropdownButton, FormControl, Button, Table, Col, 
 import { DateRangePicker } from 'react-dates';
 import Moment from 'moment';
 
+import Access from './fragments/access';
+
 import axios from 'axios';
 
 import '../resources/css/register.css';
@@ -217,6 +219,7 @@ class Apply extends Component {
     render() {
         return (
             <div>
+                <Access access='2' info={this.props.info.access}/>
                 {this.state.submitted ? this.renderFullOkPage() : this.renderFullApplyPage()}
             </div >
         );
