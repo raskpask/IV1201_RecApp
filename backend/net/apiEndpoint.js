@@ -127,7 +127,6 @@ function router(router) {
 
     router.get('/api/competence', async (req, res) => {
         try {
-            res.cookie('authToken', controller.getToken(req), { expires: new Date(Date.now() + 1800000) });
             res.send(JSON.stringify(await controller.getCompetence(req)));
         } catch (error) {
             dbErrors.respondError(error.message, res)
