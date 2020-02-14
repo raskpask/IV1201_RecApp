@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "1127d2b9-9e95-43cc-bd75-d88365bf5733",
+		"_postman_id": "906b0e34-ab98-4ef2-8de1-745a92ac51f1",
 		"name": "IV1201_API_test",
 		"description": "Testing the API created for the application built in the course IV1201 at KTH",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -37,11 +37,10 @@
 					"raw": "{\n\t\"username\": \"raskpask\",\n\t\"password\": \"abc123\"\n}"
 				},
 				"url": {
-					"raw": "localhost:8080/api/authentication",
+					"raw": "{{url}}/api/authentication",
 					"host": [
-						"localhost"
+						"{{url}}"
 					],
-					"port": "8080",
 					"path": [
 						"api",
 						"authentication"
@@ -71,11 +70,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/api/user",
+					"raw": "{{url}}/api/user",
 					"host": [
-						"localhost"
+						"{{url}}"
 					],
-					"port": "8080",
 					"path": [
 						"api",
 						"user"
@@ -94,6 +92,9 @@
 						"exec": [
 							"pm.test(\"Status code is 401\", function () {",
 							"    pm.response.to.have.status(401);",
+							"});",
+							"pm.test(\"Body contains error string\", function () {",
+							"    pm.expect(pm.response.text()).to.include('LOGIN_ERROR');",
 							"});"
 						],
 						"type": "text/javascript"
@@ -115,11 +116,10 @@
 					"raw": "{\n\t\"username\": \"\",\n\t\"password\": \"\"\n}"
 				},
 				"url": {
-					"raw": "localhost:8080/api/authentication",
+					"raw": "{{url}}/api/authentication",
 					"host": [
-						"localhost"
+						"{{url}}"
 					],
-					"port": "8080",
 					"path": [
 						"api",
 						"authentication"
@@ -149,11 +149,10 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/api/authentication",
+					"raw": "{{url}}/api/authentication",
 					"host": [
-						"localhost"
+						"{{url}}"
 					],
-					"port": "8080",
 					"path": [
 						"api",
 						"authentication"
@@ -183,11 +182,10 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/api/authentication",
+					"raw": "{{url}}/api/authentication",
 					"host": [
-						"localhost"
+						"{{url}}"
 					],
-					"port": "8080",
 					"path": [
 						"api",
 						"authentication"
@@ -205,8 +203,8 @@
 					"script": {
 						"id": "96084cdf-18e6-4df9-a691-da8d267b08ad",
 						"exec": [
-							"pm.test(\"Body contains user string\", function () {",
-							"    pm.expect(pm.response.text()).to.include('Bad Request');",
+							"pm.test(\"Body contains error string\", function () {",
+							"    pm.expect(pm.response.text()).to.include('NO_USER_ERROR');",
 							"});",
 							"pm.test(\"Status code is 400\", function () {",
 							"    pm.response.to.have.status(400);",
@@ -220,11 +218,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/api/user",
+					"raw": "{{url}}/api/user",
 					"host": [
-						"localhost"
+						"{{url}}"
 					],
-					"port": "8080",
 					"path": [
 						"api",
 						"user"
@@ -268,11 +265,10 @@
 					"raw": "{\n\t\"username\": \"raskpask\"\n}"
 				},
 				"url": {
-					"raw": "localhost:8080/api/username",
+					"raw": "{{url}}/api/username",
 					"host": [
-						"localhost"
+						"{{url}}"
 					],
-					"port": "8080",
 					"path": [
 						"api",
 						"username"
@@ -292,7 +288,7 @@
 						"exec": [
 							"",
 							"pm.test(\"Body contains competences'\", function () {",
-							"    pm.expect(pm.response.text()).to.include('[\"1\",\"Korvgrillning\",\"2\",\"Karuselldrift\",');",
+							"    pm.expect(pm.response.text()).to.include('\"competence_id\":\"1\",\"name\":\"Korvgrillning\",\"language\":\"sv-se\"');",
 							"});"
 						],
 						"type": "text/javascript"
@@ -317,12 +313,9 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "https://iv1201-rec-app.herokuapp.com/api/competence",
-					"protocol": "https",
+					"raw": "{{url}}/api/competence",
 					"host": [
-						"iv1201-rec-app",
-						"herokuapp",
-						"com"
+						"{{url}}"
 					],
 					"path": [
 						"api",
@@ -368,11 +361,10 @@
 					"raw": "{\n\t\"username\": \"1 OR 1=1\"\n}"
 				},
 				"url": {
-					"raw": "localhost:8080/api/username",
+					"raw": "{{url}}/api/username",
 					"host": [
-						"localhost"
+						"{{url}}"
 					],
-					"port": "8080",
 					"path": [
 						"api",
 						"username"
@@ -416,12 +408,9 @@
 					"raw": "{\n\t\"username\": \"jhgfdghjkljhgfdrtgyuhjkiuhtygfrdtgyuhjihygtfrdftgyuh\"\n}"
 				},
 				"url": {
-					"raw": "https://iv1201-rec-app.herokuapp.com/api/username",
-					"protocol": "https",
+					"raw": "{{url}}/api/username",
 					"host": [
-						"iv1201-rec-app",
-						"herokuapp",
-						"com"
+						"{{url}}"
 					],
 					"path": [
 						"api",
@@ -432,5 +421,6 @@
 			},
 			"response": []
 		}
-	]
+	],
+	"protocolProfileBehavior": {}
 }
