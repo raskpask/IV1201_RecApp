@@ -107,7 +107,6 @@ function router(router) {
             res.send("Application was created");
         } catch (error) {
             dbErrors.respondError(error.message, res)
-
         }
     });
 
@@ -119,10 +118,7 @@ function router(router) {
             }
         } catch (error) {
             dbErrors.respondError(error.message, res)
-            console.error(error);
-            res.status(500);
         }
-        res.send();
     });
 
     router.get('/api/competence', async (req, res) => {

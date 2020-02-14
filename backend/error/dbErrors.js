@@ -76,6 +76,11 @@ errorCodes = {
         code: 'NO_TOKEN_ERROR',
         message: 'Could not find token'
     },
+    APPLICATION_EDITED_ERROR: {
+        code: 'APPLICATION_EDITED_ERROR',
+        message: 'The application was updated after the user checked the status'
+    },
+    
 }
 function respondError(error, res) {
     console.error(error)
@@ -147,6 +152,10 @@ function respondError(error, res) {
         case errorCodes.NO_TOKEN_ERROR.code:
             res.status(400);
             res.send(errorCodes.NO_TOKEN_ERROR.code);
+            break;
+        case errorCodes.APPLICATION_EDITED_ERROR.code:
+            res.status(400);
+            res.send(errorCodes.APPLICATION_EDITED_ERROR.code);
             break;
         default:
             res.status(500);

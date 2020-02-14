@@ -21,7 +21,9 @@ class Header extends Component {
         const cookies = new Cookies();
         cookies.set('lang', lang, { path: '/' });
         console.log(cookies.get('lang'));
-        this.props.app.forceUpdate()
+        // this.props.app.forceUpdate()
+        this.props.app.updateLanguage(lang)
+        window.location.href = "/";
     }
     login = async () => {
         try {
@@ -33,7 +35,7 @@ class Header extends Component {
             if (responseLogin.status === 200) {
                 window.location.href = "/";
                 await axios.get('/api/user');
-                this.forceUpdate()
+                // this.forceUpdate()
             }
 
         } catch (error) {
@@ -44,7 +46,7 @@ class Header extends Component {
         const response = await axios.delete('/api/authentication')
         if (response.status === 200) {
             window.location.href = "/";
-            this.forceUpdate()
+            // this.forceUpdate()
         }
     }
     chooseUserLevel(){

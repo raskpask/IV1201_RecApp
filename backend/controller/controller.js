@@ -58,7 +58,7 @@ async function updateApplicationStatus(req) {
     if (privilegeLevel == "no access" || privilegeLevel.role_id > 1) {
         throw new Error(dbError.errorCodes.NO_ACCESS_ERROR.code);
     }
-    return await userDAO.updateApplicationStatus(req.body.status, req.body.id);
+    return await userDAO.updateApplicationStatus(req.body.status, req.body.id, req.body.lastEdited);
 }
 async function getCompetence(req) {
     return await userDAO.getCompetence();
