@@ -338,7 +338,7 @@ function updateApplicationStatus(status, applicationID) {
         });
     });
 }
-function getCompetence(token) {
+function getCompetence() {
     return new Promise(function (resolve, reject) {
         client = connect();
         const getCompetenceQuery = {
