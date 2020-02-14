@@ -66,6 +66,12 @@ function getLanguage() {
             },
             notUnicode: {
                 message: "Använda endast Unicode tecken"
+            },
+            duplicateUsername: {
+                message: "Användarnamnet existerar redan, testa ett annat användarnamn"
+            },
+            notNumber:{
+                message: "Du måste specificera ett giltigt nummer"
             }
         },
         listApplications: {

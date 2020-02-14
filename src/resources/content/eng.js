@@ -69,6 +69,9 @@ function getLanguage() {
             },
             duplicateUsername: {
                 message: "This username already exists, try another username"
+            },
+            notNumber:{
+                message: "You must specify a  valid number"
             }
         },
         listApplications: {

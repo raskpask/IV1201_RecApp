@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import axios from 'axios';
 
+import Spinner from 'react-bootstrap/Spinner'
 import { validator } from '../model/formValidation';
 import '../resources/css/register.css';
 
@@ -21,15 +24,33 @@ class Register extends Component {
         validated: false
       },
       isLoading:false,
+      usernameValidationLoading: false,
+      usernameValidationWaitingTime: 3,
+      usernmaeValidationStartTime:0,
       submitted: false,
 
     }
   }
+  //////////API CALL CODE///////////////
+  checkUsername = async (usernameValue) =>{
+    try{
+      const name = { username:usernameValue };
+      const response = await axios.get('/api/username', name);
+      console.log(name);
+      console.log("RESPONSE: "+ response.data);
+    }catch(error){
+      console.log("ERROR: "+error);
+    }
+  }
+  ///////////////////////////////////
   //Used for checking validation after a onChange event
   checkValidation = (type, state) => {
-
-
     const validState = validator(type, state.user, this.props.info.validationError);
+    /*
+    if(type === "username"){
+      this.checkUsername(validState.username.value);
+    }
+    */
     this.setState({
       ...this.state,
       user: {
@@ -71,7 +92,6 @@ class Register extends Component {
     this.setState(state);
     this.checkValidation(e.target.name, state);
   }
-
   //Function that registers the user(calls API)
   registerUser = async () => {
     this.setState({
@@ -88,7 +108,6 @@ class Register extends Component {
     }
     try {
       const response = await axios.post('/api/user', user);
-
       if (response.status === 200) {
         this.setState({ submitted: true });
       }
@@ -180,6 +199,8 @@ class Register extends Component {
           </Form.Group>
           <Form.Group>
             <Form.Label>{this.props.info.register.username.name}</Form.Label>
+            <Row>
+            <Col>
             <Form.Control
               value={username.value}
               onChange={this.onChange}
@@ -187,10 +208,23 @@ class Register extends Component {
               name="username"
               isInvalid={username.isInvalid }
               isValid={ username.isValid }
-              placeholder={this.props.info.register.username.placeholder} />
+              placeholder={this.props.info.register.username.placeholder}/>
             <Form.Control.Feedback type="invalid">
               { username.message }
             </Form.Control.Feedback>
+            </Col>
+            {
+            //this is for displaying the loading circle when username validation is loading 
+            this.state.usernameValidationLoading ? 
+            <Col md="auto" className="spinner">
+            <Spinner animation="border" role="status" size="sm">
+                <span className="sr-only">Loading...</span>
+            </Spinner>
+            </Col>:
+            null
+            }
+
+            </Row>
           </Form.Group>
           <Form.Group>
             <Form.Label>{this.props.info.register.password.name}</Form.Label>

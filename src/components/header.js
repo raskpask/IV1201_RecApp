@@ -39,6 +39,7 @@ class Header extends Component {
                 username: this.state.username,
                 password: this.state.password
             }
+
             const responseLogin = await axios.post('/api/authentication', credentials)
             if (responseLogin.status === 200) {
                 window.location.href = "/";
