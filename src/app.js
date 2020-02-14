@@ -26,8 +26,10 @@ class App extends Component {
         }
     }
     componentDidMount(){
-        const lang = document.cookie.split('lang=')[1].split(';')[0]
-        this.updateLanguage(lang);
+        if(document.cookie.split('lang=').length > 1){
+            const lang = document.cookie.split('lang=')[1].split(';')[0]
+            this.updateLanguage(lang);
+        }
     }
     updateLanguage(lang) {
         if (lang === 'swe') {
