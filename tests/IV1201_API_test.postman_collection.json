@@ -185,8 +185,8 @@
 					"script": {
 						"id": "79843eb8-b6a0-437f-9650-2667e204d5f6",
 						"exec": [
-							"pm.test(\"Status code is 500\", function () {",
-							"    pm.response.to.have.status(500);",
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
 							"});"
 						],
 						"type": "text/javascript"
@@ -219,7 +219,7 @@
 						"id": "96084cdf-18e6-4df9-a691-da8d267b08ad",
 						"exec": [
 							"pm.test(\"Body contains error string\", function () {",
-							"    pm.expect(pm.response.text()).to.include('NO_USER_ERROR');",
+							"    pm.expect(pm.response.text()).to.include('NO_TOKEN_ERROR');",
 							"});",
 							"pm.test(\"Status code is 400\", function () {",
 							"    pm.response.to.have.status(400);",
