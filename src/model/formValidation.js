@@ -1,5 +1,3 @@
-//Shit to do:
-
 const validator = (changedValueName,userState,errorMessages) => {
   //changedValueName will be "null" if it is a form submittion that is being validated
   let isFormSubmit = false;
@@ -32,8 +30,8 @@ const validator = (changedValueName,userState,errorMessages) => {
   password = checkPassword(password, isFormSubmit, errorMessages);
   confirmPassword = checkConfirmPassword(confirmPassword, password, isFormSubmit, errorMessages);
 
-  if(isFormSubmit && (username.isValid && password.isValid && confirmPassword.isValid
-    && email.isValid)) isGood = true;
+  if(isFormSubmit && (firstName.isValid && lastName.isValid && email.isValid && 
+    date.isValid && username.isValid && password.isValid && confirmPassword.isValid)) isGood = true;
   userState = {
     ...userState,
     firstName,
@@ -107,6 +105,8 @@ const checkUsername = (username, isFormSubmit, errorMessages) =>{
     username = setInvalid(username, errorMessages.toLongField.message.replace("FIELD", username.name).replace("MAXNUM", usernameMaxLength));
   }else if(!isAlphaNumerical(username.value)){
     username = setInvalid(username, errorMessages.invalidCharacters.message.replace("FIELD", username.name));
+  }else if(username.alreadyTakenUsernames.includes(username.value)){
+    username = setInvalid(username, errorMessages.duplicateUsername.message);
   }
   else{
     username = setValid(username, "")

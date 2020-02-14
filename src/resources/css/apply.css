@@ -1,7 +1,6 @@
 .addForm{
     padding: 5vw;
 }
-
 .paddingRight{
     padding-right: 1vw;
 }
@@ -23,4 +22,8 @@
     margin: 5vw 1vw 5vw 2vw;
     /* padding-left: 5vw; */
     /* width: 50%; */
+}
+.competenceTypeButton{
+    border: 5px solid red;
+    border-radius: 10px;
 }
