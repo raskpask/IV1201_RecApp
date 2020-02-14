@@ -68,12 +68,12 @@ function router(router) {
 
     router.delete('/api/authentication', async (req, res) => {
         try {
-            const cookie = req.headers.cookie;
-            if(cookie === undefined){
-                res.sendStatus(500)
-            } else if (cookie.split('authToken=').length < 2){
-                res.sendStatus(500)
-            }
+            // const cookie = req.headers.cookie;
+            // if(cookie === undefined){
+            //     res.sendStatus(500)
+            // } else if (cookie.split('authToken=').length < 2){
+            //     res.sendStatus(500)
+            // }
             await controller.deAuthenticateUser(req);
             res.clearCookie('authToken');
             res.clearCookie('privilegeLevel')

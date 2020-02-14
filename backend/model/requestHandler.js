@@ -12,6 +12,7 @@ function extractCredentials(req) {
     }
     return credentials
 }
+
 function extractUsername(req) {
     return req.body.username;
 }
@@ -23,25 +24,29 @@ function extractUser(req) {
 function extractToken(req) {
     cookieHeader = req.headers.cookie;
     if (cookieHeader === undefined) {
-        return null
+        throw new Error(dbError.errorCodes.NO_TOKEN_ERROR.code)
     }
-    const reqToken = cookieHeader.split('authToken=')[1];
-    if(reqToken === undefined){
-        return null
+    const authToken = cookieHeader.split('authToken=');
+    const privToken = cookieHeader.split('privilegeLevel=');
+    if (authToken === undefined || privToken === undefined) {
+        throw new Error(dbError.errorCodes.NO_TOKEN_ERROR.code)
+    } else if (authToken.length < 2 || privToken.length < 2) {
+        throw new Error(dbError.errorCodes.NO_TOKEN_ERROR.code)
+
+    } else if (privToken.length < 2) {
+        throw new Error(dbError.errorCodes.NO_TOKEN_ERROR.code)
     }
-    if(reqToken.length <1){
-        throw new Error(dbError.errorCodes.NO_ACCESS_ERROR.code)
-    }
-    const token = reqToken.split(';')[0];
+    const token = authToken[1].split(';')[0];
+
     // console.log(token)
     return token ? token : null;
 
 }
-async function extractCreateApplication(req){
+async function extractCreateApplication(req) {
     //insert vaildation here
     const competenceList = req.body.competence;
     const availability = req.body.availability;
-    return new Application(availability, null , competenceList, null)
+    return new Application(availability, null, competenceList, null)
 }
 async function extractApplication(req) {
     let availability = '';
