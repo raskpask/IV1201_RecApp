@@ -61,8 +61,7 @@ async function updateApplicationStatus(req) {
     return await userDAO.updateApplicationStatus(req.body.status, req.body.id);
 }
 async function getCompetence(req) {
-    const token = requestHandler.extractToken(req)
-    return await userDAO.getCompetence(token);
+    return await userDAO.getCompetence();
 }
 function getToken(req) {
     return requestHandler.extractToken(req);
