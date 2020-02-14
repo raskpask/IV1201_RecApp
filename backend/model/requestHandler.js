@@ -22,13 +22,17 @@ function extractUser(req) {
 }
 function extractToken(req) {
     cookieHeader = req.headers.cookie;
-    if (!cookieHeader) {
+    if (cookieHeader === undefined) {
         return null
     }
-    if(cookieHeader.split('authToken=')[1].length <1){
+    const reqToken = cookieHeader.split('authToken=')[1];
+    if(reqToken === undefined){
+        return null
+    }
+    if(reqToken.length <1){
         throw new Error(dbError.errorCodes.NO_ACCESS_ERROR.code)
     }
-    const token = cookieHeader.split('authToken=')[1].split(';')[0];
+    const token = reqToken.split(';')[0];
     // console.log(token)
     return token ? token : null;
 
