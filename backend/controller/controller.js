@@ -12,7 +12,8 @@ async function authenticateUser(req) {
     const credentials = requestHandler.extractCredentials(req);
     const token = authToken.generate();
     await userDAO.authenticateUser(credentials);
-    return await userDAO.changeAuthToken(credentials, token);
+    await userDAO.changeAuthToken(credentials, token);
+    return await userDAO.getUser(token);
 }
 async function deAuthenticateUser(req) {
     const token = requestHandler.extractToken(req);

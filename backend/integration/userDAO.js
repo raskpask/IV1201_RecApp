@@ -141,7 +141,8 @@ function checkIfUsernameIsAvailable(username) {
         }
         client.query(getUserQuery, (err, res) => {
             if (err) {
-                reject(new Error(dbError.errorCodes.UNKNOWN_ERROR.code))
+                reject(new Error(dbError.errorCodes.UNKNOWN_ERROR.code));
+                return;
             }
             if (notVaildResponse(res)) {
                 client.end()
@@ -168,11 +169,11 @@ function getUser(token) {
                 client.end();
                 reject(new Error(dbError.errorCodes.GET_USER_ERROR.code));
             }
-            if (res.rows[0] != null) {
+            if (res.rows != undefined) {
                 const rawUser = res.rows[0].person.split('(')[1].split(',');
                 // console.log("token: "+token)
                 client.end()
-                resolve(new User(rawUser[7], rawUser[5], rawUser[4], rawUser[3], rawUser[1], rawUser[2], rawUser[0], rawUser[6]));
+                resolve(new User(rawUser[7], rawUser[5], rawUser[4], rawUser[3], rawUser[1], rawUser[2], rawUser[0], rawUser[6],token));
             }
             client.end()
             reject(new Error(dbError.errorCodes.NO_USER_ERROR.code))
