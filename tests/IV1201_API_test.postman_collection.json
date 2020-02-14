@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "906b0e34-ab98-4ef2-8de1-745a92ac51f1",
+		"_postman_id": "5478081f-d6fe-4b0d-a959-1e3d1810de66",
 		"name": "IV1201_API_test",
 		"description": "Testing the API created for the application built in the course IV1201 at KTH",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -14,8 +14,16 @@
 					"script": {
 						"id": "817dcda5-af9a-4a2d-8d1c-7a6867279196",
 						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
+							"pm.test(\"Status code is 200\", function() {",
 							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response contains authToken cookie\", function() {",
+							"    pm.expect(pm.cookies.has('authToken')).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"Response contains privilegeLevel cookie\", function() {",
+							"    pm.expect(pm.cookies.has('privilegeLevel')).to.be.true;",
 							"});"
 						],
 						"type": "text/javascript"
@@ -66,9 +74,16 @@
 					}
 				}
 			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
 				"method": "GET",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "{{url}}/api/user",
 					"host": [
