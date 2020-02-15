@@ -72,6 +72,9 @@ function getLanguage() {
             },
             notNumber:{
                 message: "You must specify a  valid number"
+            },
+            competenceTypeNotChoosen:{
+                message: "Pleace choose a compitence from the list"
             }
         },
         listApplications: {

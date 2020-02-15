@@ -21,10 +21,7 @@ class Apply extends Component {
             addedCompetences: [],
             competences: [],
             competence:{
-                competenceID: "",
-                competenceType: "",
-                competenceTypeChosen:false,
-                triedToAddCompetence:false,
+                competenceType: { value: "", competenceID: "", isInvalid:false, message:"", valueHasChanged:false },
                 numberOfYears: { value: "", isValid: false, isInvalid:false, message:"", valueHasChanged:false },
             },
             user: {
@@ -42,12 +39,20 @@ class Apply extends Component {
             submitted: ""
         }
     }
+    resetCompitences = () =>{
+        this.setState({
+            competence:{
+                competenceType: { value: this.props.info.apply.buttonDefaultValue, competenceID: "", isInvalid:false, message:"", valueHasChanged:false },
+                numberOfYears: { value: "", isValid: false, isInvalid:false, message:"", valueHasChanged:false },
+            }
+        })
+    }
     //Years Of Experience OnChange
     yoeOnChange = (value) =>{
         let state ={...this.state, competence:
             {...this.state.competence,numberOfYears:
                 {...this.state.competence.numberOfYears,"value": value}}};
-        state = validateCompitence(state, this.props.info.validationError);
+        state = validateCompitence("yoe",state, this.props.info.validationError);
         this.setState(state);        
     }
     //Competence Type OnChange
@@ -55,19 +60,37 @@ class Apply extends Component {
         this.setState({
             competence:{ 
                 ...this.state.competence,
-                competenceType: event.target.name,
-                competenceTypeChosen: true,
-                competenceID: event.target.id,
+                competenceType: {
+                    ...this.state.competence.competenceType,
+                    value: event.target.name,
+                    valueHasChanged: true,
+                    isInvalid: false,
+                    competenceID: event.target.id,
+                }
                 }
         });
     }
     componentDidMount = async () => {
         const competences = await (await axios.get('/api/competence')).data;
-        console.log(competences);
         this.setState({ competences: competences, competence:{ 
             ...this.state.competence,
-            competenceType : this.props.info.apply.buttonDefaultValue 
+            competenceType : {
+                ...this.state.competence.competenceType,
+                value: this.props.info.apply.buttonDefaultValue
+            } 
         }})
+    }
+    errorTag(message){
+        return(
+            <div className = 'errorMessage'>{message}</div>
+        )
+    }
+    renderErrorMessage (trigger, message){
+        return(
+            <Fragment>
+                {trigger ? this.errorTag(message): null}
+            </Fragment>
+        )
     }
     renderNumbers() {
         return (
@@ -87,21 +110,25 @@ class Apply extends Component {
         )
     }
     addCompetence() {
-        if(!this.state.competence.numberOfYears.isValid){
-            this.yoeOnChange(this.state.competence.numberOfYears.value);
-        }else if(!this.state.competence.competenceTypeChosen){
-            this.setState({
-                ...this.state,
-                competence:{
-                ...this.state.competence,
-                triedToAddCompetence: true,
-            }});
-        }else{
-            const newCompetence = { competenceName: this.state.competence.competenceType, competenceID: this.state.competence.competenceID, numberOfYears: this.state.competence.numberOfYears.value };
+        //We sett the "type" parameter(first parameter of validateCompitence) to "null" to indicate that we want to
+        //validate both YOE(years of experience) and the competenceType
+        const newState =validateCompitence(null,this.state, this.props.info.validationError)
+        this.setState(newState);
+        if(!newState.competence.competenceType.isInvalid && !newState.competence.numberOfYears.isInvalid){
+            const newCompetence = { competenceName: this.state.competence.competenceType.value, competenceID: this.state.competence.competenceType.competenceID, numberOfYears: this.state.competence.numberOfYears.value };
             let list = this.state.addedCompetences;
             list.push(newCompetence);
             this.setState({ addedCompetences: list });
+            //we remove the compitenceType that was added
+            delete this.state.competences[newCompetence.competenceID];
+            this.resetCompitences();
         }
+        /*
+        0:
+            competenceName: "Korvgrillning"
+            competenceID: "0"
+            numberOfYears: "1"
+        */
     }
     
     addAvailability() {
@@ -136,7 +163,7 @@ class Apply extends Component {
             <Fragment>
                 <InputGroup className="mb-3 addForm">
                     <div className="paddingRight">
-                    <DropdownButton className={(!this.state.competence.competenceTypeChosen&&this.state.competence.triedToAddCompetence) ? "competenceTypeButton": ""} variant= "primary" title={this.props.info.apply.buttonCompetences + " " + this.state.competence.competenceType}
+                    <DropdownButton variant= "primary" title={this.props.info.apply.buttonCompetences + " " + this.state.competence.competenceType.value}
                     >
                         {this.state.competences.map((competence, key) =>
                             <Dropdown.Item key={key} id={key} name={competence.name}
@@ -145,6 +172,7 @@ class Apply extends Component {
                             </Dropdown.Item>
                         )}
                     </DropdownButton>
+                    {this.renderErrorMessage(this.state.competence.competenceType.isInvalid ,this.state.competence.competenceType.message)}
                     </div>
                     <DropdownButton variant="primary" title={this.props.info.apply.textYearsOfExperience}
                         onClick={event => this.yoeOnChange(event.target.id)}>
@@ -157,9 +185,7 @@ class Apply extends Component {
                             isValid = {this.state.competence.numberOfYears.isValid}
                             onChange={event => this.yoeOnChange(event.target.value)}
                         />
-                        <FormControl.Feedback type="invalid">
-                            {this.state.competence.numberOfYears.message}
-                        </FormControl.Feedback>
+                        {this.renderErrorMessage(this.state.competence.numberOfYears.isInvalid ,this.state.competence.numberOfYears.message)}
                     </div>
                     <div>
                     <Button variant="primary"

@@ -72,6 +72,9 @@ function getLanguage() {
             },
             notNumber:{
                 message: "Du måste specificera ett giltigt nummer"
+            },
+            competenceTypeNotChoosen:{
+                message: "Välj en kompetens från listan"
             }
         },
         listApplications: {

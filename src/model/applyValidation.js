@@ -1,4 +1,23 @@
-const validateCompitence = (newState,errorMessages) =>{
+const validateCompitence = (type,newState,errorMessages) =>{
+    if(type === "yoe"){
+        return competenceYOEValidation(newState,errorMessages);
+    }else if(type ==="competenceType"){
+        return competenceTypeValidation(newState,errorMessages);
+    }else{
+        const yoeState = competenceYOEValidation(newState,errorMessages);
+        const competenceTypeState = competenceTypeValidation(newState,errorMessages);
+        return{
+            ...newState, 
+            competence:{
+                competenceType:{...competenceTypeState.competence.competenceType},
+                numberOfYears:{...yoeState.competence.numberOfYears},
+            }
+        }
+    }
+
+    
+}
+const competenceYOEValidation = (newState, errorMessages) =>{
     const yoe = newState.competence.numberOfYears;
     if(yoe.value === ""){
         setInvalid(yoe, errorMessages.emptyField.message)
@@ -8,6 +27,15 @@ const validateCompitence = (newState,errorMessages) =>{
     else{
         setValid(yoe,"");
     }
+
+    return newState;
+}
+const competenceTypeValidation = (newState, errorMessages) =>{
+    const competenceType = newState.competence.competenceType;
+    if(!competenceType.valueHasChanged){
+        competenceType.message = errorMessages.competenceTypeNotChoosen.message;
+        competenceType.isInvalid = true;
+       };
     return newState;
 }
 const setInvalid = (value, message) =>{
@@ -24,4 +52,5 @@ const setInvalid = (value, message) =>{
   }
 export {
     validateCompitence,
+    
 }

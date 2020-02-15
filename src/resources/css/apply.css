@@ -27,3 +27,8 @@
     border: 5px solid red;
     border-radius: 10px;
 }
+.errorMessage{
+    color: #D8000C;
+    background-color: #FFD2D2;
+    margin-top: 0.6vw;
+}
