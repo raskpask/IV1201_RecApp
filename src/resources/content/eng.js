@@ -42,7 +42,7 @@ function getLanguage() {
             password: "Password",
             profile: "Your profile",
             swe: "SWE",
-            eng: "ENG"
+            eng: "ENG",
 
         },
         validationError: {
@@ -66,6 +66,12 @@ function getLanguage() {
             },
             notUnicode: {
                 message: "Please only use Unicode characters"
+            },
+            duplicateUsername: {
+                message: "This username already exists, try another username"
+            },
+            notNumber:{
+                message: "You must specify a  valid number"
             }
         },
         listApplications: {
@@ -151,7 +157,10 @@ function getLanguage() {
                 status2: "Rejected",
                 statuselse: "Status Loading/Error"
             }
-        ]
+        ],
+        general:{
+            loading: "Loading...",
+        }
     }
     return lang;
 }

@@ -5,7 +5,7 @@ import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import 'react-toastify/dist/ReactToastify.min.css';
 import { BrowserRouter, Route } from 'react-router-dom';
-import {  ToastContainer  } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 
 import Header from './components/header';
 import Home from './components/home';
@@ -22,38 +22,42 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            eng: Eng.getLanguage(),
-            swe: Swe.getLanguage()
+            lang: Eng.getLanguage()
         }
     }
-
-    chooseLanguage() {
-        if (document.cookie.split('lang=')[1] === 'swe') {
-            return this.state.swe
-        } else {
-            return this.state.eng
+    componentDidMount(){
+        if(document.cookie.split('lang=').length > 1){
+            const lang = document.cookie.split('lang=')[1].split(';')[0]
+            this.updateLanguage(lang);
+        }
+    }
+    updateLanguage(lang) {
+        if (lang === 'swe') {
+            this.setState({ lang: Swe.getLanguage() });
+        } else if (lang === 'eng') {
+            this.setState({ lang: Eng.getLanguage() });
         }
     }
     render() {
         return (
             <div className="App" >
                 <ToastContainer />
-                <Header info={this.chooseLanguage()} app={this} />
+                <Header info={this.state.lang} app={this} />
                 <BrowserRouter>
                     <Route exact path="/"
-                        render={(props) => <Home info={this.chooseLanguage()} />}
+                        render={(props) => <Home info={this.state.lang} />}
                     />
                     <Route exact path="/listApplications"
-                        render={(props) => <ListApplications info={this.chooseLanguage()} />}
+                        render={(props) => <ListApplications info={this.state.lang} />}
                     />
                     <Route exact path="/apply"
-                        render={(props) => <Apply info={this.chooseLanguage()} />}
+                        render={(props) => <Apply info={this.state.lang} />}
                     />
                     <Route exact path="/register"
-                        render={(props) => <Register info={this.chooseLanguage()} />}
+                        render={(props) => <Register info={this.state.lang} />}
                     />
                     <Route exact path="/user"
-                        render={(props) => <User info={this.chooseLanguage()} />}
+                        render={(props) => <User info={this.state.lang} />}
                     />
                 </BrowserRouter>
             </div>

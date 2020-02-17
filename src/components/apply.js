@@ -1,7 +1,9 @@
 import React, { Component, Fragment } from 'react';
-import { Dropdown, InputGroup, DropdownButton, FormControl, Button, Table, Col, Row } from 'react-bootstrap';
+import { Dropdown, InputGroup, DropdownButton, Button, Table, Col, Row, FormControl } from 'react-bootstrap';
 import { DateRangePicker } from 'react-dates';
 import Moment from 'moment';
+import { validateCompitence } from '../model/applyValidation';
+
 
 import Access from './fragments/access';
 
@@ -16,11 +18,15 @@ class Apply extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            numberOfYears: "",
-            competence: "",
-            competenceID: "",
             addedCompetences: [],
             competences: [],
+            competence:{
+                competenceID: "",
+                competenceType: "",
+                competenceTypeChosen:false,
+                triedToAddCompetence:false,
+                numberOfYears: { value: "", isValid: false, isInvalid:false, message:"", valueHasChanged:false },
+            },
             user: {
                 username: "",
                 password: "",
@@ -36,10 +42,32 @@ class Apply extends Component {
             submitted: ""
         }
     }
+    //Years Of Experience OnChange
+    yoeOnChange = (value) =>{
+        let state ={...this.state, competence:
+            {...this.state.competence,numberOfYears:
+                {...this.state.competence.numberOfYears,"value": value}}};
+        state = validateCompitence(state, this.props.info.validationError);
+        this.setState(state);        
+    }
+    //Competence Type OnChange
+    ctOnChange = (event) =>{
+        this.setState({
+            competence:{ 
+                ...this.state.competence,
+                competenceType: event.target.name,
+                competenceTypeChosen: true,
+                competenceID: event.target.id,
+                }
+        });
+    }
     componentDidMount = async () => {
         const competences = await (await axios.get('/api/competence')).data;
-        console.log(competences);
-        this.setState({ competences: competences, competence: this.props.info.apply.buttonDefaultValue })
+
+        this.setState({ competences: competences, competence:{ 
+            ...this.state.competence,
+            competenceType : this.props.info.apply.buttonDefaultValue 
+        }})
     }
     renderNumbers() {
         return (
@@ -59,11 +87,23 @@ class Apply extends Component {
         )
     }
     addCompetence() {
-        const newCompetence = { competenceName: this.state.competence, competenceID: this.state.competenceID, numberOfYears: this.state.numberOfYears };
-        let list = this.state.addedCompetences;
-        list.push(newCompetence);
-        this.setState({ addedCompetences: list });
+        if(!this.state.competence.numberOfYears.isValid){
+            this.yoeOnChange(this.state.competence.numberOfYears.value);
+        }else if(!this.state.competence.competenceTypeChosen){
+            this.setState({
+                ...this.state,
+                competence:{
+                ...this.state.competence,
+                triedToAddCompetence: true,
+            }});
+        }else{
+            const newCompetence = { competenceName: this.state.competence.competenceType, competenceID: this.state.competence.competenceID, numberOfYears: this.state.competence.numberOfYears.value };
+            let list = this.state.addedCompetences;
+            list.push(newCompetence);
+            this.setState({ addedCompetences: list });
+        }
     }
+    
     addAvailability() {
         const newAvailability = { startDate: Moment(this.state.startDate).format('YYYY-MM-DD'), endDate: Moment(this.state.endDate).format('YYYY-MM-DD'), period: this.state.availabilityCounter };
         let list = this.state.availability;
@@ -77,9 +117,9 @@ class Apply extends Component {
                 <DateRangePicker
                     displayFormat={() => "DD/MM/YYYY"}
                     startDate={this.state.startDate}
-                    // startDateId="your_unique_start_date_id" 
+                    // startDateId="your_unique_start_date_id"
                     endDate={this.state.endDate}
-                    // endDateId="your_unique_end_date_id" 
+                    // endDateId="your_unique_end_date_id"
                     onDatesChange={({ startDate, endDate }) => this.setState({ startDate, endDate })}
                     focusedInput={this.state.focusedInput}
                     onFocusChange={focusedInput => this.setState({ focusedInput })}
@@ -95,25 +135,38 @@ class Apply extends Component {
         return (
             <Fragment>
                 <InputGroup className="mb-3 addForm">
-                    <DropdownButton variant="primary" title={this.props.info.apply.buttonCompetences + " " + this.state.competence} className="paddingRight"
+                    <div className="paddingRight">
+                    <DropdownButton className={(!this.state.competence.competenceTypeChosen&&this.state.competence.triedToAddCompetence) ? "competenceTypeButton": ""} variant= "primary" title={this.props.info.apply.buttonCompetences + " " + this.state.competence.competenceType}
                     >
                         {this.state.competences.map((competence, key) =>
                             <Dropdown.Item key={key} id={key} name={competence.name}
-                                onClick={event => this.setState({ competence: event.target.name, competenceID: event.target.id })}>
+                                onClick={this.ctOnChange}>
                                 {competence.name}
                             </Dropdown.Item>
                         )}
                     </DropdownButton>
+                    </div>
                     <DropdownButton variant="primary" title={this.props.info.apply.textYearsOfExperience}
-                        onClick={event => this.setState({ numberOfYears: event.target.id })}>
+                        onClick={event => this.yoeOnChange(event.target.id)}>
                         {this.renderNumbers()}
                     </DropdownButton>
-                    <FormControl className="marginTextBox" aria-describedby="basic-addon1" value={this.state.numberOfYears}
-                        onChange={event => this.setState({ numberOfYears: event.target.value })}
-                    />
-                    <Button variant="primary" className="paddingLeft"
+                    <div className="marginTextBox">
+                        <FormControl aria-describedby="basic-addon1" 
+                            value={this.state.competence.numberOfYears.value}
+                            isInvalid = {this.state.competence.numberOfYears.isInvalid}
+                            isValid = {this.state.competence.numberOfYears.isValid}
+                            onChange={event => this.yoeOnChange(event.target.value)}
+                        />
+                        <FormControl.Feedback type="invalid">
+                            {this.state.competence.numberOfYears.message}
+                        </FormControl.Feedback>
+                    </div>
+                    <div>
+                    <Button variant="primary"
                         onClick={() => this.addCompetence()}
                     >{this.props.info.apply.buttonAddCompetence}</Button>
+                    </div>
+
                 </InputGroup>
             </Fragment>
         )

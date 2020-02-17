@@ -1,6 +1,12 @@
 const controller = require('../controller/controller');
 const dbErrors = require('../error/dbErrors');
 
+/**
+ * Routes all api requests. 
+ * All client requests will be send here and and the right functions here will send a request to the controller.
+ *
+ * @param {*} router
+ */
 function router(router) {
     router.post('/api/user', async (req, res) => {
         try {
@@ -8,7 +14,6 @@ function router(router) {
             res.status(statusCode);
         } catch (error) {
             dbErrors.respondError(error.message, res)
-            // res.status(400)
         }
         res.send();
     });
@@ -20,7 +25,6 @@ function router(router) {
         } catch (error) {
             dbErrors.respondError(error.message, res)
             console.error(error.message);
-            res.status(400)
         }
         res.send();
     });
@@ -31,12 +35,9 @@ function router(router) {
             res.cookie('privilegeLevel', user.privilegeLevel, { expires: new Date(Date.now() + 1800000) });
             res.cookie('authToken', controller.getToken(req), { expires: new Date(Date.now() + 1800000) });
             res.send(JSON.stringify({ user: user }));
-            // console.log(user);
-
         } catch (error) {
             dbErrors.respondError(error.message, res)
             console.error(error)
-            res.sendStatus(400);
         }
     });
 
@@ -57,7 +58,6 @@ function router(router) {
             const user = await controller.authenticateUser(req);
             res.cookie('authToken', user.token, { expires: new Date(Date.now() + 1800000) });
             res.cookie('privilegeLevel', user.privilegeLevel, { expires: new Date(Date.now() + 1800000) });
-
         } catch (error) {
             dbErrors.respondError(error.message, res)
             console.error(error);
@@ -68,12 +68,6 @@ function router(router) {
 
     router.delete('/api/authentication', async (req, res) => {
         try {
-            // const cookie = req.headers.cookie;
-            // if(cookie === undefined){
-            //     res.sendStatus(500)
-            // } else if (cookie.split('authToken=').length < 2){
-            //     res.sendStatus(500)
-            // }
             await controller.deAuthenticateUser(req);
             res.clearCookie('authToken');
             res.clearCookie('privilegeLevel')
@@ -97,7 +91,6 @@ function router(router) {
         } catch (error) {
             dbErrors.respondError(error.message, res)
             console.error(error);
-            res.status(400);
         }
     });
 
@@ -107,7 +100,6 @@ function router(router) {
             res.send("Application was created");
         } catch (error) {
             dbErrors.respondError(error.message, res)
-
         }
     });
 
@@ -119,20 +111,15 @@ function router(router) {
             }
         } catch (error) {
             dbErrors.respondError(error.message, res)
-            console.error(error);
-            res.status(500);
         }
-        res.send();
     });
 
     router.get('/api/competence', async (req, res) => {
         try {
-            res.cookie('authToken', controller.getToken(req), { expires: new Date(Date.now() + 1800000) });
             res.send(JSON.stringify(await controller.getCompetence(req)));
         } catch (error) {
             dbErrors.respondError(error.message, res)
             console.error(error)
-            res.sendStatus(500);
         }
     })
 }

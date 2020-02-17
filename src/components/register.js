@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import axios from 'axios';
 
+import Spinner from 'react-bootstrap/Spinner'
 import { validator } from '../model/formValidation';
 import '../resources/css/register.css';
 
@@ -11,7 +14,7 @@ class Register extends Component {
     super(props);
     this.state = {
       user: {
-        username: { value: '', name: this.props.info.register.username.name, isValid: false, isInvalid: false, valueHasChanged: false, message: '' },
+        username: { value: '', name: this.props.info.register.username.name, isValid: false, isInvalid: false, valueHasChanged: false, message: '', alreadyTakenUsernames:[] },
         password: { value: '', name: this.props.info.register.password.name, isValid: false, isInvalid: false, valueHasChanged: false, message: '' },
         confirmPassword: { value: '', name: this.props.info.register.password.name, isValid: false, isInvalid: false, message: '' },
         email: { value: '', name: this.props.info.register.email.name, isValid: false, isInvalid: false, message: '' },
@@ -20,13 +23,34 @@ class Register extends Component {
         lastName: { value: '', name: this.props.info.register.lastName.name, isValid: false, isInvalid: false, message: '' },
         validated: false
       },
+      isLoading:false,
+      usernameValidationLoading: false,
+      usernameValidationWaitingTime: 3,
+      usernmaeValidationStartTime:0,
       submitted: false,
 
     }
   }
+  //////////API CALL CODE///////////////
+  checkUsername = async (usernameValue) =>{
+    try{
+      const name = { username:usernameValue };
+      const response = await axios.get('/api/username', name);
+      console.log(name);
+      console.log("RESPONSE: "+ response.data);
+    }catch(error){
+      console.log("ERROR: "+error);
+    }
+  }
+  ///////////////////////////////////
   //Used for checking validation after a onChange event
   checkValidation = (type, state) => {
     const validState = validator(type, state.user, this.props.info.validationError);
+    /*
+    if(type === "username"){
+      this.checkUsername(validState.username.value);
+    }
+    */
     this.setState({
       ...this.state,
       user: {
@@ -68,29 +92,47 @@ class Register extends Component {
     this.setState(state);
     this.checkValidation(e.target.name, state);
   }
-
   //Function that registers the user(calls API)
   registerUser = async () => {
+    this.setState({
+      isLoading: true,
+      submitted: false,
+    });
+    const user = {
+      username: this.state.user.username.value,
+      password: this.state.user.password.value,
+      email: this.state.user.email.value,
+      date: this.state.user.date.value,
+      firstName: this.state.user.firstName.value,
+      lastName: this.state.user.lastName.value
+    }
     try {
-      console.log(this.state)
-      const user = {
-        username: this.state.user.username.value,
-        password: this.state.user.password.value,
-        email: this.state.user.email.value,
-        date: this.state.user.date.value,
-        firstName: this.state.user.firstName.value,
-        lastName: this.state.user.lastName.value
-      }
-      console.log(user)
       const response = await axios.post('/api/user', user);
-
       if (response.status === 200) {
         this.setState({ submitted: true });
       }
-
     } catch (error) {
-      console.log(error);
+      //The error can not be identified, so we will expect it to be a DUPLICATE_USER_ERROR error
+      const state = { 
+        ...this.state,
+        user: {
+          ...this.state.user,
+          username:{
+            ...this.state.user.username,
+            alreadyTakenUsernames:[
+              ...this.state.user.username.alreadyTakenUsernames,
+              this.state.user.username.value
+            ]
+          }
+        }
+      };
+      //we have to redo the validation to that the DUPLICATE_USER_ERROR will be shown
+      this.checkValidation(null,state);
+
     }
+    this.setState({
+      isLoading: false,
+    });
   }
   renderRegisterForm = () => {
     const { username, password, confirmPassword, email, date, firstName, lastName } = this.state.user;
@@ -157,17 +199,32 @@ class Register extends Component {
           </Form.Group>
           <Form.Group>
             <Form.Label>{this.props.info.register.username.name}</Form.Label>
+            <Row>
+            <Col>
             <Form.Control
               value={username.value}
               onChange={this.onChange}
               type="text"
               name="username"
-              isInvalid={username.isInvalid}
-              isValid={username.isValid}
-              placeholder={this.props.info.register.username.placeholder} />
+              isInvalid={username.isInvalid }
+              isValid={ username.isValid }
+              placeholder={this.props.info.register.username.placeholder}/>
             <Form.Control.Feedback type="invalid">
-              {username.message}
+              { username.message }
             </Form.Control.Feedback>
+            </Col>
+            {
+            //this is for displaying the loading circle when username validation is loading 
+            this.state.usernameValidationLoading ? 
+            <Col md="auto" className="spinner">
+            <Spinner animation="border" role="status" size="sm">
+                <span className="sr-only">Loading...</span>
+            </Spinner>
+            </Col>:
+            null
+            }
+
+            </Row>
           </Form.Group>
           <Form.Group>
             <Form.Label>{this.props.info.register.password.name}</Form.Label>
@@ -196,7 +253,9 @@ class Register extends Component {
               {confirmPassword.message}
             </Form.Control.Feedback>
           </Form.Group>
-          <Button className="registerButton" type="submit" variant="primary">Register</Button>
+          <Button type="submit" variant="primary" disabled={this.state.isLoading}>
+            {this.state.isLoading ? this.props.info.general.loading : this.props.info.register.register}
+          </Button>
         </Form>
       </div>)
   }

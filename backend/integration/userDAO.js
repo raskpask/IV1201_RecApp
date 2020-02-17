@@ -89,7 +89,6 @@ function authenticateUser(credentials) {
             values: [credentials.username]
         }
         client.query(query, (err, res) => {
-            // console.log(res.rows.length)
             if (res.rows.length === 1) {
                 if (notVaildResponse(res)) {
                     client.end()
@@ -171,9 +170,8 @@ function getUser(token) {
             }
             if (res.rows != undefined) {
                 const rawUser = res.rows[0].person.split('(')[1].split(',');
-                // console.log("token: "+token)
                 client.end()
-                resolve(new User(rawUser[7], rawUser[5], rawUser[4], rawUser[3], rawUser[1], rawUser[2], rawUser[0], rawUser[6],token));
+                resolve(new User(rawUser[7], rawUser[5], rawUser[4], rawUser[3], rawUser[1], rawUser[2], rawUser[0], rawUser[6], token));
             }
             client.end()
             reject(new Error(dbError.errorCodes.NO_USER_ERROR.code))
@@ -195,9 +193,7 @@ function getPrivilegeLevel(token) {
                 client.end()
                 reject(new Error(dbError.errorCodes.GET_USER_ERROR.code));
             } else {
-                // console.log(res)
                 if (res.rows[0] != null) {
-                    // console.log(res.rows[0])
                     client.end()
                     resolve(res.rows[0]);
                 }
@@ -210,14 +206,8 @@ function getPrivilegeLevel(token) {
 
 function getApplication(privilegeLevel, token, application) {
     return new Promise(function (resolve, reject) {
-        // console.log(application)
-        // console.log(privilegeLevel)
-        // console.log(application)
-        // console.log("Pri lvl: "+privilegeLevel.role_id)
-        // console.log(application.competence)
         let competenceIDList = [];
         for (let competence in application.competence) {
-            // console.log(application.competence[competence].competence_id)
             competenceIDList.push(application.competence[competence])
         }
         client = connect();
@@ -240,17 +230,11 @@ function getApplication(privilegeLevel, token, application) {
             values: [application.availability.startDate, application.availability.endDate, application.name + "%", application.name + "%", application.applicationDate.startDate, application.applicationDate.endDate, 0, 999999999999999]
         }
         if (privilegeLevel.role_id == 2) {
-            // getApplicationQuery.text.concat(" AND person.token = ($7)")
             getApplicationQuery.values[6] = privilegeLevel.person_id;
             getApplicationQuery.values[7] = privilegeLevel.person_id;
 
         }
-        // console.log(getApplicationQuery)
-        // get status, job application, competence with year, availability, person name *
-
         client.query(getApplicationQuery, (err, res) => {
-            // console.log("Adding to db")
-            // console.log(res.rows)
             if (err) {
                 console.error(err)
                 reject(new Error(dbError.errorCodes.APPLICATION_ERROR.code));
@@ -262,17 +246,16 @@ function getApplication(privilegeLevel, token, application) {
                 client.end()
                 reject(new Error(dbError.errorCodes.UNKNOWN_ERROR.code));
             }
-            // console.log(res.rows.length)
             const applicationList = dbResponseHandler.extractApplication(res.rows)
             client.end()
-            // console.log("End of request")
-            // console.log(applicationList)
             resolve(applicationList)
         });
     });
 }
 async function createApplication(application, user) {
     return new Promise(async function (resolve, reject) {
+        console.log(application)
+        console.log(user)
         const client = await pool.connect()
         try {
             await client.query("BEGIN");
@@ -298,7 +281,7 @@ async function createApplication(application, user) {
             }
             await client.query(addApplicatonQuery);
             await client.query("COMMIT");
-            resolve("OK")
+            resolve(200)
 
         } catch (e) {
             await client.query("ROLLBACK");
@@ -306,39 +289,62 @@ async function createApplication(application, user) {
                 reject(new Error(dbError.errorCodes.DUPLICATE_APPLICATION_ERROR.code))
             }
             reject(new Error(dbError.errorCodes.CREATE_APPLICATION_ERROR.code))
-            // console.error(e)
+        } finally {
+            client.release();
+        }
+    });
+}
+function updateApplicationStatus(status, applicationID, lastEdited) {
+    return new Promise(async function (resolve, reject) {
+        const client = await pool.connect()
+        try {
+            await client.query("BEGIN");
+            const getLastEditedQuery = {
+                text: "SELECT last_edited FROM application WHERE application_id = $1",
+                values: [applicationID]
+            }
+            client
+                .query(getLastEditedQuery)
+                .then(res => {
+                    console.log(res.rows[0].last_edited)
+                    console.log(lastEdited)
+                    const lastEditedDB = new Date(res.rows[0].last_edited)
+                    const lastUpdated = new Date(lastEdited)
+                    if (lastEditedDB > lastUpdated) {
+                        console.log("application edited")
+                        throw new Error(dbError.errorCodes.APPLICATION_EDITED_ERROR.code)
+                    }
+                    console.log("application not edited")
+
+                })
+                .catch(err => {
+                    reject(new Error(err.message))
+                })
+
+            const updateApplicationStatusQuery = {
+                text: "UPDATE application SET status = $1 ,last_edited = $2  WHERE application_id = $3",
+                values: [status, new Date(), applicationID]
+            }
+            client
+                .query(updateApplicationStatusQuery)
+                .then(res => {
+                    if (res.rowCount == '1') {
+                        resolve(200)
+                    }
+                    reject(new Error(dbError.errorCodes.UPDATE_APPLCIATION_ERROR.code));
+                })
+            await client.query("COMMIT");
+        } catch (e) {
+            await client.query("ROLLBACK");
+            reject(new Error(dbError.errorCodes.UPDATE_APPLCIATION_ERROR.code))
 
         } finally {
             client.release();
         }
     });
 }
-function updateApplicationStatus(status, applicationID) {
-    return new Promise(function (resolve, reject) {
-        client = connect();
-        const updateApplicationStatusQuery = {
-            text: "UPDATE application SET status = $1 WHERE application_id = $2",
-            values: [status, applicationID]
 
-        }
-        // console.log(updateApplicationStatusQuery)
-
-        client.query(updateApplicationStatusQuery, (err, res) => {
-            if (notVaildResponse(res)) {
-                client.end();
-                reject(new Error(dbError.errorCodes.UPDATE_APPLCIATION_ERROR.code))
-            } else {
-                // console.log(res)
-                client.end();
-                if (res.rowCount == '1') {
-                    resolve("OK")
-                }
-                reject(new Error(dbError.errorCodes.UPDATE_APPLCIATION_ERROR.code));
-            }
-        });
-    });
-}
-function getCompetence(token) {
+function getCompetence() {
     return new Promise(function (resolve, reject) {
         client = connect();
         const getCompetenceQuery = {

@@ -42,7 +42,7 @@ function getLanguage() {
             password: "Lösenord",
             profile: "Min profil",
             swe: "SWE",
-            eng: "ENG"
+            eng: "ENG",
 
         },
         validationError: {
@@ -66,6 +66,12 @@ function getLanguage() {
             },
             notUnicode: {
                 message: "Använda endast Unicode tecken"
+            },
+            duplicateUsername: {
+                message: "Användarnamnet existerar redan, testa ett annat användarnamn"
+            },
+            notNumber:{
+                message: "Du måste specificera ett giltigt nummer"
             }
         },
         listApplications: {
@@ -151,7 +157,10 @@ function getLanguage() {
                 status2: "Avböjd",
                 statuselse: "Status Laddar/Fel"
             }
-        ]
+        ],
+        general:{
+            loading: "Laddar...",
+        }
     }
     return lang;
 }

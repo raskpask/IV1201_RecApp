@@ -1,3 +1,9 @@
+/**
+ * Extracts the applications from the DB request into a list of instances of the Applciation object.
+ *
+ * @param {*} rows
+ * @returns List of Applications
+ */
 function extractApplication(rows) {
     let applicationID = rows[0].application_id;
     let applicationList = [];
@@ -82,5 +88,4 @@ function checkIfNotExistsInAvailability(startDate, endDate, list) {
 }
 module.exports = {
     extractApplication,
-
 }

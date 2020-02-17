@@ -1,14 +1,35 @@
 const dbError = require('../error/dbErrors');
 
+/**
+ * Checks if the register input of the user is correct.
+ *
+ * @param {*} req
+ * @returns Boolean
+ */
 function registerInput(req) {
         const body = req.body;
         if (!body || !body.username || !body.password || !body.email || !body.date || !body.firstName || !body.lastName) {
-            throw Error(dbError.errorCodes.WRONG_REGISTER_INPUT);
+            throw Error(dbError.errorCodes.WRONG_REGISTER_INPUT.code);
         }
         if (checkUsername(body.username) && checkPassword(body.password) && checkEmail(body.email) && checkDate(body.date) && checkName(body.firstName) && checkName(body.lastName)) {
             return true;
         }
-        throw Error(dbError.errorCodes.WRONG_REGISTER_INPUT_ERROR);
+        throw Error(dbError.errorCodes.WRONG_REGISTER_INPUT_ERROR.code);
+        return false
+}
+/**
+ * Checks if the user has a valid date for availability and at least one competence.
+ *
+ * @param {*} competence
+ * @param {*} availability
+ */
+function applyInput(competence,availability){
+    if(competence.length<1){
+        throw Error(dbError.errorCodes.NO_COMPETENCE_ERROR.code)
+    } else if (availability.length<1){
+        throw Error(dbError.errorCodes.NO_AVAILABILITY_ERROR.code)
+    }
+    return true
 }
 function checkUsername(username) {
     const regEx = /([0-9]|[a-z]|[A-Z])/g;
@@ -60,5 +81,6 @@ function checkUnicode(string) {
 }
 module.exports = {
     registerInput,
+    applyInput,
 
 }

@@ -15,15 +15,27 @@ class Header extends Component {
                 username: "",
                 password: "",
             },
+            form:{
+                invalidLogin:false,
+                isLoading:false,
+            }
         }
     }
     setLanguage(lang) {
         const cookies = new Cookies();
         cookies.set('lang', lang, { path: '/' });
         console.log(cookies.get('lang'));
-        this.props.app.forceUpdate()
+        // this.props.app.forceUpdate()
+        this.props.app.updateLanguage(lang)
+        window.location.href = "/";
     }
     login = async () => {
+        this.setState({
+            form: {
+                invalidLogin: false,
+                isLoading: true
+            }
+        });
         try {
             const credentials = {
                 username: this.state.username,
@@ -33,24 +45,30 @@ class Header extends Component {
             if (responseLogin.status === 200) {
                 window.location.href = "/";
                 await axios.get('/api/user');
-                this.forceUpdate()
+                // this.forceUpdate()
             }
 
         } catch (error) {
             console.log(error)
+            this.setState({
+                form: {
+                    invalidLogin: true,
+                    isLoading: false
+                }
+            });
         }
     }
     logout = async () => {
         const response = await axios.delete('/api/authentication')
         if (response.status === 200) {
             window.location.href = "/";
-            this.forceUpdate()
+            // this.forceUpdate()
         }
     }
-    chooseUserLevel(){
+    chooseUserLevel() {
         let privilegeLevel = document.cookie.split('privilegeLevel=')[1];
-        
-        if(Boolean(privilegeLevel)){
+
+        if (Boolean(privilegeLevel)) {
             privilegeLevel = privilegeLevel.split(';')[0];
         }
         if (privilegeLevel === '1') {
@@ -111,7 +129,9 @@ class Header extends Component {
                         placeholder={this.props.info.header.password}
                         onChange={event => this.setState({ password: event.target.value })}
                         className=" mr-sm-2" />
-                    <Button onClick={() => this.login()} variant="primary">{this.props.info.header.login}</Button>
+                    <Button onClick={() => this.login()} variant="primary" disabled={this.state.form.isLoading}>
+                        {this.state.form.isLoading ? this.props.info.general.loading : this.props.info.header.login}
+                    </Button>
                 </Form>
                 {this.renderlanguage()}
             </Nav>
