@@ -1,5 +1,5 @@
 {
-	"info": { 
+	"info": {
 		"_postman_id": "09fc1eeb-0763-477a-8c07-07836ee29fac",
 		"name": "IV1201_API_test",
 		"description": "Testing the API created for the application built in the course IV1201 at KTH",
@@ -320,6 +320,11 @@
 						"key": "Content-Type",
 						"name": "Content-Type",
 						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Cookie",
+						"value": "lang=sv-se",
 						"type": "text"
 					}
 				],
