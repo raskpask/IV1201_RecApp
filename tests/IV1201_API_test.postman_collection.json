@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "1127d2b9-9e95-43cc-bd75-d88365bf5733",
+		"_postman_id": "5478081f-d6fe-4b0d-a959-1e3d1810de66",
 		"name": "IV1201_API_test",
 		"description": "Testing the API created for the application built in the course IV1201 at KTH",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -14,8 +14,16 @@
 					"script": {
 						"id": "817dcda5-af9a-4a2d-8d1c-7a6867279196",
 						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
+							"pm.test(\"Status code is 200\", function() {",
 							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response contains authToken cookie\", function() {",
+							"    pm.expect(pm.cookies.has('authToken')).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"Response contains privilegeLevel cookie\", function() {",
+							"    pm.expect(pm.cookies.has('privilegeLevel')).to.be.true;",
 							"});"
 						],
 						"type": "text/javascript"
@@ -37,12 +45,9 @@
 					"raw": "{\n\t\"username\": \"raskpask\",\n\t\"password\": \"abc123\"\n}"
 				},
 				"url": {
-					"raw": "https://iv1201-rec-app.herokuapp.com/api/authentication",
-					"protocol": "https",
+					"raw": "{{url}}/api/authentication",
 					"host": [
-						"iv1201-rec-app",
-						"herokuapp",
-						"com"
+						"{{url}}"
 					],
 					"path": [
 						"api",
@@ -50,6 +55,45 @@
 					]
 				},
 				"description": "Tests a login"
+			},
+			"response": []
+		},
+		{
+			"name": "GetUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "96084cdf-18e6-4df9-a691-da8d267b08ad",
+						"exec": [
+							"pm.test(\"Body contains user string\", function () {",
+							"    pm.expect(pm.response.text()).to.include('{\"user\":{\"username\":\"raskpask\"');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/api/user",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"user"
+					]
+				}
 			},
 			"response": []
 		},
@@ -63,6 +107,9 @@
 						"exec": [
 							"pm.test(\"Status code is 401\", function () {",
 							"    pm.response.to.have.status(401);",
+							"});",
+							"pm.test(\"Body contains error string\", function () {",
+							"    pm.expect(pm.response.text()).to.include('LOGIN_ERROR');",
 							"});"
 						],
 						"type": "text/javascript"
@@ -84,12 +131,9 @@
 					"raw": "{\n\t\"username\": \"\",\n\t\"password\": \"\"\n}"
 				},
 				"url": {
-					"raw": "https://iv1201-rec-app.herokuapp.com/api/authentication",
-					"protocol": "https",
+					"raw": "{{url}}/api/authentication",
 					"host": [
-						"iv1201-rec-app",
-						"herokuapp",
-						"com"
+						"{{url}}"
 					],
 					"path": [
 						"api",
@@ -120,12 +164,9 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "https://iv1201-rec-app.herokuapp.com/api/authentication",
-					"protocol": "https",
+					"raw": "{{url}}/api/authentication",
 					"host": [
-						"iv1201-rec-app",
-						"herokuapp",
-						"com"
+						"{{url}}"
 					],
 					"path": [
 						"api",
@@ -144,8 +185,8 @@
 					"script": {
 						"id": "79843eb8-b6a0-437f-9650-2667e204d5f6",
 						"exec": [
-							"pm.test(\"Status code is 500\", function () {",
-							"    pm.response.to.have.status(500);",
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
 							"});"
 						],
 						"type": "text/javascript"
@@ -156,12 +197,9 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "https://iv1201-rec-app.herokuapp.com/api/authentication",
-					"protocol": "https",
+					"raw": "{{url}}/api/authentication",
 					"host": [
-						"iv1201-rec-app",
-						"herokuapp",
-						"com"
+						"{{url}}"
 					],
 					"path": [
 						"api",
@@ -171,6 +209,233 @@
 				"description": "Test logging out the user logged in in the successful test 1"
 			},
 			"response": []
+		},
+		{
+			"name": "GetUserNoCookie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "96084cdf-18e6-4df9-a691-da8d267b08ad",
+						"exec": [
+							"pm.test(\"Body contains error string\", function () {",
+							"    pm.expect(pm.response.text()).to.include('NO_TOKEN_ERROR');",
+							"});",
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/user",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CheckIfExistingUsernameIsAvailable",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "21c84215-b638-4e1b-9e42-0e0a8de8879d",
+						"exec": [
+							"",
+							"pm.test(\"Body matches string 'Username taken'\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Username taken\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"raskpask\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/username",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"username"
+					]
+				},
+				"description": "Checks if a username already in the database exists"
+			},
+			"response": []
+		},
+		{
+			"name": "CheckCompetences",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "21c84215-b638-4e1b-9e42-0e0a8de8879d",
+						"exec": [
+							"",
+							"pm.test(\"Body contains competences'\", function () {",
+							"    pm.expect(pm.response.text()).to.include('\"competence_id\":\"1\",\"name\":\"Korvgrillning\",\"language\":\"sv-se\"');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/api/competence",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"competence"
+					]
+				},
+				"description": "Checks if a username already in the database exists"
+			},
+			"response": []
+		},
+		{
+			"name": "CheckSQLInjection",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "21c84215-b638-4e1b-9e42-0e0a8de8879d",
+						"exec": [
+							"",
+							"pm.test(\"Body matches string 'Username not taken'\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Username not taken\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"1 OR 1=1\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/username",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"username"
+					]
+				},
+				"description": "Checks if a username already in the database exists"
+			},
+			"response": []
+		},
+		{
+			"name": "CheckIfNonExistantUsernameExists",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "02967c3e-c218-48c7-b7fe-68e6d56fcfae",
+						"exec": [
+							"pm.test(\"Body matches string 'Username not taken'\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Username not taken\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"jhgfdghjkljhgfdrtgyuhjkiuhtygfrdtgyuhjihygtfrdftgyuh\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/username",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"username"
+					]
+				},
+				"description": "Checks if a username that does not exist in the database exists."
+			},
+			"response": []
 		}
-	]
+	],
+	"protocolProfileBehavior": {}
 }

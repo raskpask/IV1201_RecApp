@@ -173,7 +173,7 @@ function getUser(token) {
                 const rawUser = res.rows[0].person.split('(')[1].split(',');
                 // console.log("token: "+token)
                 client.end()
-                resolve(new User(rawUser[7], rawUser[5], rawUser[4], rawUser[3], rawUser[1], rawUser[2], rawUser[0], rawUser[6],token));
+                resolve(new User(rawUser[7], rawUser[5], rawUser[4], rawUser[3], rawUser[1], rawUser[2], rawUser[0], rawUser[6], token));
             }
             client.end()
             reject(new Error(dbError.errorCodes.NO_USER_ERROR.code))
@@ -313,32 +313,72 @@ async function createApplication(application, user) {
         }
     });
 }
-function updateApplicationStatus(status, applicationID) {
-    return new Promise(function (resolve, reject) {
-        client = connect();
-        const updateApplicationStatusQuery = {
-            text: "UPDATE application SET status = $1 WHERE application_id = $2",
-            values: [status, applicationID]
+function updateApplicationStatus(status, applicationID, lastEdited) {
+    return new Promise(async function (resolve, reject) {
+        const client = await pool.connect()
+        try {
+            await client.query("BEGIN");
+            const getLastEditedQuery = {
+                text: "SELECT last_edited FROM application WHERE application_id = $1",
+                values: [applicationID]
+            }
+            client
+                .query(getLastEditedQuery)
+                .then(res => {
+                    console.log(res.rows[0].last_edited)
+                    console.log(lastEdited)
+                    const lastEditedDB = new Date(res.rows[0].last_edited)
+                    const lastUpdated = new Date(lastEdited)
+                    if (lastEditedDB > lastUpdated) {
+                        console.log("application edited")
+                        throw new Error(dbError.errorCodes.APPLICATION_EDITED_ERROR.code)
+                    }
+                    console.log("application not edited")
 
+                })
+                .catch(err => {
+                    reject(new Error(err.message))
+                })
+
+            const updateApplicationStatusQuery = {
+                text: "UPDATE application SET status = $1 ,last_edited = $2  WHERE application_id = $3",
+                values: [status, new Date(), applicationID]
+            }
+            client
+                .query(updateApplicationStatusQuery)
+                .then(res => {
+                    if (res.rowCount == '1') {
+                        resolve("OK")
+                    }
+                    reject(new Error(dbError.errorCodes.UPDATE_APPLCIATION_ERROR.code));
+                })
+            await client.query("COMMIT");
+        } catch (e) {
+            await client.query("ROLLBACK");
+            reject(new Error(dbError.errorCodes.UPDATE_APPLCIATION_ERROR.code))
+
+        } finally {
+            client.release();
         }
         // console.log(updateApplicationStatusQuery)
 
-        client.query(updateApplicationStatusQuery, (err, res) => {
-            if (notVaildResponse(res)) {
-                client.end();
-                reject(new Error(dbError.errorCodes.UPDATE_APPLCIATION_ERROR.code))
-            } else {
-                // console.log(res)
-                client.end();
-                if (res.rowCount == '1') {
-                    resolve("OK")
-                }
-                reject(new Error(dbError.errorCodes.UPDATE_APPLCIATION_ERROR.code));
-            }
-        });
+        // client.query(updateApplicationStatusQuery, (err, res) => {
+        //     if (notVaildResponse(res)) {
+        //         client.end();
+        //         reject(new Error(dbError.errorCodes.UPDATE_APPLCIATION_ERROR.code))
+        //     } else {
+        //         // console.log(res)
+        //         client.end();
+        //         if (res.rowCount == '1') {
+        //             resolve("OK")
+        //         }
+        //         reject(new Error(dbError.errorCodes.UPDATE_APPLCIATION_ERROR.code));
+        //     }
+        // });
     });
 }
-function getCompetence(token) {
+
+function getCompetence() {
     return new Promise(function (resolve, reject) {
         client = connect();
         const getCompetenceQuery = {

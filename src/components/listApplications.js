@@ -12,6 +12,7 @@ class ListApplications extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            timestamp: "",
             show: false,
             showUser: [],
             startDate: "",
@@ -50,6 +51,7 @@ class ListApplications extends Component {
         }
     }
     componentDidMount = async () => {
+        this.setState({ timestamp: new Date() })
         this.getApplicationsAndCompetences();
     }
     sendFilter = () => {
@@ -133,7 +135,7 @@ class ListApplications extends Component {
     // <Application info={this.props.info} application={application} />
     changeApplicationStatus = (status, id) => {
         axios
-            .put('/api/application', { status: status, id: id })
+            .put('/api/application', { status: status, id: id, lastEdited: this.state.timestamp })
             .then(res =>
                 console.log(res.status))
             .catch(err =>
@@ -263,7 +265,7 @@ class ListApplications extends Component {
     render() {
         return (
             <div className="marginTop">
-                <Access access='1' info={this.props.info.access}/>
+                <Access access='1' info={this.props.info.access} />
                 {this.renderFilter()}
                 {/* {this.renderSearch()} */}
                 {this.renderTable()}

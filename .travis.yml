@@ -2,6 +2,9 @@ language: node_js
 node_js:
   - "10"
 
+addons:
+  hosts:
+    - localhost
 install:
   - npm install newman
 
@@ -9,6 +12,8 @@ before_script:
   - node --version
   - npm --version
   - node_modules/.bin/newman --version
+  - npm start &
 
 script:
-  - node_modules/.bin/newman run tests/IV1201_API_test.postman_collection.json -e tests/IV1201_API_test.postman_collection.json --color auto --disable-unicode
+
+  - node_modules/.bin/newman run tests/IV1201_API_test.postman_collection.json -e tests/IV1201_RecApp.postman_environment.json --color auto --disable-unicode

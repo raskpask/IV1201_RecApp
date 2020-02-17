@@ -2,76 +2,85 @@
 errorCodes = {
     CONNECTION_ERROR: {
         code: 'CONNECTION_ERROR',
-        message:'The connection the to database could not be made.'
+        message: 'The connection the to database could not be made.'
     },
     UNKNOWN_ERROR: {
         code: 'UNKNOWN_ERROR',
-        message:'Some internal error occured'
+        message: 'Some internal error occured'
     },
     INSERTING_USER_ERROR: {
         code: 'INSERTING_USER_ERROR',
-        message:'Problem when the user was to be insterted to the database.'
+        message: 'Problem when the user was to be insterted to the database.'
     },
     USER_ERROR: {
         code: 'USER_ERROR',
-        message:'A problem occured when the user was supposed to be set.'
+        message: 'A problem occured when the user was supposed to be set.'
     },
     UPDATE_USER_ERROR: {
         code: 'UPDATE_USER_ERROR',
-        message:'A problem when tring to update the user.'
+        message: 'A problem when tring to update the user.'
     },
     LOGIN_ERROR: {
         code: 'LOGIN_ERROR',
-        message:'The password or username was not correct!'
+        message: 'The password or username was not correct!'
     },
     TOKEN_ERROR: {
         code: 'TOKEN_ERROR',
-        message:'Token could not be set.'
+        message: 'Token could not be set.'
     },
     GET_USER_ERROR: {
         code: 'GET_USER_ERROR',
-        message:'The request for the user was not correct.'
+        message: 'The request for the user was not correct.'
     },
     NO_USER_ERROR: {
         code: 'NO_USER_ERROR',
-        message:'The user could not be found.'
+        message: 'The user could not be found.'
     },
     NO_ACCESS_ERROR: {
         code: 'NO_ACCESS_ERROR',
-        message:'The the client does not have the access rights to this function.'
+        message: 'The the client does not have the access rights to this function.'
     },
     APPLICATION_ERROR: {
         code: 'APPLICATION_ERROR',
-        message:'Error while trying to fetch a application.'
+        message: 'Error while trying to fetch a application.'
     },
     CREATE_APPLICATION_ERROR: {
         code: 'CREATE_APPLICATION_ERROR',
-        message:'Error while making an application in one of the three queries.'
+        message: 'Error while making an application in one of the three queries.'
     },
     UPDATE_APPLCIATION_ERROR: {
         code: 'UPDATE_APPLCIATION_ERROR',
-        message:'The application status could not be set.'
+        message: 'The application status could not be set.'
     },
     GET_COMPETENCE_ERROR: {
         code: 'GET_COMPETENCE_ERROR',
-        message:'Error while getting the competences.'
+        message: 'Error while getting the competences.'
     },
     WRONG_REGISTER_INPUT_ERROR: {
         code: 'WRONG_REGISTER_INPUT',
-        message:'The input from the user is incorrect'
+        message: 'The input from the user is incorrect'
     },
     DUPLICATE_USER_ERROR: {
         code: 'DUPLICATE_USER_ERROR',
-        message:'The user already exists try another username'
+        message: 'The user already exists try another username'
     },
     DUPLICATE_APPLICATION_ERROR: {
         code: 'DUPLICATE_APPLICATION_ERROR',
-        message:'The user already as an application'
+        message: 'The user already as an application'
     },
     NO_APPLICATION_ERROR: {
         code: 'NO_APPLICATION_ERROR',
-        message:'Could not find application'
+        message: 'Could not find application'
     },
+    NO_TOKEN_ERROR: {
+        code: 'NO_TOKEN_ERROR',
+        message: 'Could not find token'
+    },
+    APPLICATION_EDITED_ERROR: {
+        code: 'APPLICATION_EDITED_ERROR',
+        message: 'The application was updated after the user checked the status'
+    },
+    
 }
 function respondError(error, res) {
     console.error(error)
@@ -139,6 +148,14 @@ function respondError(error, res) {
         case errorCodes.NO_APPLICATION_ERROR.code:
             res.status(400);
             res.send(errorCodes.NO_APPLICATION_ERROR.code);
+            break;
+        case errorCodes.NO_TOKEN_ERROR.code:
+            res.status(400);
+            res.send(errorCodes.NO_TOKEN_ERROR.code);
+            break;
+        case errorCodes.APPLICATION_EDITED_ERROR.code:
+            res.status(400);
+            res.send(errorCodes.APPLICATION_EDITED_ERROR.code);
             break;
         default:
             res.status(500);
