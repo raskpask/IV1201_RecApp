@@ -26,7 +26,7 @@ SET row_security = off;
 CREATE DATABASE testDatabase WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8';
 
 
-ALTER DATABASE testDatabase OWNER TO IV1201;
+-- ALTER DATABASE testDatabase OWNER TO IV1201;
 
 \connect testDatabase
 
