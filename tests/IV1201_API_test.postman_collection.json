@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "5478081f-d6fe-4b0d-a959-1e3d1810de66",
+		"_postman_id": "906b0e34-ab98-4ef2-8de1-745a92ac51f1",
 		"name": "IV1201_API_test",
 		"description": "Testing the API created for the application built in the course IV1201 at KTH",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -14,16 +14,8 @@
 					"script": {
 						"id": "817dcda5-af9a-4a2d-8d1c-7a6867279196",
 						"exec": [
-							"pm.test(\"Status code is 200\", function() {",
+							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test(\"Response contains authToken cookie\", function() {",
-							"    pm.expect(pm.cookies.has('authToken')).to.be.true;",
-							"});",
-							"",
-							"pm.test(\"Response contains privilegeLevel cookie\", function() {",
-							"    pm.expect(pm.cookies.has('privilegeLevel')).to.be.true;",
 							"});"
 						],
 						"type": "text/javascript"
@@ -74,16 +66,9 @@
 					}
 				}
 			],
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
 			"request": {
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
 				"url": {
 					"raw": "{{url}}/api/user",
 					"host": [
@@ -185,8 +170,8 @@
 					"script": {
 						"id": "79843eb8-b6a0-437f-9650-2667e204d5f6",
 						"exec": [
-							"pm.test(\"Status code is 400\", function () {",
-							"    pm.response.to.have.status(400);",
+							"pm.test(\"Status code is 500\", function () {",
+							"    pm.response.to.have.status(500);",
 							"});"
 						],
 						"type": "text/javascript"
@@ -219,7 +204,7 @@
 						"id": "96084cdf-18e6-4df9-a691-da8d267b08ad",
 						"exec": [
 							"pm.test(\"Body contains error string\", function () {",
-							"    pm.expect(pm.response.text()).to.include('NO_TOKEN_ERROR');",
+							"    pm.expect(pm.response.text()).to.include('NO_USER_ERROR');",
 							"});",
 							"pm.test(\"Status code is 400\", function () {",
 							"    pm.response.to.have.status(400);",
