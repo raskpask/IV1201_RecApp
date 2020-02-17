@@ -1,5 +1,8 @@
 const express = require('express');
 const favicon = require('express-favicon');
+const dotenv = require('dotenv');
+dotenv.config();
+console.log(`Your uri is ${process.env.DATABASE_URL}`)
 const path = require('path');
 const port = process.env.PORT || 8080;
 const app = express();

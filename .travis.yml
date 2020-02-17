@@ -5,6 +5,10 @@ node_js:
 addons:
   hosts:
     - localhost
+
+services:
+  - postgresql
+  
 install:
   - npm install newman
 
@@ -12,7 +16,12 @@ before_script:
   - node --version
   - npm --version
   - node_modules/.bin/newman --version
+  - psql -f ./tests/testDatabase.sql -U postgres
   - npm start &
+env:
+  global:
+    -DATABASE_URL='postgres://postgres@127.0.0.1:5432/'
+
 
 script:
 
