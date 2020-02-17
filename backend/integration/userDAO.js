@@ -111,18 +111,19 @@ function authenticateUser(credentials) {
             values: [credentials.username]
         }
         client.query(query, (err, res) => {
-            if (res.rows.length === 1) {
-                if (notVaildResponse(res)) {
-                    client.end()
-                    reject(new Error(dbError.errorCodes.LOGIN_ERROR.code))
-                } else if (res.rows[0].password === credentials.password) {
-                    client.end()
-                    resolve(200);
-                }
-            } else {
+            if (notVaildResponse(res)) {
                 client.end()
                 reject(new Error(dbError.errorCodes.LOGIN_ERROR.code))
             }
+            if (res.rows.length === 1) {
+                if (res.rows[0].password === credentials.password) {
+                    client.end()
+                    resolve(200);
+                }
+            }
+            client.end()
+            reject(new Error(dbError.errorCodes.LOGIN_ERROR.code))
+
         })
     });
 }
@@ -264,8 +265,9 @@ function getPrivilegeLevel(token) {
  * @param {application} application - Instance of application
  * @returns Promise with list of instances of applications
  */
-function getApplication(privilegeLevel, application) {
-    return new Promise(function (resolve, reject) {
+function getApplication(privilegeLevel, application, lang) {
+    return new Promise(async function (resolve, reject) {
+        const competences = await getCompetence(lang)
         let competenceIDList = [];
         for (let competence in application.competence) {
             competenceIDList.push(application.competence[competence])
@@ -273,7 +275,7 @@ function getApplication(privilegeLevel, application) {
         client = connect();
         let getApplicationQuery = {
             text:
-                "SELECT application.application_id, person.name AS firstname, application.status , application.last_edited , person.surname, person.ssn, competence.name, competence_profile.years_of_experience, availability.to_date AS startDate, availability.from_date AS endDate, application.time_of_submission, application.status " +
+                "SELECT application.application_id, person.name AS firstname, application.status , application.last_edited , person.surname, person.ssn, competence.competence_id, competence_profile.years_of_experience, availability.to_date AS startDate, availability.from_date AS endDate, application.time_of_submission, application.status " +
                 "FROM application " +
                 "INNER JOIN availability ON availability.person_id = application.person_id " +
                 "INNER JOIN person ON person.person_id = application.person_id " +
@@ -306,7 +308,7 @@ function getApplication(privilegeLevel, application) {
                 client.end()
                 reject(new Error(dbError.errorCodes.UNKNOWN_ERROR.code));
             }
-            const applicationList = dbResponseHandler.extractApplication(res.rows)
+            const applicationList = dbResponseHandler.extractApplication(res.rows, competences)
             client.end()
             resolve(applicationList)
         });

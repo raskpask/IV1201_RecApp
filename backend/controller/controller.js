@@ -78,11 +78,14 @@ async function getApplication(req) {
     try {
         const token = requestHandler.extractToken(req);
         const application = await requestHandler.extractApplication(req)
+        const lang = await requestHandler.extractLang(req);
         let privilegeLevel = await userDAO.getPrivilegeLevel(token);
         if (privilegeLevel == "no access") {
             throw new Error(dbError.errorCodes.NO_ACCESS_ERROR);
         }
-        return await userDAO.getApplication(privilegeLevel, application);
+        const applicationU = await userDAO.getApplication(privilegeLevel, application, lang);
+        console.log(applicationU)
+        return applicationU;
     } catch (error) {
         throw error
     }

@@ -4,7 +4,11 @@
  * @param {String} rows - Response from the DB.
  * @returns List of Applications
  */
-function extractApplication(rows) {
+function extractApplication(rows, competences) {
+    let competenceNames = [];
+    competences.forEach(competence => {
+        competenceNames[competence.competence_id] = competence.name;
+    });
     let applicationID = rows[0].application_id;
     let applicationList = [];
     let indexCompetence = 0;
@@ -19,7 +23,7 @@ function extractApplication(rows) {
         id: rows[0].application_id,
         competence: [
             {
-                name: rows[0].name,
+                name: competenceNames[rows[0].competence_id],
                 yearsOfExperience: rows[0].years_of_experience
             }
         ],
@@ -32,9 +36,9 @@ function extractApplication(rows) {
 
     };
     rows.forEach(element => {
-        if (checkIfNotExistsInCompetence(element.name, tempApplication.competence)) {
+        if (checkIfNotExistsInCompetence(competenceNames[element.competence_id], tempApplication.competence, competenceNames)) {
             indexCompetence++;
-            tempApplication.competence[indexCompetence] = { name: element.name, yearsOfExperience: element.years_of_experience };
+            tempApplication.competence[indexCompetence] = { name: competenceNames[element.competence_id], yearsOfExperience: element.years_of_experience };
         }
         if (checkIfNotExistsInAvailability(element.startdate, element.enddate, tempApplication.availability)) {
             indexAvailability++;
@@ -54,7 +58,7 @@ function extractApplication(rows) {
             indexCompetence = 0;
             tempApplication.competence = [
                 {
-                    name: element.name,
+                    name: competenceNames[element.competence_id],
                     yearsOfExperience: element.years_of_experience
                 }
             ];
@@ -67,17 +71,23 @@ function extractApplication(rows) {
         }
 
     });
+    console.log(competences)
     applicationList.push(JSON.stringify(tempApplication));
     return applicationList;
 }
-function checkIfNotExistsInCompetence(name, list) {
+
+function checkIfNotExistsInCompetence(name, list,competenceNames) {
+    
     for (let element of list) {
-        if (name === element.name) {
+        console.log(name)
+        console.log(competenceNames[element.competence_id])
+        if (name === competenceNames[element.competence_id]) {
             return false
         }
     }
     return true;
 }
+
 function checkIfNotExistsInAvailability(startDate, endDate, list) {
     for (let element of list) {
         if (JSON.stringify(startDate).split("GMT")[0].split('T')[0] === JSON.stringify(element.startDate).split("GMT")[0].split('T')[0] || endDate == element.endDate) {
