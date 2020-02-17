@@ -26,7 +26,8 @@ class Header extends Component {
     setLanguage(lang) {
         const cookies = new Cookies();
         cookies.set('lang', lang, { path: '/' });
-        console.log(cookies.get('lang'));
+        this.props.app.updateLanguage(lang)
+        window.location.href = "/";
         this.props.app.forceUpdate()
     }
     login = async () => {

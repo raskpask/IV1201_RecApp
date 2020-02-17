@@ -164,7 +164,8 @@ function getLanguage() {
                 lastEdited: "Last edited:  ",
                 firstName: "First name: ",
                 lastName: "Last name: ",
-                dateOfBirth: "Date of birth: "
+                dateOfBirth: "Date of birth: ",
+                info: "Info"
             },
             {
                 status0: "Unhandled",

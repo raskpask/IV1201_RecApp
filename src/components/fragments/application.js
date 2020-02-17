@@ -22,13 +22,13 @@ componentDidMount(){
                     <Card.Header className="header">
                         <Nav variant="pills" >
                             <Nav.Item>
-                                <Nav.Link onClick={() => this.setState({ bodyContent: this.renderInfo() })}>Info</Nav.Link>
+                                <Nav.Link onClick={() => this.setState({ bodyContent: this.renderInfo() })}>{this.props.info.user[7].info}</Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
-                                <Nav.Link onClick={() => this.setState({ bodyContent: this.renderCompetence() })}>Competence</Nav.Link>
+                                <Nav.Link onClick={() => this.setState({ bodyContent: this.renderCompetence() })}>{this.props.info.user[7].competence}</Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
-                                <Nav.Link onClick={() => this.setState({ bodyContent: this.renderAvailability() })}>Availability</Nav.Link>
+                                <Nav.Link onClick={() => this.setState({ bodyContent: this.renderAvailability() })}>{this.props.info.user[7].availability}</Nav.Link>
                             </Nav.Item>
                         </Nav>
                     </Card.Header>
