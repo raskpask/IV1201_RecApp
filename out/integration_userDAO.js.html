@@ -145,11 +145,12 @@ function authenticateUser(credentials) {
                     reject(new Error(dbError.errorCodes.LOGIN_ERROR.code))
                 } else if (res.rows[0].password === credentials.password) {
                     client.end()
-                    return resolve(200);
+                    resolve(200);
                 }
+            } else {
+                client.end()
+                reject(new Error(dbError.errorCodes.LOGIN_ERROR.code))
             }
-            client.end()
-            reject(new Error(dbError.errorCodes.LOGIN_ERROR.code))
         })
     });
 }
@@ -237,14 +238,13 @@ function getUser(token) {
                 if (notVaildResponse(res)) {
                     client.end();
                     reject(new Error(dbError.errorCodes.GET_USER_ERROR.code));
-
-                    if (res.rows != undefined) {
-                        const rawUser = res.rows[0].person.split('(')[1].split(',');
-                        client.end()
-                        resolve(new User(rawUser[7], rawUser[5], rawUser[4], rawUser[3], rawUser[1], rawUser[2], rawUser[0], rawUser[6], token));
-                    }
                 }
-                client.end()
+                if (res.rows != undefined) {
+                    const rawUser = res.rows[0].person.split('(')[1].split(',');
+                    client.end()
+                    resolve(new User(rawUser[7], rawUser[5], rawUser[4], rawUser[3], rawUser[1], rawUser[2], rawUser[0], rawUser[6], token));
+                }
+
             } catch (err) {
                 client.end()
                 reject(new Error(dbError.errorCodes.NO_USER_ERROR.code))
@@ -322,6 +322,8 @@ function getApplication(privilegeLevel, token, application) {
             getApplicationQuery.values[7] = privilegeLevel.person_id;
 
         }
+        console.log(getApplicationQuery)
+        console.log(privilegeLevel)
         client.query(getApplicationQuery, (err, res) => {
             if (err) {
                 console.error(err)
@@ -349,8 +351,6 @@ function getApplication(privilegeLevel, token, application) {
  */
 async function createApplication(application, user) {
     return new Promise(async function (resolve, reject) {
-        console.log(application)
-        console.log(user)
         const client = await pool.connect()
         try {
             await client.query("BEGIN");
@@ -383,6 +383,7 @@ async function createApplication(application, user) {
             if (e.code == '23505') {
                 reject(new Error(dbError.errorCodes.DUPLICATE_APPLICATION_ERROR.code))
             }
+            console.error(e)
             reject(new Error(dbError.errorCodes.CREATE_APPLICATION_ERROR.code))
         } finally {
             client.release();
@@ -409,16 +410,11 @@ function updateApplicationStatus(status, applicationID, lastEdited) {
             client
                 .query(getLastEditedQuery)
                 .then(res => {
-                    console.log(res.rows[0].last_edited)
-                    console.log(lastEdited)
                     const lastEditedDB = new Date(res.rows[0].last_edited)
                     const lastUpdated = new Date(lastEdited)
                     if (lastEditedDB > lastUpdated) {
-                        console.log("application edited")
                         throw new Error(dbError.errorCodes.APPLICATION_EDITED_ERROR.code)
                     }
-                    console.log("application not edited")
-
                 })
                 .catch(err => {
                     reject(new Error(err.message))
@@ -452,11 +448,12 @@ function updateApplicationStatus(status, applicationID, lastEdited) {
  *
  * @returns Promise with list of Strings that contains the different competences.
  */
-function getCompetence() {
+function getCompetence(lang) {
     return new Promise(function (resolve, reject) {
         client = connect();
         const getCompetenceQuery = {
-            text: "SELECT * FROM competence",
+            text: "SELECT competence_id, name FROM competence_language WHERE language=$1",
+            values: [lang]
         }
         client.query(getCompetenceQuery, (err, res) => {
             if (notVaildResponse(res)) {
@@ -495,13 +492,13 @@ module.exports = {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#applyInput">applyInput</a></li><li><a href="global.html#authenticateUser">authenticateUser</a></li><li><a href="global.html#changeAuthToken">changeAuthToken</a></li><li><a href="global.html#checkIfUsernameIsAvailable">checkIfUsernameIsAvailable</a></li><li><a href="global.html#createApplication">createApplication</a></li><li><a href="global.html#deAuthenticateUser">deAuthenticateUser</a></li><li><a href="global.html#extractApplication">extractApplication</a></li><li><a href="global.html#extractCreateApplication">extractCreateApplication</a></li><li><a href="global.html#extractCredentials">extractCredentials</a></li><li><a href="global.html#extractToken">extractToken</a></li><li><a href="global.html#extractUser">extractUser</a></li><li><a href="global.html#extractUsername">extractUsername</a></li><li><a href="global.html#generate">generate</a></li><li><a href="global.html#getApplication">getApplication</a></li><li><a href="global.html#getCompetence">getCompetence</a></li><li><a href="global.html#getPrivilegeLevel">getPrivilegeLevel</a></li><li><a href="global.html#getToken">getToken</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#registerInput">registerInput</a></li><li><a href="global.html#registerUser">registerUser</a></li><li><a href="global.html#respondError">respondError</a></li><li><a href="global.html#router">router</a></li><li><a href="global.html#updateApplicationStatus">updateApplicationStatus</a></li><li><a href="global.html#updateUser">updateUser</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#applyInput">applyInput</a></li><li><a href="global.html#authenticateUser">authenticateUser</a></li><li><a href="global.html#changeAuthToken">changeAuthToken</a></li><li><a href="global.html#checkIfUsernameIsAvailable">checkIfUsernameIsAvailable</a></li><li><a href="global.html#createApplication">createApplication</a></li><li><a href="global.html#deAuthenticateUser">deAuthenticateUser</a></li><li><a href="global.html#extractApplication">extractApplication</a></li><li><a href="global.html#extractCreateApplication">extractCreateApplication</a></li><li><a href="global.html#extractCredentials">extractCredentials</a></li><li><a href="global.html#extractLang">extractLang</a></li><li><a href="global.html#extractLangCookie">extractLangCookie</a></li><li><a href="global.html#extractToken">extractToken</a></li><li><a href="global.html#extractUser">extractUser</a></li><li><a href="global.html#extractUsername">extractUsername</a></li><li><a href="global.html#generate">generate</a></li><li><a href="global.html#getApplication">getApplication</a></li><li><a href="global.html#getCompetence">getCompetence</a></li><li><a href="global.html#getPrivilegeLevel">getPrivilegeLevel</a></li><li><a href="global.html#getToken">getToken</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#registerInput">registerInput</a></li><li><a href="global.html#registerUser">registerUser</a></li><li><a href="global.html#respondError">respondError</a></li><li><a href="global.html#router">router</a></li><li><a href="global.html#updateApplicationStatus">updateApplicationStatus</a></li><li><a href="global.html#updateUser">updateUser</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Mon Feb 17 2020 12:42:25 GMT+0100 (GMT+01:00)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Mon Feb 17 2020 15:15:49 GMT+0100 (GMT+01:00)
 </footer>
 
 <script> prettyPrint(); </script>

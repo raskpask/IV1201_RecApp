@@ -264,7 +264,7 @@ function getPrivilegeLevel(token) {
  * @param {application} application - Instance of application
  * @returns Promise with list of instances of applications
  */
-function getApplication(privilegeLevel, token, application) {
+function getApplication(privilegeLevel, application) {
     return new Promise(function (resolve, reject) {
         let competenceIDList = [];
         for (let competence in application.competence) {
@@ -294,8 +294,6 @@ function getApplication(privilegeLevel, token, application) {
             getApplicationQuery.values[7] = privilegeLevel.person_id;
 
         }
-        console.log(getApplicationQuery)
-        console.log(privilegeLevel)
         client.query(getApplicationQuery, (err, res) => {
             if (err) {
                 console.error(err)
