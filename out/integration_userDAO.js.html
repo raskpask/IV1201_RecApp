@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: integration/userDAO.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: integration/userDAO.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * The different instances can be found in the model folder. They are all contructed in the model as a JS object.
  */
 const { Pool, Client } = require('pg')
@@ -14,23 +42,23 @@ function notVaildResponse(res) {
 }
 
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    /*user: "wlmremkduaitnk",
+    // connectionString: process.env.DATABASE_URL,
+    user: "wlmremkduaitnk",
     password: "83a43bfb610544a9c62da56a7144bafb13a726bf63a91e7ec454178a9623b479",
     database: "d38bijitre5o3s",
     port: 5432,
-    host: "ec2-54-247-92-167.eu-west-1.compute.amazonaws.com",*/
+    host: "ec2-54-247-92-167.eu-west-1.compute.amazonaws.com",
     ssl: true
 })
 
 function connect() {
     const client = new Client({
-        connectionString: process.env.DATABASE_URL,
-        /*user: "wlmremkduaitnk",
+        // connectionString: process.env.DATABASE_URL,
+        user: "wlmremkduaitnk",
         password: "83a43bfb610544a9c62da56a7144bafb13a726bf63a91e7ec454178a9623b479",
         database: "d38bijitre5o3s",
         port: 5432,
-        host: "ec2-54-247-92-167.eu-west-1.compute.amazonaws.com",*/
+        host: "ec2-54-247-92-167.eu-west-1.compute.amazonaws.com",
         ssl: true
     });
     client.connect();
@@ -264,7 +292,7 @@ function getPrivilegeLevel(token) {
  * @param {application} application - Instance of application
  * @returns Promise with list of instances of applications
  */
-function getApplication(privilegeLevel, application) {
+function getApplication(privilegeLevel, token, application) {
     return new Promise(function (resolve, reject) {
         let competenceIDList = [];
         for (let competence in application.competence) {
@@ -281,12 +309,12 @@ function getApplication(privilegeLevel, application) {
                 "INNER JOIN competence ON competence.competence_id = competence_profile.competence_id " +
                 "WHERE competence.competence_id IN " + '(' + competenceIDList.join() + ') ' +
                 "AND availability.from_date >= DATE($1) " +
-                "AND availability.to_date <= DATE($2) " +
+                "AND availability.to_date &lt;= DATE($2) " +
                 "AND(person.name LIKE ($3) OR person.surname LIKE ($4)) " +
                 "AND DATE(application.time_of_submission) >= DATE($5) " +
-                "AND DATE(application.time_of_submission) <= DATE($6) " +
+                "AND DATE(application.time_of_submission) &lt;= DATE($6) " +
                 "AND person.person_id >= ($7)" +
-                "AND person.person_id <= ($8)",
+                "AND person.person_id &lt;= ($8)",
             values: [application.availability.startDate, application.availability.endDate, application.name + "%", application.name + "%", application.applicationDate.startDate, application.applicationDate.endDate, 0, 999999999999999]
         }
         if (privilegeLevel.role_id == 2) {
@@ -294,6 +322,8 @@ function getApplication(privilegeLevel, application) {
             getApplicationQuery.values[7] = privilegeLevel.person_id;
 
         }
+        console.log(getApplicationQuery)
+        console.log(privilegeLevel)
         client.query(getApplicationQuery, (err, res) => {
             if (err) {
                 console.error(err)
@@ -324,14 +354,14 @@ async function createApplication(application, user) {
         const client = await pool.connect()
         try {
             await client.query("BEGIN");
-            for (i = 0; i < application.competence.length; i++) {
+            for (i = 0; i &lt; application.competence.length; i++) {
                 let addCompetenceProfileQuery = {
                     text: "INSERT INTO competence_profile (person_id,competence_id,years_of_experience) VALUES($1,$2,$3) RETURNING *",
                     values: [user.personID, application.competence[i].competenceID, application.competence[i].numberOfYears]
                 }
                 await client.query(addCompetenceProfileQuery);
             }
-            for (i = 0; i < application.availability.length; i++) {
+            for (i = 0; i &lt; application.availability.length; i++) {
                 let addAvailabilityQuery = {
                     text: "INSERT INTO availability (person_id,from_date,to_date) VALUES($1,$2,$3) RETURNING *",
                     values: [user.personID, application.availability[i].startDate, application.availability[i].endDate]
@@ -452,4 +482,26 @@ module.exports = {
     getCompetence,
     checkIfUsernameIsAvailable,
     getPrivilegeLevel,
-}
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#applyInput">applyInput</a></li><li><a href="global.html#authenticateUser">authenticateUser</a></li><li><a href="global.html#changeAuthToken">changeAuthToken</a></li><li><a href="global.html#checkIfUsernameIsAvailable">checkIfUsernameIsAvailable</a></li><li><a href="global.html#createApplication">createApplication</a></li><li><a href="global.html#deAuthenticateUser">deAuthenticateUser</a></li><li><a href="global.html#extractApplication">extractApplication</a></li><li><a href="global.html#extractCreateApplication">extractCreateApplication</a></li><li><a href="global.html#extractCredentials">extractCredentials</a></li><li><a href="global.html#extractLang">extractLang</a></li><li><a href="global.html#extractLangCookie">extractLangCookie</a></li><li><a href="global.html#extractToken">extractToken</a></li><li><a href="global.html#extractUser">extractUser</a></li><li><a href="global.html#extractUsername">extractUsername</a></li><li><a href="global.html#generate">generate</a></li><li><a href="global.html#getApplication">getApplication</a></li><li><a href="global.html#getCompetence">getCompetence</a></li><li><a href="global.html#getPrivilegeLevel">getPrivilegeLevel</a></li><li><a href="global.html#getToken">getToken</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#registerInput">registerInput</a></li><li><a href="global.html#registerUser">registerUser</a></li><li><a href="global.html#respondError">respondError</a></li><li><a href="global.html#router">router</a></li><li><a href="global.html#updateApplicationStatus">updateApplicationStatus</a></li><li><a href="global.html#updateUser">updateUser</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Mon Feb 17 2020 15:15:49 GMT+0100 (GMT+01:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

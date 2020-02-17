@@ -72,7 +72,16 @@ function getLanguage() {
             },
             notNumber:{
                 message: "Du måste specificera ett giltigt nummer"
-            }
+            },
+            competenceTypeNotChoosen:{
+                message: "Välj en kompetens från listan"
+            },
+            alreadyHasApplication:{
+                message: "Du har redan skapat en applikation. Du får ej skapa fler applikationer."
+            },
+            bothCompAndAvailMissing:{
+                message: "Var god och skriv in en kompetens och en tillgänglighet"
+            },
         },
         listApplications: {
             firstName: "Förnamn",

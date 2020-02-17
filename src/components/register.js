@@ -4,6 +4,8 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import axios from 'axios';
+import { errorCodes } from '../model/dbErrors'
+
 
 import Spinner from 'react-bootstrap/Spinner'
 import { validator } from '../model/formValidation';
@@ -70,13 +72,8 @@ class Register extends Component {
       }
     })
     if (validState.validated) {
-      //this console log can be removed
-      console.log("Success form submission!");
       this.registerUser();
-    } else {
-      //this console log can be removed
-      console.log("Unsuccessfull form submission");
-    }
+    } 
   }
   onChange = (e) => {
     const state = {
@@ -111,28 +108,31 @@ class Register extends Component {
       if (response.status === 200) {
         this.setState({ submitted: true });
       }
-    } catch (error) {
-      //The error can not be identified, so we will expect it to be a DUPLICATE_USER_ERROR error
-      const state = { 
-        ...this.state,
-        user: {
-          ...this.state.user,
-          username:{
-            ...this.state.user.username,
-            alreadyTakenUsernames:[
-              ...this.state.user.username.alreadyTakenUsernames,
-              this.state.user.username.value
-            ]
+    }catch (error) {
+      if(error.response.data === errorCodes.DUPLICATE_USER_ERROR.code){
+        const state = { 
+          ...this.state,
+          user: {
+            ...this.state.user,
+            username:{
+              ...this.state.user.username,
+              alreadyTakenUsernames:[
+                ...this.state.user.username.alreadyTakenUsernames,
+                this.state.user.username.value
+              ]
+            }
           }
-        }
-      };
-      //we have to redo the validation to that the DUPLICATE_USER_ERROR will be shown
-      this.checkValidation(null,state);
+        };
+        //we have to redo the validation to that the DUPLICATE_USER_ERROR will be shown
+        this.checkValidation(null,state);
 
+      }else{
+        console.log("Unhandled error occured in frontend!")
+      }
+      this.setState({
+        isLoading: false,
+      });
     }
-    this.setState({
-      isLoading: false,
-    });
   }
   renderRegisterForm = () => {
     const { username, password, confirmPassword, email, date, firstName, lastName } = this.state.user;
@@ -218,7 +218,7 @@ class Register extends Component {
             this.state.usernameValidationLoading ? 
             <Col md="auto" className="spinner">
             <Spinner animation="border" role="status" size="sm">
-                <span className="sr-only">Loading...</span>
+                <span className="sr-only">{this.props.info.general.loading}</span>
             </Spinner>
             </Col>:
             null

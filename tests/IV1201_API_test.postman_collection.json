@@ -1,10 +1,6 @@
 {
 	"info": {
-		"_postman_id": "906b0e34-ab98-4ef2-8de1-745a92ac51f1",
-		"name": "IV1201_API_test",
-		"description": "Testing the API created for the application built in the course IV1201 at KTH",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
 	"item": [
 		{
 			"name": "Login",
@@ -288,7 +284,7 @@
 						"exec": [
 							"",
 							"pm.test(\"Body contains competences'\", function () {",
-							"    pm.expect(pm.response.text()).to.include('\"competence_id\":\"1\",\"name\":\"Korvgrillning\",\"language\":\"sv-se\"');",
+							"    pm.expect(pm.response.text()).to.include('{\"competence_id\":\"1\",\"name\":\"Korvgrillning\"},{\"competence_id\":\"2\",\"name\":\"Karuselldrift\"}');",
 							"});"
 						],
 						"type": "text/javascript"
@@ -305,6 +301,11 @@
 						"key": "Content-Type",
 						"name": "Content-Type",
 						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Cookie",
+						"value": "lang=sv-se",
 						"type": "text"
 					}
 				],

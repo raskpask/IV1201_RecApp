@@ -5,7 +5,7 @@ const authToken = require('../model/authToken');
 /**
  * Registers a user in the DB.
  *
- * @param {*} req
+ * @param {String} req - The request of the client.
  * @returns Promise with 200
  */
 async function registerUser(req) {
@@ -15,7 +15,7 @@ async function registerUser(req) {
 /**
  * Authenticate a user. Checks if the client used the right credentials and generate a cookie to set it to the user.
  *
- * @param {*} req
+ * @param {String} req - The request of the client.
  * @returns Promise with the user
  */
 async function authenticateUser(req) {
@@ -28,7 +28,7 @@ async function authenticateUser(req) {
 /**
  * Logouts a user and removes the token from the DB.
  *
- * @param {*} req
+ * @param {String} req - The request of the client.
  * @returns Promise with token.
  */
 async function deAuthenticateUser(req) {
@@ -38,7 +38,7 @@ async function deAuthenticateUser(req) {
 /**
  * Fetches a user from the DB.
  *
- * @param {*} req
+ * @param {String} req - The request of the client.
  * @returns Promise with user
  */
 async function getUser(req) {
@@ -52,7 +52,7 @@ async function getUser(req) {
 /**
  * Validates if the username is in the DB.
  *
- * @param {*} req
+ * @param {String} req - The request of the client.
  * @returns Promise with a string, Username taken or Username not taken.
  */
 async function checkIfUsernameIsAvailable(req) {
@@ -61,7 +61,7 @@ async function checkIfUsernameIsAvailable(req) {
 /**
  * Changes the the user in the DB.
  *
- * @param {*} req
+ * @param {String} req - The request of the client.
  * @returns Promise with 200.
  */
 async function updateUser(req) {
@@ -71,7 +71,7 @@ async function updateUser(req) {
 /**
  * Fetch an application
  *
- * @param {*} req
+ * @param {String} req - The request of the client.
  * @returns Promise with list of all matching applications
  */
 async function getApplication(req) {
@@ -82,7 +82,7 @@ async function getApplication(req) {
         if (privilegeLevel == "no access") {
             throw new Error(dbError.errorCodes.NO_ACCESS_ERROR);
         }
-        return await userDAO.getApplication(privilegeLevel, token, application);
+        return await userDAO.getApplication(privilegeLevel, application);
     } catch (error) {
         throw error
     }
@@ -90,7 +90,7 @@ async function getApplication(req) {
 /**
  * Creates a application. 
  *
- * @param {*} req
+ * @param {String} req - The request of the client.
  * @returns Promise with 200.
  */
 async function createApplication(req) {
@@ -102,8 +102,8 @@ async function createApplication(req) {
 /**
  * Update the application status and last edited.
  *
- * @param {*} req
- * @returns Promise with 200.
+ * @param {String} req - The request of the client.
+ * @returns {Promise} - with code 200.
  */
 async function updateApplicationStatus(req) {
     const token = requestHandler.extractToken(req)
@@ -116,20 +116,31 @@ async function updateApplicationStatus(req) {
 /**
  * Fetches the competences of the user.
  *
- * @param {*} req
+ * @param {String} req - The request of the client.
  * @returns Promise with list competences.
  */
 async function getCompetence(req) {
-    return await userDAO.getCompetence();
+    const lang = requestHandler.extractLang(req);
+    return await userDAO.getCompetence(lang);
 }
 /**
  * Fetches the token of the User
  *
- * @param {*} req
- * @returns
+ * @param {String} req - The request of the client.
+ * @returns String with token.
  */
 function getToken(req) {
     return requestHandler.extractToken(req);
+}
+
+/**
+ * Extracts language cookie from header.
+ *
+ * @param {String} req - Request from client
+ * @returns String of language
+ */
+function extractLangCookie(req) {
+    return requestHandler.extractLang(req);
 }
 
 module.exports = {
@@ -144,4 +155,5 @@ module.exports = {
     getCompetence,
     checkIfUsernameIsAvailable,
     getToken,
+    extractLangCookie,
 }

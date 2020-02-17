@@ -1,33 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>JSDoc: Source: error/dbErrors.js</title>
-
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
-</head>
-
-<body>
-
-<div id="main">
-
-    <h1 class="page-title">Source: error/dbErrors.js</h1>
-
-    
-
-
-
-    
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>//These messages are only used for debugging.
-errorCodes = {
+//These messages are only used for debugging.
+const errorCodes = {
     CONNECTION_ERROR: {
         code: 'CONNECTION_ERROR',
         message: 'The connection the to database could not be made.'
@@ -108,32 +80,14 @@ errorCodes = {
         code: 'APPLICATION_EDITED_ERROR',
         message: 'The application was updated after the user checked the status'
     },
-    NO_AVAILABILITY_ERROR: {
-        code: 'NO_AVAILABILITY_ERROR',
-        message: 'The client did not send availability dates'
-    },
-    NO_COMPETENCE_ERROR: {
-        code: 'NO_COMPETENCE_ERROR',
-        message: 'The client did not send competences'
-    },
-    NO_LANGUAGE_COOKIE_ERROR: {
-        code: 'NO_LANGUAGE_COOKIE_ERROR',
-        message: 'Could not find language cookie'
-    },
-
+    
 }
-/**
- * Takes the error and send the right error message to the client.
- *
- * @param {String} error - Error message.
- * @param {Object} res - Response to the client.
- */
 function respondError(error, res) {
     console.error(error)
     switch (error) {
         case errorCodes.CONNECTION_ERROR.code:
             res.status(503);
-            res.send(CONNECTION_ERROR.code);
+            res.send(errorCodes.CONNECTION_ERROR.code);
             break;
         case errorCodes.INSERTING_USER_ERROR.code:
             res.status(503);
@@ -203,19 +157,6 @@ function respondError(error, res) {
             res.status(400);
             res.send(errorCodes.APPLICATION_EDITED_ERROR.code);
             break;
-        case errorCodes.NO_AVAILABILITY_ERROR.code:
-            res.status(400);
-            res.send(errorCodes.NO_AVAILABILITY_ERROR.code);
-            break;
-        case errorCodes.NO_COMPETENCE_ERROR.code:
-            res.status(400);
-            res.send(errorCodes.NO_COMPETENCE_ERROR.code);
-            break;
-        case errorCodes.NO_LANGUAGE_COOKIE_ERROR.code:
-            res.status(400);
-            res.send(errorCodes.NO_LANGUAGE_COOKIE_ERROR.code);
-            break;
-            
         default:
             res.status(500);
             res.send('Something went wrong on the server');
@@ -224,26 +165,4 @@ function respondError(error, res) {
 module.exports = {
     errorCodes,
     respondError
-}</code></pre>
-        </article>
-    </section>
-
-
-
-
-</div>
-
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#applyInput">applyInput</a></li><li><a href="global.html#authenticateUser">authenticateUser</a></li><li><a href="global.html#changeAuthToken">changeAuthToken</a></li><li><a href="global.html#checkIfUsernameIsAvailable">checkIfUsernameIsAvailable</a></li><li><a href="global.html#createApplication">createApplication</a></li><li><a href="global.html#deAuthenticateUser">deAuthenticateUser</a></li><li><a href="global.html#extractApplication">extractApplication</a></li><li><a href="global.html#extractCreateApplication">extractCreateApplication</a></li><li><a href="global.html#extractCredentials">extractCredentials</a></li><li><a href="global.html#extractLang">extractLang</a></li><li><a href="global.html#extractLangCookie">extractLangCookie</a></li><li><a href="global.html#extractToken">extractToken</a></li><li><a href="global.html#extractUser">extractUser</a></li><li><a href="global.html#extractUsername">extractUsername</a></li><li><a href="global.html#generate">generate</a></li><li><a href="global.html#getApplication">getApplication</a></li><li><a href="global.html#getCompetence">getCompetence</a></li><li><a href="global.html#getPrivilegeLevel">getPrivilegeLevel</a></li><li><a href="global.html#getToken">getToken</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#registerInput">registerInput</a></li><li><a href="global.html#registerUser">registerUser</a></li><li><a href="global.html#respondError">respondError</a></li><li><a href="global.html#router">router</a></li><li><a href="global.html#updateApplicationStatus">updateApplicationStatus</a></li><li><a href="global.html#updateUser">updateUser</a></li></ul>
-</nav>
-
-<br class="clear">
-
-<footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Mon Feb 17 2020 15:15:49 GMT+0100 (GMT+01:00)
-</footer>
-
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
-</body>
-</html>
+}

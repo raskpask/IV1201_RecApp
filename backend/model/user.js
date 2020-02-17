@@ -1,15 +1,15 @@
 module.exports = class User{
     /**
      *Creates an instance of User.
-     * @param {*} username
-     * @param {*} password
-     * @param {*} email
-     * @param {*} date
-     * @param {*} firstName
-     * @param {*} lastName
-     * @param {*} personID
-     * @param {*} privilegeLevel
-     * @param {*} token
+     * @param {String} username - Username of the user
+     * @param {String} password - Password of the user
+     * @param {String} email - Email of the user
+     * @param {String} date - Birthday of the user
+     * @param {String} firstName - Name of the user
+     * @param {String} lastName - Surname of the user
+     * @param {int} personID - Person ID of the user
+     * @param {int} privilegeLevel - Privilege level of the user
+     * @param {String} token - Authorization token of the user
      */
     constructor(username,password,email,date,firstName,lastName,personID,privilegeLevel,token){
         this.username = username;
