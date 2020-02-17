@@ -2,9 +2,8 @@ import React, { Component, Fragment } from 'react';
 import { Dropdown, InputGroup, DropdownButton, Button, Table, Col, Row, FormControl } from 'react-bootstrap';
 import { DateRangePicker } from 'react-dates';
 import Moment from 'moment';
-import { validateCompitence } from '../model/applyValidation';
-
-
+import { validateCompitence, validateForm } from '../model/applyValidation';
+import { errorCodes } from '../model/dbErrors'
 import Access from './fragments/access';
 
 import axios from 'axios';
@@ -21,10 +20,7 @@ class Apply extends Component {
             addedCompetences: [],
             competences: [],
             competence:{
-                competenceID: "",
-                competenceType: "",
-                competenceTypeChosen:false,
-                triedToAddCompetence:false,
+                competenceType: { value: "", competenceID: "", isInvalid:false, message:"", valueHasChanged:false },
                 numberOfYears: { value: "", isValid: false, isInvalid:false, message:"", valueHasChanged:false },
             },
             user: {
@@ -37,37 +33,70 @@ class Apply extends Component {
             },
             availabilityCounter: 1,
             availability: [],
+            form:{
+                noCompetences:false,
+                noAvailability:false,
+                alreadyHasApplication:false,
+                message:"",
+            },
             startDate: "",
             endDate: "",
-            submitted: ""
+            submitted: "",
+            isLoading:false,
         }
+    }
+    resetCompitences = () =>{
+        this.setState({
+            competence:{
+                competenceType: { value: this.props.info.apply.buttonDefaultValue, competenceID: "", isInvalid:false, message:"", valueHasChanged:false },
+                numberOfYears: { value: "", isValid: false, isInvalid:false, message:"", valueHasChanged:false },
+            }
+        })
     }
     //Years Of Experience OnChange
     yoeOnChange = (value) =>{
         let state ={...this.state, competence:
             {...this.state.competence,numberOfYears:
                 {...this.state.competence.numberOfYears,"value": value}}};
-        state = validateCompitence(state, this.props.info.validationError);
+        state = validateCompitence("yoe",state, this.props.info.validationError);
         this.setState(state);        
     }
     //Competence Type OnChange
-    ctOnChange = (event) =>{
+    ctOnChange = (name, id) =>{
         this.setState({
             competence:{ 
                 ...this.state.competence,
-                competenceType: event.target.name,
-                competenceTypeChosen: true,
-                competenceID: event.target.id,
+                competenceType: {
+                    ...this.state.competence.competenceType,
+                    value: name,
+                    valueHasChanged: true,
+                    isInvalid: false,
+                    competenceID: id,
+                }
                 }
         });
     }
     componentDidMount = async () => {
         const competences = await (await axios.get('/api/competence')).data;
-
         this.setState({ competences: competences, competence:{ 
             ...this.state.competence,
-            competenceType : this.props.info.apply.buttonDefaultValue 
+            competenceType : {
+                ...this.state.competence.competenceType,
+                value: this.props.info.apply.buttonDefaultValue
+            } 
         }})
+    }
+    errorTag(message){
+        return(
+            <div className = 'errorMessage m-auto'>{message}</div>
+        )
+    }
+    renderErrorMessage (trigger, message){
+        return(
+            <Fragment>
+                {trigger ? this.errorTag(message): null}
+            </Fragment>
+        )
     }
     renderNumbers() {
         return (
@@ -87,21 +116,25 @@ class Apply extends Component {
         )
     }
     addCompetence() {
-        if(!this.state.competence.numberOfYears.isValid){
-            this.yoeOnChange(this.state.competence.numberOfYears.value);
-        }else if(!this.state.competence.competenceTypeChosen){
-            this.setState({
-                ...this.state,
-                competence:{
-                ...this.state.competence,
-                triedToAddCompetence: true,
-            }});
-        }else{
-            const newCompetence = { competenceName: this.state.competence.competenceType, competenceID: this.state.competence.competenceID, numberOfYears: this.state.competence.numberOfYears.value };
+        //We sett the "type" parameter(first parameter of validateCompitence) to "null" to indicate that we want to
+        //validate both YOE(years of experience) and the competenceType
+        const newState =validateCompitence(null,this.state, this.props.info.validationError)
+        this.setState(newState);
+        if(!newState.competence.competenceType.isInvalid && !newState.competence.numberOfYears.isInvalid){
+            const newCompetence = { competenceName: this.state.competence.competenceType.value, competenceID: this.state.competence.competenceType.competenceID, numberOfYears: this.state.competence.numberOfYears.value };
             let list = this.state.addedCompetences;
             list.push(newCompetence);
             this.setState({ addedCompetences: list });
+            //we remove the compitenceType that was added
+            delete this.state.competences[newCompetence.competenceID];
+            this.resetCompitences();
         }
+        /*
+        0:
+            competenceName: "Korvgrillning"
+            competenceID: "0"
+            numberOfYears: "1"
+        */
     }
     
     addAvailability() {
@@ -130,21 +163,23 @@ class Apply extends Component {
             </Fragment>
         )
     }
-
     renderCompetences() {
         return (
             <Fragment>
                 <InputGroup className="mb-3 addForm">
                     <div className="paddingRight">
-                    <DropdownButton className={(!this.state.competence.competenceTypeChosen&&this.state.competence.triedToAddCompetence) ? "competenceTypeButton": ""} variant= "primary" title={this.props.info.apply.buttonCompetences + " " + this.state.competence.competenceType}
+                    <DropdownButton variant= "primary" title={this.props.info.apply.buttonCompetences + " " + this.state.competence.competenceType.value}
                     >
                         {this.state.competences.map((competence, key) =>
+                            
                             <Dropdown.Item key={key} id={key} name={competence.name}
-                                onClick={this.ctOnChange}>
+                                //We parseInt the key and add one to that it is not zero-indexed.
+                                onClick={event => this.ctOnChange(competence.name,(parseInt(key)+1))}>
                                 {competence.name}
                             </Dropdown.Item>
                         )}
                     </DropdownButton>
+                    {this.renderErrorMessage(this.state.competence.competenceType.isInvalid ,this.state.competence.competenceType.message)}
                     </div>
                     <DropdownButton variant="primary" title={this.props.info.apply.textYearsOfExperience}
                         onClick={event => this.yoeOnChange(event.target.id)}>
@@ -157,9 +192,7 @@ class Apply extends Component {
                             isValid = {this.state.competence.numberOfYears.isValid}
                             onChange={event => this.yoeOnChange(event.target.value)}
                         />
-                        <FormControl.Feedback type="invalid">
-                            {this.state.competence.numberOfYears.message}
-                        </FormControl.Feedback>
+                        {this.renderErrorMessage(this.state.competence.numberOfYears.isInvalid ,this.state.competence.numberOfYears.message)}
                     </div>
                     <div>
                     <Button variant="primary"
@@ -220,22 +253,66 @@ class Apply extends Component {
     renderSumbit() {
         return (
             <Fragment>
-                <Button variant="primary" className="m-auto"
-                    onClick={() => this.submitApplication()}
-                >
-                    {this.props.info.apply.sumbitApplication}
-                </Button>
+                <Row>
+                    <Button variant="primary" className="m-auto"
+                        onClick={() => this.submitApplication()}
+                        disabled={this.state.isLoading}
+                    >    
+                    {this.state.isLoading ? this.props.info.general.loading : this.props.info.apply.sumbitApplication}
+                    </Button>
+                </Row>
+                <Row>
+                    {this.renderErrorMessage((this.state.form.alreadyHasApplication|| this.state.form.noAvailability || this.state.form.noCompetences)  ,this.state.form.message)}
+                </Row>
+
             </Fragment>
         )
     }
     submitApplication = async () => {
-        const application = {
-            competence: this.state.addedCompetences,
-            availability: this.state.availability,
+        let newState = {
+            ...this.state,
+            isLoading: true,
+            form:{
+                noCompetences:false,
+                noAvailability:false,
+                alreadyHasApplication:false,
+                message:"", 
+            }
+        };
+        newState = validateForm(newState, this.props.info.validationError);
+        if(!newState.form.noCompetences && !newState.form.noAvailability){
+            try{
+                this.setState({
+                    isLoading: true,
+                });
+                const application = {
+                    competence: newState.addedCompetences,
+                    availability: newState.availability,
+                }
+                const res = await axios.post('/api/application', application);
+                if (res.status === 200) {
+                    this.setState({ ...newState,isLoading:false, submitted: true });
+                };
+            }catch(error){
+                if(error.response.data === errorCodes.DUPLICATE_APPLICATION_ERROR.code){
+                    this.setState({ 
+                        isLoading:false, 
+                        form:{
+                            ...this.state.form,
+                            alreadyHasApplication:true,
+                            message: this.props.info.validationError.alreadyHasApplication.message,
+                        }
+                    });
+                }else{
+                    console.log("Unhandled error occured in frontend!")
+                }
+            }
         }
-        const res = await axios.post('/api/application', application);
-        if (res.status === 200) {
-            this.setState({ submitted: true })
+        else{
+            this.setState({
+                ...newState,
+                isLoading:false,
+            })
         }
     }
     renderFullApplyPage() {
@@ -250,14 +327,11 @@ class Apply extends Component {
                         {this.renderAvailability()}
                     </Col>
                     <Col></Col>
-
                 </Row>
                 <Row>
                     {this.renderSummary()}
                 </Row>
-                <Row>
-                    {this.renderSumbit()}
-                </Row>
+                {this.renderSumbit()}
             </Fragment>
         )
     }
@@ -268,7 +342,6 @@ class Apply extends Component {
             </Fragment>
         )
     }
-
     render() {
         return (
             <div>
