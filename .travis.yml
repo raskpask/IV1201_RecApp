@@ -5,6 +5,7 @@ node_js:
 addons:
   hosts:
     - localhost
+  postgresql: "11.6"
 
 services:
   - postgresql
