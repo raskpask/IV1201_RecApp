@@ -3,7 +3,7 @@ const dbError = require('../error/dbErrors');
 /**
  * Checks if the register input of the user is correct.
  *
- * @param {*} req
+ * @param {String} req - Request from the client
  * @returns Boolean
  */
 function registerInput(req) {
@@ -20,8 +20,8 @@ function registerInput(req) {
 /**
  * Checks if the user has a valid date for availability and at least one competence.
  *
- * @param {*} competence
- * @param {*} availability
+ * @param {List} competence - List of all competences of the application. Checks if it is empty.
+ * @param {List} availability - List of all available date of the application. Checks if it is empty.
  */
 function applyInput(competence,availability){
     if(competence.length<1){

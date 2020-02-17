@@ -93,8 +93,8 @@ errorCodes = {
 /**
  * Takes the error and send the right error message to the client.
  *
- * @param {*} error
- * @param {*} res
+ * @param {String} error - Error message.
+ * @param {Object} res - Response to the client.
  */
 function respondError(error, res) {
     console.error(error)

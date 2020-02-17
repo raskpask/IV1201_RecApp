@@ -1,11 +1,11 @@
 module.exports = class Application{
     /**
      *Creates an instance of Application.
-     * @param {*} applicationID
-     * @param {*} availability
-     * @param {*} applicationDate
-     * @param {*} competence
-     * @param {*} name
+     * @param {int} applicationID - Application ID
+     * @param {List} availability - List of available dates.
+     * @param {Date} applicationDate - Date when the application was made.
+     * @param {List} competence - List of comepetences that the applciation has
+     * @param {String} name - The name of the user who made the application
      */
     constructor(applicationID, availability, applicationDate,competence,name){
         this.applicationID = applicationID;

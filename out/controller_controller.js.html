@@ -33,7 +33,7 @@ const authToken = require('../model/authToken');
 /**
  * Registers a user in the DB.
  *
- * @param {*} req
+ * @param {String} req - The request of the client.
  * @returns Promise with 200
  */
 async function registerUser(req) {
@@ -43,7 +43,7 @@ async function registerUser(req) {
 /**
  * Authenticate a user. Checks if the client used the right credentials and generate a cookie to set it to the user.
  *
- * @param {*} req
+ * @param {String} req - The request of the client.
  * @returns Promise with the user
  */
 async function authenticateUser(req) {
@@ -56,7 +56,7 @@ async function authenticateUser(req) {
 /**
  * Logouts a user and removes the token from the DB.
  *
- * @param {*} req
+ * @param {String} req - The request of the client.
  * @returns Promise with token.
  */
 async function deAuthenticateUser(req) {
@@ -66,7 +66,7 @@ async function deAuthenticateUser(req) {
 /**
  * Fetches a user from the DB.
  *
- * @param {*} req
+ * @param {String} req - The request of the client.
  * @returns Promise with user
  */
 async function getUser(req) {
@@ -80,7 +80,7 @@ async function getUser(req) {
 /**
  * Validates if the username is in the DB.
  *
- * @param {*} req
+ * @param {String} req - The request of the client.
  * @returns Promise with a string, Username taken or Username not taken.
  */
 async function checkIfUsernameIsAvailable(req) {
@@ -89,7 +89,7 @@ async function checkIfUsernameIsAvailable(req) {
 /**
  * Changes the the user in the DB.
  *
- * @param {*} req
+ * @param {String} req - The request of the client.
  * @returns Promise with 200.
  */
 async function updateUser(req) {
@@ -99,7 +99,7 @@ async function updateUser(req) {
 /**
  * Fetch an application
  *
- * @param {*} req
+ * @param {String} req - The request of the client.
  * @returns Promise with list of all matching applications
  */
 async function getApplication(req) {
@@ -118,7 +118,7 @@ async function getApplication(req) {
 /**
  * Creates a application. 
  *
- * @param {*} req
+ * @param {String} req - The request of the client.
  * @returns Promise with 200.
  */
 async function createApplication(req) {
@@ -130,8 +130,8 @@ async function createApplication(req) {
 /**
  * Update the application status and last edited.
  *
- * @param {*} req
- * @returns Promise with 200.
+ * @param {String} req - The request of the client.
+ * @returns {Promise} - with code 200.
  */
 async function updateApplicationStatus(req) {
     const token = requestHandler.extractToken(req)
@@ -144,13 +144,21 @@ async function updateApplicationStatus(req) {
 /**
  * Fetches the competences of the user.
  *
- * @param {*} req
+ * @param {String} req - The request of the client.
  * @returns Promise with list competences.
  */
 async function getCompetence(req) {
     return await userDAO.getCompetence();
 }
-
+/**
+ * Fetches the token of the User
+ *
+ * @param {String} req - The request of the client.
+ * @returns String with token.
+ */
+function getToken(req) {
+    return requestHandler.extractToken(req);
+}
 
 module.exports = {
     registerUser,
@@ -163,6 +171,7 @@ module.exports = {
     deAuthenticateUser,
     getCompetence,
     checkIfUsernameIsAvailable,
+    getToken,
 }</code></pre>
         </article>
     </section>
@@ -173,13 +182,13 @@ module.exports = {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#authenticateUser">authenticateUser</a></li><li><a href="global.html#checkIfUsernameIsAvailable">checkIfUsernameIsAvailable</a></li><li><a href="global.html#createApplication">createApplication</a></li><li><a href="global.html#deAuthenticateUser">deAuthenticateUser</a></li><li><a href="global.html#getApplication">getApplication</a></li><li><a href="global.html#getCompetence">getCompetence</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#registerUser">registerUser</a></li><li><a href="global.html#respondError">respondError</a></li><li><a href="global.html#updateApplicationStatus">updateApplicationStatus</a></li><li><a href="global.html#updateUser">updateUser</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#applyInput">applyInput</a></li><li><a href="global.html#authenticateUser">authenticateUser</a></li><li><a href="global.html#changeAuthToken">changeAuthToken</a></li><li><a href="global.html#checkIfUsernameIsAvailable">checkIfUsernameIsAvailable</a></li><li><a href="global.html#createApplication">createApplication</a></li><li><a href="global.html#deAuthenticateUser">deAuthenticateUser</a></li><li><a href="global.html#extractApplication">extractApplication</a></li><li><a href="global.html#extractCreateApplication">extractCreateApplication</a></li><li><a href="global.html#extractCredentials">extractCredentials</a></li><li><a href="global.html#extractToken">extractToken</a></li><li><a href="global.html#extractUser">extractUser</a></li><li><a href="global.html#extractUsername">extractUsername</a></li><li><a href="global.html#generate">generate</a></li><li><a href="global.html#getApplication">getApplication</a></li><li><a href="global.html#getCompetence">getCompetence</a></li><li><a href="global.html#getPrivilegeLevel">getPrivilegeLevel</a></li><li><a href="global.html#getToken">getToken</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#registerInput">registerInput</a></li><li><a href="global.html#registerUser">registerUser</a></li><li><a href="global.html#respondError">respondError</a></li><li><a href="global.html#router">router</a></li><li><a href="global.html#updateApplicationStatus">updateApplicationStatus</a></li><li><a href="global.html#updateUser">updateUser</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Mon Feb 17 2020 10:44:42 GMT+0100 (GMT+01:00)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Mon Feb 17 2020 12:42:25 GMT+0100 (GMT+01:00)
 </footer>
 
 <script> prettyPrint(); </script>
