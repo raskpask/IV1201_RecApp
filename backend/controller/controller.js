@@ -134,6 +134,16 @@ function getToken(req) {
     return requestHandler.extractToken(req);
 }
 
+/**
+ * Extracts language cookie from header.
+ *
+ * @param {String} req - Request from client
+ * @returns String of language
+ */
+function extractLangCookie(req) {
+    return requestHandler.extractLang(req);
+}
+
 module.exports = {
     registerUser,
     authenticateUser,
@@ -146,4 +156,5 @@ module.exports = {
     getCompetence,
     checkIfUsernameIsAvailable,
     getToken,
+    extractLangCookie,
 }

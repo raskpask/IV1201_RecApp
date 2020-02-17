@@ -294,6 +294,8 @@ function getApplication(privilegeLevel, token, application) {
             getApplicationQuery.values[7] = privilegeLevel.person_id;
 
         }
+        console.log(getApplicationQuery)
+        console.log(privilegeLevel)
         client.query(getApplicationQuery, (err, res) => {
             if (err) {
                 console.error(err)
@@ -422,7 +424,7 @@ function getCompetence(lang) {
     return new Promise(function (resolve, reject) {
         client = connect();
         const getCompetenceQuery = {
-            text: "SELECT name,competence_id FROM competence_language WHERE language=$1",
+            text: "SELECT competence_id, name FROM competence_language WHERE language=$1",
             values: [lang]
         }
         client.query(getCompetenceQuery, (err, res) => {

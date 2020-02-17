@@ -42,17 +42,17 @@ function extractUser(req) {
 /**
  * Extarct the language of the client from the cookie
  *
- * @param {*} req
+ * @param {String} req - Request from client
  * @returns String of language
  */
 function extractLang(req){
     cookieHeader = req.headers.cookie;
     if (cookieHeader === undefined) {
-        throw new Error(dbError.errorCodes.NO_LANGUAGE_COOKIE_ERROR.code)
+        return 'en-us';
     }
     const langCookie = cookieHeader.split('lang=');
     if (langCookie === undefined || langCookie.length < 2) {
-        throw new Error(dbError.errorCodes.NO_LANGUAGE_COOKIE_ERROR.code)
+        return 'en-us';
     } 
     const lang = langCookie[1].split(';')[0];
     return lang ? lang : 'en-us';
