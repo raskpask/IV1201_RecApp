@@ -121,7 +121,8 @@ async function updateApplicationStatus(req) {
  * @returns Promise with list competences.
  */
 async function getCompetence(req) {
-    return await userDAO.getCompetence();
+    const lang = requestHandler.extractLang(req);
+    return await userDAO.getCompetence(lang);
 }
 /**
  * Fetches the token of the User

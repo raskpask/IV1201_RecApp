@@ -40,6 +40,24 @@ function extractUser(req) {
     return new User(body.username, body.password, body.email, body.date, body.firstName, body.lastName);
 }
 /**
+ * Extarct the language of the client from the cookie
+ *
+ * @param {*} req
+ * @returns String of language
+ */
+function extractLang(req){
+    cookieHeader = req.headers.cookie;
+    if (cookieHeader === undefined) {
+        throw new Error(dbError.errorCodes.NO_LANGUAGE_COOKIE_ERROR.code)
+    }
+    const langCookie = cookieHeader.split('lang=');
+    if (langCookie === undefined || langCookie.length < 2) {
+        throw new Error(dbError.errorCodes.NO_LANGUAGE_COOKIE_ERROR.code)
+    } 
+    const lang = langCookie[1].split(';')[0];
+    return lang ? lang : 'en-us';
+}
+/**
  * Extracts the client token from the request.
  *
  * @param {String} req - Request from the client
@@ -129,4 +147,5 @@ module.exports = {
     extractApplication,
     extractUsername,
     extractCreateApplication,
+    extractLang,
 }

@@ -88,6 +88,10 @@ errorCodes = {
         code: 'NO_COMPETENCE_ERROR',
         message: 'The client did not send competences'
     },
+    NO_LANGUAGE_COOKIE_ERROR: {
+        code: 'NO_LANGUAGE_COOKIE_ERROR',
+        message: 'Could not find language cookie'
+    },
 
 }
 /**
@@ -178,6 +182,10 @@ function respondError(error, res) {
         case errorCodes.NO_COMPETENCE_ERROR.code:
             res.status(400);
             res.send(errorCodes.NO_COMPETENCE_ERROR.code);
+            break;
+        case errorCodes.NO_LANGUAGE_COOKIE_ERROR.code:
+            res.status(400);
+            res.send(errorCodes.NO_LANGUAGE_COOKIE_ERROR.code);
             break;
             
         default:

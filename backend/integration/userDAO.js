@@ -353,6 +353,7 @@ async function createApplication(application, user) {
             if (e.code == '23505') {
                 reject(new Error(dbError.errorCodes.DUPLICATE_APPLICATION_ERROR.code))
             }
+            console.error(e)
             reject(new Error(dbError.errorCodes.CREATE_APPLICATION_ERROR.code))
         } finally {
             client.release();
@@ -417,11 +418,12 @@ function updateApplicationStatus(status, applicationID, lastEdited) {
  *
  * @returns Promise with list of Strings that contains the different competences.
  */
-function getCompetence() {
+function getCompetence(lang) {
     return new Promise(function (resolve, reject) {
         client = connect();
         const getCompetenceQuery = {
-            text: "SELECT * FROM competence",
+            text: "SELECT name,competence_id FROM competence_language WHERE language=$1",
+            values: [lang]
         }
         client.query(getCompetenceQuery, (err, res) => {
             if (notVaildResponse(res)) {
