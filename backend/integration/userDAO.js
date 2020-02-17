@@ -117,11 +117,12 @@ function authenticateUser(credentials) {
                     reject(new Error(dbError.errorCodes.LOGIN_ERROR.code))
                 } else if (res.rows[0].password === credentials.password) {
                     client.end()
-                    return resolve(200);
+                    resolve(200);
                 }
+            } else {
+                client.end()
+                reject(new Error(dbError.errorCodes.LOGIN_ERROR.code))
             }
-            client.end()
-            reject(new Error(dbError.errorCodes.LOGIN_ERROR.code))
         })
     });
 }
@@ -209,14 +210,13 @@ function getUser(token) {
                 if (notVaildResponse(res)) {
                     client.end();
                     reject(new Error(dbError.errorCodes.GET_USER_ERROR.code));
-
-                    if (res.rows != undefined) {
-                        const rawUser = res.rows[0].person.split('(')[1].split(',');
-                        client.end()
-                        resolve(new User(rawUser[7], rawUser[5], rawUser[4], rawUser[3], rawUser[1], rawUser[2], rawUser[0], rawUser[6], token));
-                    }
                 }
-                client.end()
+                if (res.rows != undefined) {
+                    const rawUser = res.rows[0].person.split('(')[1].split(',');
+                    client.end()
+                    resolve(new User(rawUser[7], rawUser[5], rawUser[4], rawUser[3], rawUser[1], rawUser[2], rawUser[0], rawUser[6], token));
+                }
+
             } catch (err) {
                 client.end()
                 reject(new Error(dbError.errorCodes.NO_USER_ERROR.code))
@@ -321,8 +321,6 @@ function getApplication(privilegeLevel, token, application) {
  */
 async function createApplication(application, user) {
     return new Promise(async function (resolve, reject) {
-        console.log(application)
-        console.log(user)
         const client = await pool.connect()
         try {
             await client.query("BEGIN");
@@ -381,16 +379,11 @@ function updateApplicationStatus(status, applicationID, lastEdited) {
             client
                 .query(getLastEditedQuery)
                 .then(res => {
-                    console.log(res.rows[0].last_edited)
-                    console.log(lastEdited)
                     const lastEditedDB = new Date(res.rows[0].last_edited)
                     const lastUpdated = new Date(lastEdited)
                     if (lastEditedDB > lastUpdated) {
-                        console.log("application edited")
                         throw new Error(dbError.errorCodes.APPLICATION_EDITED_ERROR.code)
                     }
-                    console.log("application not edited")
-
                 })
                 .catch(err => {
                     reject(new Error(err.message))

@@ -23,6 +23,7 @@ async function authenticateUser(req) {
     const token = authToken.generate();
     await userDAO.authenticateUser(credentials);
     await userDAO.changeAuthToken(credentials, token);
+    console.log("OK 2")
     return await userDAO.getUser(token);
 }
 /**

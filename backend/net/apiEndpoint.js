@@ -56,6 +56,7 @@ function router(router) {
         try {
             // console.log(req.body)
             const user = await controller.authenticateUser(req);
+            console.log(user)
             res.cookie('authToken', user.token, { expires: new Date(Date.now() + 1800000) });
             res.cookie('privilegeLevel', user.privilegeLevel, { expires: new Date(Date.now() + 1800000) });
         } catch (error) {
