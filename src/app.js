@@ -32,9 +32,9 @@ class App extends Component {
         }
     }
     updateLanguage(lang) {
-        if (lang === 'swe') {
+        if (lang === 'sv-se') {
             this.setState({ lang: Swe.getLanguage() });
-        } else if (lang === 'eng') {
+        } else if (lang === 'en-us') {
             this.setState({ lang: Eng.getLanguage() });
         }
     }

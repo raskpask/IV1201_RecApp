@@ -157,8 +157,8 @@ class Header extends Component {
     renderlanguage() {
         return (
             <NavDropdown title={this.props.info.header.language} id="basic-nav-dropdown" >
-                <NavDropdown.Item onClick={() => this.setLanguage('swe')}>{this.props.info.header.swe}</NavDropdown.Item>
-                <NavDropdown.Item onClick={() => this.setLanguage('eng')}>{this.props.info.header.eng}</NavDropdown.Item>
+                <NavDropdown.Item onClick={() => this.setLanguage('sv-se')}>{this.props.info.header.swe}</NavDropdown.Item>
+                <NavDropdown.Item onClick={() => this.setLanguage('en-us')}>{this.props.info.header.eng}</NavDropdown.Item>
             </NavDropdown>
         )
     }

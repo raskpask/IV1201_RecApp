@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: model/authToken.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,30 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: model/authToken.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const crypto = require('crypto');
 
-
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+/**
+ *  Generate a authorization token to be stored in the DB and in the client window.
+ *
+ * @returns authToken 
+ */
+function generate(){
+    return crypto.randomBytes(64).toString('hex');
+}
+module.exports = {
+    generate,
+}</code></pre>
+        </article>
+    </section>
 
 
 

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: model/user.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,46 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: model/user.js</h1>
 
     
 
 
 
     
-
-
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>module.exports = class User{
+    /**
+     *Creates an instance of User.
+     * @param {String} username - Username of the user
+     * @param {String} password - Password of the user
+     * @param {String} email - Email of the user
+     * @param {String} date - Birthday of the user
+     * @param {String} firstName - Name of the user
+     * @param {String} lastName - Surname of the user
+     * @param {int} personID - Person ID of the user
+     * @param {int} privilegeLevel - Privilege level of the user
+     * @param {String} token - Authorization token of the user
+     */
+    constructor(username,password,email,date,firstName,lastName,personID,privilegeLevel,token){
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.date = date;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.personID = personID;
+        this.privilegeLevel = privilegeLevel;
+        this.token = token;
+    }
+    display() {
+        console.log(this.firstName + " " + this.lastName);
+    }
+}
+</code></pre>
+        </article>
+    </section>
 
 
 
