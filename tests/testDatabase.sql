@@ -23,12 +23,12 @@ SET row_security = off;
 -- Name: testDatabase; Type: DATABASE; Schema: -; Owner: IV1201
 --
 
-CREATE DATABASE testDatabase WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8';
+-- CREATE DATABASE testDatabase WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8';
 
 
 -- ALTER DATABASE testDatabase OWNER TO IV1201;
 
-\connect testDatabase
+\connect testdatabase
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
