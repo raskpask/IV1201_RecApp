@@ -77,7 +77,9 @@ class ListApplications extends Component {
                 this.setState({ show: false })
                 // console.log(res.data)
             })
-            .catch(err => console.log(err))
+            .catch(err => {
+                console.log(err)
+            })
     }
     getApplicationsAndCompetences = () => {
         axios
@@ -94,11 +96,15 @@ class ListApplications extends Component {
                         this.setState({ filteredCompetences: competenceList });
 
                     })
-                    .catch(err => console.log(err))
+                    .catch(err => {
+                        console.log(err)
+                    })
                 this.setState({ application: this.parseApplications(res.data) })
 
             })
-            .catch(err => console.log(err))
+            .catch(err => {
+                console.log(err)
+            })
     }
     parseApplications(applications) {
         let listOfApplications = [];

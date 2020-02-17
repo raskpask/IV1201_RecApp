@@ -75,7 +75,19 @@ function getLanguage() {
             },
             competenceTypeNotChoosen:{
                 message: "Pleace choose a compitence from the list"
-            }
+            },
+            alreadyHasApplication:{
+                message: "You have already created a application. You may not create any more appications."
+            },
+            bothCompAndAvailMissing:{
+                message: "Please specify a compitence and a availibility"
+            },
+            compMissing:{
+                message: "Please specify a compitence"
+            },
+            availMissing:{
+                message: "Please specify a availibility date"
+            },
         },
         listApplications: {
             firstName: "First name",

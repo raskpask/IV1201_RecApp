@@ -2,9 +2,8 @@ import React, { Component, Fragment } from 'react';
 import { Dropdown, InputGroup, DropdownButton, Button, Table, Col, Row, FormControl } from 'react-bootstrap';
 import { DateRangePicker } from 'react-dates';
 import Moment from 'moment';
-import { validateCompitence } from '../model/applyValidation';
-
-
+import { validateCompitence, validateForm } from '../model/applyValidation';
+import { errorCodes } from '../model/dbErrors'
 import Access from './fragments/access';
 
 import axios from 'axios';
@@ -34,9 +33,16 @@ class Apply extends Component {
             },
             availabilityCounter: 1,
             availability: [],
+            form:{
+                noCompetences:false,
+                noAvailability:false,
+                alreadyHasApplication:false,
+                message:"",
+            },
             startDate: "",
             endDate: "",
-            submitted: ""
+            submitted: "",
+            isLoading:false,
         }
     }
     resetCompitences = () =>{
@@ -56,16 +62,16 @@ class Apply extends Component {
         this.setState(state);        
     }
     //Competence Type OnChange
-    ctOnChange = (event) =>{
+    ctOnChange = (name, id) =>{
         this.setState({
             competence:{ 
                 ...this.state.competence,
                 competenceType: {
                     ...this.state.competence.competenceType,
-                    value: event.target.name,
+                    value: name,
                     valueHasChanged: true,
                     isInvalid: false,
-                    competenceID: event.target.id,
+                    competenceID: id,
                 }
                 }
         });
@@ -82,7 +88,7 @@ class Apply extends Component {
     }
     errorTag(message){
         return(
-            <div className = 'errorMessage'>{message}</div>
+            <div className = 'errorMessage m-auto'>{message}</div>
         )
     }
     renderErrorMessage (trigger, message){
@@ -157,7 +163,6 @@ class Apply extends Component {
             </Fragment>
         )
     }
-
     renderCompetences() {
         return (
             <Fragment>
@@ -166,8 +171,10 @@ class Apply extends Component {
                     <DropdownButton variant= "primary" title={this.props.info.apply.buttonCompetences + " " + this.state.competence.competenceType.value}
                     >
                         {this.state.competences.map((competence, key) =>
+                            
                             <Dropdown.Item key={key} id={key} name={competence.name}
-                                onClick={this.ctOnChange}>
+                                //We parseInt the key and add one to that it is not zero-indexed.
+                                onClick={event => this.ctOnChange(competence.name,(parseInt(key)+1))}>
                                 {competence.name}
                             </Dropdown.Item>
                         )}
@@ -246,22 +253,66 @@ class Apply extends Component {
     renderSumbit() {
         return (
             <Fragment>
-                <Button variant="primary" className="m-auto"
-                    onClick={() => this.submitApplication()}
-                >
-                    {this.props.info.apply.sumbitApplication}
-                </Button>
+                <Row>
+                    <Button variant="primary" className="m-auto"
+                        onClick={() => this.submitApplication()}
+                        disabled={this.state.isLoading}
+                    >    
+                    {this.state.isLoading ? this.props.info.general.loading : this.props.info.apply.sumbitApplication}
+                    </Button>
+                </Row>
+                <Row>
+                    {this.renderErrorMessage((this.state.form.alreadyHasApplication|| this.state.form.noAvailability || this.state.form.noCompetences)  ,this.state.form.message)}
+                </Row>
+
             </Fragment>
         )
     }
     submitApplication = async () => {
-        const application = {
-            competence: this.state.addedCompetences,
-            availability: this.state.availability,
+        let newState = {
+            ...this.state,
+            isLoading: true,
+            form:{
+                noCompetences:false,
+                noAvailability:false,
+                alreadyHasApplication:false,
+                message:"", 
+            }
+        };
+        newState = validateForm(newState, this.props.info.validationError);
+        if(!newState.form.noCompetences && !newState.form.noAvailability){
+            try{
+                this.setState({
+                    isLoading: true,
+                });
+                const application = {
+                    competence: newState.addedCompetences,
+                    availability: newState.availability,
+                }
+                const res = await axios.post('/api/application', application);
+                if (res.status === 200) {
+                    this.setState({ ...newState,isLoading:false, submitted: true });
+                };
+            }catch(error){
+                if(error.response.data === errorCodes.DUPLICATE_APPLICATION_ERROR.code){
+                    this.setState({ 
+                        isLoading:false, 
+                        form:{
+                            ...this.state.form,
+                            alreadyHasApplication:true,
+                            message: this.props.info.validationError.alreadyHasApplication.message,
+                        }
+                    });
+                }else{
+                    console.log("Unhandled error occured in frontend!")
+                }
+            }
         }
-        const res = await axios.post('/api/application', application);
-        if (res.status === 200) {
-            this.setState({ submitted: true })
+        else{
+            this.setState({
+                ...newState,
+                isLoading:false,
+            })
         }
     }
     renderFullApplyPage() {
@@ -276,14 +327,11 @@ class Apply extends Component {
                         {this.renderAvailability()}
                     </Col>
                     <Col></Col>
-
                 </Row>
                 <Row>
                     {this.renderSummary()}
                 </Row>
-                <Row>
-                    {this.renderSumbit()}
-                </Row>
+                {this.renderSumbit()}
             </Fragment>
         )
     }
@@ -294,7 +342,6 @@ class Apply extends Component {
             </Fragment>
         )
     }
-
     render() {
         return (
             <div>
