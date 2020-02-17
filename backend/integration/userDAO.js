@@ -114,11 +114,12 @@ function authenticateUser(credentials) {
             if (notVaildResponse(res)) {
                 client.end()
                 reject(new Error(dbError.errorCodes.LOGIN_ERROR.code))
-            }
-            if (res.rows.length === 1) {
-                if (res.rows[0].password === credentials.password) {
-                    client.end()
-                    resolve(200);
+            } else {
+                if (res.rows.length === 1) {
+                    if (res.rows[0].password === credentials.password) {
+                        client.end()
+                        resolve(200);
+                    }
                 }
             }
             client.end()

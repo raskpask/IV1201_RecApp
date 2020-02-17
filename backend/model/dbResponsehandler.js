@@ -71,17 +71,13 @@ function extractApplication(rows, competences) {
         }
 
     });
-    console.log(competences)
     applicationList.push(JSON.stringify(tempApplication));
     return applicationList;
 }
 
-function checkIfNotExistsInCompetence(name, list,competenceNames) {
-    
+function checkIfNotExistsInCompetence(name, list, competenceNames) {
     for (let element of list) {
-        console.log(name)
-        console.log(competenceNames[element.competence_id])
-        if (name === competenceNames[element.competence_id]) {
+        if (name === element.name) {
             return false
         }
     }
