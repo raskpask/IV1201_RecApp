@@ -122,7 +122,15 @@ async function updateApplicationStatus(req) {
 async function getCompetence(req) {
     return await userDAO.getCompetence();
 }
-
+/**
+ * Fetches the token of the User
+ *
+ * @param {*} req
+ * @returns
+ */
+function getToken(req) {
+    return requestHandler.extractToken(req);
+}
 
 module.exports = {
     registerUser,
@@ -135,4 +143,5 @@ module.exports = {
     deAuthenticateUser,
     getCompetence,
     checkIfUsernameIsAvailable,
+    getToken,
 }

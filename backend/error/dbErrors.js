@@ -80,7 +80,15 @@ errorCodes = {
         code: 'APPLICATION_EDITED_ERROR',
         message: 'The application was updated after the user checked the status'
     },
-    
+    NO_AVAILABILITY_ERROR: {
+        code: 'NO_AVAILABILITY_ERROR',
+        message: 'The client did not send availability dates'
+    },
+    NO_COMPETENCE_ERROR: {
+        code: 'NO_COMPETENCE_ERROR',
+        message: 'The client did not send competences'
+    },
+
 }
 /**
  * Takes the error and send the right error message to the client.
@@ -163,6 +171,15 @@ function respondError(error, res) {
             res.status(400);
             res.send(errorCodes.APPLICATION_EDITED_ERROR.code);
             break;
+        case errorCodes.NO_AVAILABILITY_ERROR.code:
+            res.status(400);
+            res.send(errorCodes.NO_AVAILABILITY_ERROR.code);
+            break;
+        case errorCodes.NO_COMPETENCE_ERROR.code:
+            res.status(400);
+            res.send(errorCodes.NO_COMPETENCE_ERROR.code);
+            break;
+            
         default:
             res.status(500);
             res.send('Something went wrong on the server');

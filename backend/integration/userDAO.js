@@ -89,7 +89,6 @@ function authenticateUser(credentials) {
             values: [credentials.username]
         }
         client.query(query, (err, res) => {
-            // console.log(res.rows.length)
             if (res.rows.length === 1) {
                 if (notVaildResponse(res)) {
                     client.end()
@@ -171,7 +170,6 @@ function getUser(token) {
             }
             if (res.rows != undefined) {
                 const rawUser = res.rows[0].person.split('(')[1].split(',');
-                // console.log("token: "+token)
                 client.end()
                 resolve(new User(rawUser[7], rawUser[5], rawUser[4], rawUser[3], rawUser[1], rawUser[2], rawUser[0], rawUser[6], token));
             }
@@ -195,9 +193,7 @@ function getPrivilegeLevel(token) {
                 client.end()
                 reject(new Error(dbError.errorCodes.GET_USER_ERROR.code));
             } else {
-                // console.log(res)
                 if (res.rows[0] != null) {
-                    // console.log(res.rows[0])
                     client.end()
                     resolve(res.rows[0]);
                 }
@@ -210,14 +206,8 @@ function getPrivilegeLevel(token) {
 
 function getApplication(privilegeLevel, token, application) {
     return new Promise(function (resolve, reject) {
-        // console.log(application)
-        // console.log(privilegeLevel)
-        // console.log(application)
-        // console.log("Pri lvl: "+privilegeLevel.role_id)
-        // console.log(application.competence)
         let competenceIDList = [];
         for (let competence in application.competence) {
-            // console.log(application.competence[competence].competence_id)
             competenceIDList.push(application.competence[competence])
         }
         client = connect();
@@ -240,17 +230,11 @@ function getApplication(privilegeLevel, token, application) {
             values: [application.availability.startDate, application.availability.endDate, application.name + "%", application.name + "%", application.applicationDate.startDate, application.applicationDate.endDate, 0, 999999999999999]
         }
         if (privilegeLevel.role_id == 2) {
-            // getApplicationQuery.text.concat(" AND person.token = ($7)")
             getApplicationQuery.values[6] = privilegeLevel.person_id;
             getApplicationQuery.values[7] = privilegeLevel.person_id;
 
         }
-        // console.log(getApplicationQuery)
-        // get status, job application, competence with year, availability, person name *
-
         client.query(getApplicationQuery, (err, res) => {
-            // console.log("Adding to db")
-            // console.log(res.rows)
             if (err) {
                 console.error(err)
                 reject(new Error(dbError.errorCodes.APPLICATION_ERROR.code));
@@ -262,17 +246,16 @@ function getApplication(privilegeLevel, token, application) {
                 client.end()
                 reject(new Error(dbError.errorCodes.UNKNOWN_ERROR.code));
             }
-            // console.log(res.rows.length)
             const applicationList = dbResponseHandler.extractApplication(res.rows)
             client.end()
-            // console.log("End of request")
-            // console.log(applicationList)
             resolve(applicationList)
         });
     });
 }
 async function createApplication(application, user) {
     return new Promise(async function (resolve, reject) {
+        console.log(application)
+        console.log(user)
         const client = await pool.connect()
         try {
             await client.query("BEGIN");
@@ -306,8 +289,6 @@ async function createApplication(application, user) {
                 reject(new Error(dbError.errorCodes.DUPLICATE_APPLICATION_ERROR.code))
             }
             reject(new Error(dbError.errorCodes.CREATE_APPLICATION_ERROR.code))
-            // console.error(e)
-
         } finally {
             client.release();
         }
@@ -360,21 +341,6 @@ function updateApplicationStatus(status, applicationID, lastEdited) {
         } finally {
             client.release();
         }
-        // console.log(updateApplicationStatusQuery)
-
-        // client.query(updateApplicationStatusQuery, (err, res) => {
-        //     if (notVaildResponse(res)) {
-        //         client.end();
-        //         reject(new Error(dbError.errorCodes.UPDATE_APPLCIATION_ERROR.code))
-        //     } else {
-        //         // console.log(res)
-        //         client.end();
-        //         if (res.rowCount == '1') {
-        //             resolve("OK")
-        //         }
-        //         reject(new Error(dbError.errorCodes.UPDATE_APPLCIATION_ERROR.code));
-        //     }
-        // });
     });
 }
 

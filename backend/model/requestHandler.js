@@ -4,6 +4,12 @@ const userDAO = require('../integration/userDAO');
 const validation = require('./requestValidation');
 const dbError = require('../error/dbErrors');
 
+/**
+ * Extracts the credentials of the client request
+ *
+ * @param {*} req
+ * @returns JSON of credentials.
+ */
 function extractCredentials(req) {
     const body = req.body;
     const credentials = {
@@ -13,14 +19,32 @@ function extractCredentials(req) {
     return credentials
 }
 
+/**
+ * Extracts the useranme of the client request.
+ *
+ * @param {*} req
+ * @returns String of username
+ */
 function extractUsername(req) {
     return req.body.username;
 }
+/**
+ * Extracts the user from the client request.
+ *
+ * @param {*} req
+ * @returns Instance of user.
+ */
 function extractUser(req) {
     validation.registerInput(req)
     const body = req.body;
     return new User(body.username, body.password, body.email, body.date, body.firstName, body.lastName);
 }
+/**
+ * Extracts the client token from the request.
+ *
+ * @param {*} req
+ * @returns String of token
+ */
 function extractToken(req) {
     cookieHeader = req.headers.cookie;
     if (cookieHeader === undefined) {
@@ -37,17 +61,30 @@ function extractToken(req) {
         throw new Error(dbError.errorCodes.NO_TOKEN_ERROR.code)
     }
     const token = authToken[1].split(';')[0];
-
-    // console.log(token)
     return token ? token : null;
-
 }
+/**
+ * Extracts a application from client request.
+ *
+ * @param {*} req
+ * @returns Instance of Application
+ */
 async function extractCreateApplication(req) {
-    //insert vaildation here
     const competenceList = req.body.competence;
     const availability = req.body.availability;
-    return new Application(availability, null, competenceList, null)
+    if (validation.applyInput(competenceList, availability)) {
+        return new Application(availability, null, competenceList, null)
+    } else {
+        return null
+    }
+
 }
+/**
+ * Extract search params for applications from client request.
+ *
+ * @param {*} req
+ * @returns Instance of application.
+ */
 async function extractApplication(req) {
     let availability = '';
     let applicationDate = '';
@@ -83,10 +120,6 @@ async function extractApplication(req) {
             endDate: date.getFullYear() + 2000 + "-01-01"
         }
     }
-    // console.log(availability)
-    // console.log(applicationDate)
-    // console.log(competenceList)
-    // console.log(name)
     return new Application(availability, applicationDate, competenceList, name);
 }
 module.exports = {

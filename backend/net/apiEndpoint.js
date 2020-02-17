@@ -1,6 +1,12 @@
 const controller = require('../controller/controller');
 const dbErrors = require('../error/dbErrors');
 
+/**
+ * Routes all api requests. 
+ * All client requests will be send here and and the right functions here will send a request to the controller.
+ *
+ * @param {*} router
+ */
 function router(router) {
     router.post('/api/user', async (req, res) => {
         try {
