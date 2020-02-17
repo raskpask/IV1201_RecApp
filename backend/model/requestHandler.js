@@ -110,7 +110,6 @@ async function extractApplication(req) {
     let name = '';
     if (Boolean(req.query.application)) {
         application = JSON.parse(req.query.application);
-        // console.log(application)
         if (application.applicationDate.startDate !== '' || application.applicationDate.endDate !== '') {
             applicationDate = application.applicationDate;
         }
@@ -120,7 +119,7 @@ async function extractApplication(req) {
         competenceList = application.competence ? application.competence : [];
         name = application.name ? application.name : "";
     } else {
-        const competences = await userDAO.getCompetence()
+        const competences = await userDAO.getCompetence(this.extractLang(req))
         for (i = 0; i < competences.length; i++) {
             competenceList.push(competences[i].competence_id);
         }

@@ -23,7 +23,6 @@ async function authenticateUser(req) {
     const token = authToken.generate();
     await userDAO.authenticateUser(credentials);
     await userDAO.changeAuthToken(credentials, token);
-    console.log("OK 2")
     return await userDAO.getUser(token);
 }
 /**
@@ -83,7 +82,7 @@ async function getApplication(req) {
         if (privilegeLevel == "no access") {
             throw new Error(dbError.errorCodes.NO_ACCESS_ERROR);
         }
-        return await userDAO.getApplication(privilegeLevel, token, application);
+        return await userDAO.getApplication(privilegeLevel, application);
     } catch (error) {
         throw error
     }

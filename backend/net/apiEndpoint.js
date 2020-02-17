@@ -54,7 +54,6 @@ function router(router) {
 
     router.post('/api/authentication', async (req, res) => {
         try {
-            // console.log(req.body)
             const user = await controller.authenticateUser(req);
             const lang = await controller.extractLangCookie(req);
             res.cookie('lang',lang);
@@ -84,7 +83,6 @@ function router(router) {
     router.get('/api/application', async (req, res) => {
         try {
             const application = await controller.getApplication(req);
-            // console.log("Server sends: " + application)
             if (application == "no access") {
                 res.sendStatus(401)
             } else {
