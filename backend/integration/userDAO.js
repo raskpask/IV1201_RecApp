@@ -298,7 +298,7 @@ async function createApplication(application, user) {
             }
             await client.query(addApplicatonQuery);
             await client.query("COMMIT");
-            resolve("OK")
+            resolve(200)
 
         } catch (e) {
             await client.query("ROLLBACK");
@@ -348,7 +348,7 @@ function updateApplicationStatus(status, applicationID, lastEdited) {
                 .query(updateApplicationStatusQuery)
                 .then(res => {
                     if (res.rowCount == '1') {
-                        resolve("OK")
+                        resolve(200)
                     }
                     reject(new Error(dbError.errorCodes.UPDATE_APPLCIATION_ERROR.code));
                 })
