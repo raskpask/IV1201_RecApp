@@ -26,7 +26,8 @@ class Header extends Component {
     setLanguage(lang) {
         const cookies = new Cookies();
         cookies.set('lang', lang, { path: '/' });
-        console.log(cookies.get('lang'));
+        this.props.app.updateLanguage(lang)
+        window.location.href = "/";
         this.props.app.forceUpdate()
     }
     login = async () => {
@@ -157,8 +158,8 @@ class Header extends Component {
     renderlanguage() {
         return (
             <NavDropdown title={this.props.info.header.language} id="basic-nav-dropdown" >
-                <NavDropdown.Item onClick={() => this.setLanguage('swe')}>{this.props.info.header.swe}</NavDropdown.Item>
-                <NavDropdown.Item onClick={() => this.setLanguage('eng')}>{this.props.info.header.eng}</NavDropdown.Item>
+                <NavDropdown.Item onClick={() => this.setLanguage('sv-se')}>{this.props.info.header.swe}</NavDropdown.Item>
+                <NavDropdown.Item onClick={() => this.setLanguage('en-us')}>{this.props.info.header.eng}</NavDropdown.Item>
             </NavDropdown>
         )
     }

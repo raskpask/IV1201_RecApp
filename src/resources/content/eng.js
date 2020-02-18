@@ -164,13 +164,17 @@ function getLanguage() {
                 lastEdited: "Last edited:  ",
                 firstName: "First name: ",
                 lastName: "Last name: ",
-                dateOfBirth: "Date of birth: "
+                dateOfBirth: "Date of birth: ",
+                info: "Info"
             },
             {
                 status0: "Unhandled",
                 status1: "Accepted",
                 status2: "Rejected",
                 statuselse: "Status Loading/Error"
+            },
+            {
+                noApplicationMessage: "This is where your application will be displayed when you create one."
             }
         ],
         general:{

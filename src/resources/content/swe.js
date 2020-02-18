@@ -158,13 +158,17 @@ function getLanguage() {
                 lastEdited: "Senast redigerad:  ",
                 firstName: "Förnamn: ",
                 lastName: "Efternamn: ",
-                dateOfBirth: "Födelsedag: "
+                dateOfBirth: "Födelsedag: ",
+                info: "Info"
             },
             {
                 status0: "Ej hanterad",
                 status1: "Accepterad",
                 status2: "Avböjd",
                 statuselse: "Status Laddar/Fel"
+            },
+            {
+                noApplicationMessage: "Här visas din applikation när du skapar den."
             }
         ],
         general:{

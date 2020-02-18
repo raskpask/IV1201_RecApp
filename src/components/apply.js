@@ -78,6 +78,7 @@ class Apply extends Component {
     }
     componentDidMount = async () => {
         const competences = await (await axios.get('/api/competence')).data;
+        console.log(competences);
         this.setState({ competences: competences, competence:{ 
             ...this.state.competence,
             competenceType : {
