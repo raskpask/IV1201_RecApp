@@ -48,6 +48,7 @@ function getLanguage() {
             profile: "Your profile",
             swe: "SWE",
             eng: "ENG",
+            loginError: "Invaild password/username"
 
         },
         validationError: {

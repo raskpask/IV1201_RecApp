@@ -1,4 +1,3 @@
-//These messages are only used for debugging.
 const errorCodes = {
     CONNECTION_ERROR: {
         code: 'CONNECTION_ERROR',
