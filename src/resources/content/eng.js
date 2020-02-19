@@ -107,7 +107,10 @@ function getLanguage() {
             application: "Application",
             editedMessage: "This applicataion has already been edited by someone else!\n" +
                 "The page will be reloaded to see the new status.",
-            success: "The application has been changed"
+            success: "The application has been changed",
+            noApplications: "The filter you used has no matching applications",
+            filter: "Filter"
+
         },
         apply: {
             buttonCompetences: "Competence:",

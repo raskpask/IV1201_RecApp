@@ -101,7 +101,9 @@ function getLanguage() {
             application: "Ansökan",
             editedMessage: "Denna ansökningen har redan blivit ändrad på av någon annan!\n" +
                 "Sidan kommer att laddas om så det går att se den uppdaterade ansökningen.",
-            success: "Ansökningen har ändrats."
+            success: "Ansökningen har ändrats.",
+            noApplications: "Filtret du använde har inga matchande ansökningar.",
+            filter: "Filter"
         },
         apply: {
             buttonCompetences: "Kompetens:",

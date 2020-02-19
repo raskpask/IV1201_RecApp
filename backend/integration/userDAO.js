@@ -24,7 +24,6 @@ const pool = new Pool({
 })
 
 function connect() {
-    console.log(`Your uri is ${process.env.DATABASE_URL}`)
     const client = new Client({
         connectionString: process.env.DATABASE_URL,
         /*user: "wlmremkduaitnk",
@@ -244,10 +243,16 @@ function getPrivilegeLevel(token) {
             values: [token]
         }
         client.query(getPrivilegeLevelQuery, (err, res) => {
+            if (err) {
+                console.error(err)
+                reject(new Error(dbError.errorCodes.GET_USER_ERROR.code));
+                client.end()
+            }
             if (notVaildResponse(res)) {
                 reject(new Error(dbError.errorCodes.GET_USER_ERROR.code));
                 client.end()
             } else {
+                // console.log(res.rows[0])
                 if (res.rows[0] != null) {
                     resolve(res.rows[0]);
                     client.end()
