@@ -108,7 +108,6 @@ function getLanguage() {
             editedMessage: "This applicataion has already been edited by someone else!\n" +
                 "The page will be reloaded to see the new status.",
             success: "The application has been changed"
-
         },
         apply: {
             buttonCompetences: "Competence:",
