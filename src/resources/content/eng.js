@@ -94,6 +94,9 @@ function getLanguage() {
             availMissing: {
                 message: "Please specify a availibility date"
             },
+            availEmpty:{
+                message: "Please give a valid availibility date"
+            },
         },
         listApplications: {
             firstName: "First name",
@@ -119,6 +122,7 @@ function getLanguage() {
 
         },
         apply: {
+            sumbitError: "You did not use the correct input for the application so it could not be created. Please check the application and try again.",
             buttonCompetences: "Competence:",
             buttonDefaultValue: "Pick a competence",
             buttonAddCompetence: "Add competence",
@@ -183,6 +187,9 @@ function getLanguage() {
                 status1: "Accepted",
                 status2: "Rejected",
                 statuselse: "Status Loading/Error"
+            },
+            {
+                noApplicationMessage: "This is where your application will be displayed when you create one."
             }
         ],
         general: {

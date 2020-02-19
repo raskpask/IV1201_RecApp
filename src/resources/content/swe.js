@@ -89,6 +89,9 @@ function getLanguage() {
             bothCompAndAvailMissing: {
                 message: "Var god och skriv in en kompetens och en tillgänglighet"
             },
+            availEmpty:{
+                message: "Skriv in ett korrekt tillgänglighetsdatum"
+            },
         },
         listApplications: {
             firstName: "Förnamn",
@@ -113,6 +116,7 @@ function getLanguage() {
             filter: "Filter"
         },
         apply: {
+            sumbitError: "Du skrev fyllde inte i fälten korrekt! Titta över det du fyllt i och försök igen.",
             buttonCompetences: "Kompetens:",
             buttonDefaultValue: "Välj en kompetens",
             buttonAddCompetence: "Lägg till kompetens",
@@ -177,6 +181,9 @@ function getLanguage() {
                 status1: "Accepterad",
                 status2: "Avböjd",
                 statuselse: "Status Laddar/Fel"
+            },
+            {
+                noApplicationMessage: "Här visas din applikation när du skapar den."
             }
         ],
         general: {

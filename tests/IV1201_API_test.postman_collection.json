@@ -440,6 +440,543 @@
 				"description": "Checks if a username that does not exist in the database exists."
 			},
 			"response": []
+		},
+		{
+			"name": "LoginAdmin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "817dcda5-af9a-4a2d-8d1c-7a6867279196",
+						"exec": [
+							"pm.test(\"Status code is 200\", function() {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response contains authToken cookie\", function() {",
+							"    pm.expect(pm.cookies.has('authToken')).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"Response contains privilegeLevel cookie\", function() {",
+							"    pm.expect(pm.cookies.has('privilegeLevel')).to.be.true;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"borg\",\n\t\"password\": \"wl9nk23a\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/authentication",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"authentication"
+					]
+				},
+				"description": "Tests a login"
+			},
+			"response": []
+		},
+		{
+			"name": "GetListOfALLApplications",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "11352a2f-5273-40b7-97c3-25b41ae01ca0",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Contains Pebo's application\", function () {",
+							"    pm.expect(pm.response.text()).to.include('Pebo'",
+							");",
+							"});",
+							"pm.test(\"Contains hejhejhej's application\", function () {",
+							"    pm.expect(pm.response.text()).to.include('\"dateOfSubmission\\\\\":\\\\\"2020-02-13\\\\\",\\\\\"status\\\\\":0,\\\\\"firstName\\\\\":\\\\\"hejhejhej\\\\\",\\\\\"lastName\\\\\":\\\\\"hejhejhej\\\\\",\\\\\"dateOfBirth\\\\\":\\\\\"0001-01-01\\\\\",\\\\\"id\\\\\":\\\\\"40\\\\\",\\\\\"competence\\\\\":[{\\\\\"name\\\\\":\\\\\"Carousel');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/application",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"application"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update application",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8c7527d4-81f2-4413-a65a-ccb0b8c667fb",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"status\":0,\n\t\"id\":2,\n\t\"lastEdited\":\"2030-02-19T11:59:07.927Z\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/application",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"application"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update application Conflict",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8c7527d4-81f2-4413-a65a-ccb0b8c667fb",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"status\":0,\n\t\"id\":2,\n\t\"lastEdited\":\"2030-02-19T11:59:07.927Z\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/application",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"application"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "LoginApplicantWithoutApplication",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "817dcda5-af9a-4a2d-8d1c-7a6867279196",
+						"exec": [
+							"pm.test(\"Status code is 200\", function() {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response contains authToken cookie\", function() {",
+							"    pm.expect(pm.cookies.has('authToken')).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"Response contains privilegeLevel cookie\", function() {",
+							"    pm.expect(pm.cookies.has('privilegeLevel')).to.be.true;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"1234\",\n\t\"password\": \"1234\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/authentication",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"authentication"
+					]
+				},
+				"description": "Tests a login"
+			},
+			"response": []
+		},
+		{
+			"name": "No application in system",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "384b54d3-df38-4d02-8c87-e9f7b1470123",
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"No application is system error\", function () {",
+							"    pm.response.to.have.body(\"NO_APPLICATION_ERROR\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/application",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"application"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Apllication no cookies",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "384b54d3-df38-4d02-8c87-e9f7b1470123",
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"No Token\", function () {",
+							"    pm.response.to.have.body(\"NO_TOKEN_ERROR\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/application",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"application"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "LoginApplicantWithApplication",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "817dcda5-af9a-4a2d-8d1c-7a6867279196",
+						"exec": [
+							"pm.test(\"Status code is 200\", function() {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response contains authToken cookie\", function() {",
+							"    pm.expect(pm.cookies.has('authToken')).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"Response contains privilegeLevel cookie\", function() {",
+							"    pm.expect(pm.cookies.has('privilegeLevel')).to.be.true;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"JakobMolin\",\n\t\"password\": \"jakob\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/authentication",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"authentication"
+					]
+				},
+				"description": "Tests a login"
+			},
+			"response": []
+		},
+		{
+			"name": "GetOwnApplicationOnly",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "11352a2f-5273-40b7-97c3-25b41ae01ca0",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Contains user's application\", function () {",
+							"    pm.expect(pm.response.text()).to.include('\"dateOfSubmission\\\\\":\\\\\"2020-01-29\\\\\",\\\\\"status\\\\\":2,\\\\\"firstName\\\\\":\\\\\"1\\\\\",\\\\\"lastName\\\\\":\\\\\"asd\\\\\",\\\\\"dateOfBirth\\\\\":\\\\\"1231-12-01\\\\\",\\\\\"id\\\\\":\\\\\"10\\\\\",\\\\\"competence\\\\\":[{\\\\\"name\\\\\":\\\\\"Clown\\\\\",\\\\\"yearsOfExperience\\\\\":\\\\\"4.00\\\\\"},{\\\\\"name\\\\\":\\\\\"Carousel operation\\\\\",\\\\\"yearsOfExperience\\\\\":\\\\\"5.00\\\\\"},{\\\\\"name\\\\\":\\\\\"Sales\\\\\",\\\\\"yearsOfExperience\\\\\":\\\\\"2.00\\\\\"}],\\\\\"availability\\\\\":[{\\\\\"startDate\\\\\":\\\\\"2020-02-19T23:00:00.000Z\\\\\",\\\\\"endDate\\\\\":\\\\\"2020-02-16T23:00:00.000Z\\\\\"},{\\\\\"startDate\\\\\":\\\\\"2020-02-05T23:00:00.000Z\\\\\",\\\\\"endDate\\\\\":\\\\\"2020-02-03T23:00:00.000Z\\\\\"},{\\\\\"startDate\\\\\":\\\\\"2020-02-02T23:00:00.000Z\\\\\",\\\\\"endDate\\\\\":\\\\\"2020-01-30T23:00:00.000Z\\\\\"}]}\"]');",
+							"});",
+							"",
+							"pm.test(\"Does not contain other user\", function () {",
+							"    pm.expect(pm.response.text()).to.not.include('Pebo');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/application",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"application"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Application in system",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "384b54d3-df38-4d02-8c87-e9f7b1470123",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Body contains application string\", function () {",
+							"    pm.expect(pm.response.text()).to.include('\"dateOfSubmission\\\\\":\\\\\"2020-01-29\\\\\",\\\\\"status\\\\\":2,\\\\\"firstName\\\\\":\\\\\"1\\\\\",\\\\\"lastName\\\\\":\\\\\"asd\\\\\",\\\\\"dateOfBirth\\\\\":\\\\\"1231-12-01\\\\\",\\\\\"id\\\\\":\\\\\"10\\\\\",\\\\\"competence\\\\\\\":[{\\\\\\\"name\\\\\":\\\\\"Clown\\\\\",\\\\\"yearsOfExperience\\\\\":\\\\\"4.00\\\\\"');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/application",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"application"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update application Unauthorized",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0de7e349-841c-46a5-8cdb-0d05af5eb9ff",
+						"exec": [
+							"pm.test(\"Status code is 403\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});",
+							"pm.test(\"Body is correct\", function () {",
+							"    pm.response.to.have.body(\"NO_ACCESS_ERROR\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"status\":1,\n\t\"id\":10,\n\t\"lastEdited\":\"2030-02-19T11:59:07.927Z\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/application",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"application"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateApplicationUnauthorizedEditedCookie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0de7e349-841c-46a5-8cdb-0d05af5eb9ff",
+						"exec": [
+							"pm.test(\"Status code is 403\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});",
+							"pm.test(\"Body is correct\", function () {",
+							"    pm.response.to.have.body(\"NO_ACCESS_ERROR\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"status\":1,\n\t\"id\":10,\n\t\"lastEdited\":\"2030-02-19T11:59:07.927Z\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/application",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"application"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"protocolProfileBehavior": {}
