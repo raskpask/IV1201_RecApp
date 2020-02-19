@@ -57,7 +57,7 @@ errorCodes = {
         message: 'Error while getting the competences.'
     },
     WRONG_REGISTER_INPUT_ERROR: {
-        code: 'WRONG_REGISTER_INPUT',
+        code: 'WRONG_REGISTER_INPUT_ERROR',
         message: 'The input from the user is incorrect'
     },
     DUPLICATE_USER_ERROR: {
@@ -80,18 +80,6 @@ errorCodes = {
         code: 'APPLICATION_EDITED_ERROR',
         message: 'The application was updated after the user checked the status'
     },
-    NO_AVAILABILITY_ERROR: {
-        code: 'NO_AVAILABILITY_ERROR',
-        message: 'The client did not send availability dates'
-    },
-    NO_COMPETENCE_ERROR: {
-        code: 'NO_COMPETENCE_ERROR',
-        message: 'The client did not send competences'
-    },
-    NO_LANGUAGE_COOKIE_ERROR: {
-        code: 'NO_LANGUAGE_COOKIE_ERROR',
-        message: 'Could not find language cookie'
-    },
 
 }
 /**
@@ -109,11 +97,11 @@ function respondError(error, res) {
             break;
         case errorCodes.INSERTING_USER_ERROR.code:
             res.status(503);
-            res.send('DB error');
+            res.send(INSERTING_USER_ERROR.code);
             break;
         case errorCodes.UNKNOWN_ERROR.code:
             res.status(500);
-            res.send('Internal server error');
+            res.send(UNKNOWN_ERROR.code);
             break;
         case errorCodes.USER_ERROR.code:
             res.status(503);
@@ -175,17 +163,9 @@ function respondError(error, res) {
             res.status(400);
             res.send(errorCodes.APPLICATION_EDITED_ERROR.code);
             break;
-        case errorCodes.NO_AVAILABILITY_ERROR.code:
+        case errorCodes.CREATE_APPLICATION_ERROR.code:
             res.status(400);
-            res.send(errorCodes.NO_AVAILABILITY_ERROR.code);
-            break;
-        case errorCodes.NO_COMPETENCE_ERROR.code:
-            res.status(400);
-            res.send(errorCodes.NO_COMPETENCE_ERROR.code);
-            break;
-        case errorCodes.NO_LANGUAGE_COOKIE_ERROR.code:
-            res.status(400);
-            res.send(errorCodes.NO_LANGUAGE_COOKIE_ERROR.code);
+            res.send(errorCodes.CREATE_APPLICATION_ERROR.code);
             break;
             
         default:
