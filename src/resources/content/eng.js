@@ -70,22 +70,22 @@ function getLanguage() {
             duplicateUsername: {
                 message: "This username already exists, try another username"
             },
-            notNumber:{
+            notNumber: {
                 message: "You must specify a  valid number"
             },
-            competenceTypeNotChoosen:{
+            competenceTypeNotChoosen: {
                 message: "Pleace choose a compitence from the list"
             },
-            alreadyHasApplication:{
+            alreadyHasApplication: {
                 message: "You have already created a application. You may not create any more appications."
             },
-            bothCompAndAvailMissing:{
+            bothCompAndAvailMissing: {
                 message: "Please specify a compitence and a availibility"
             },
-            compMissing:{
+            compMissing: {
                 message: "Please specify a compitence"
             },
-            availMissing:{
+            availMissing: {
                 message: "Please specify a availibility date"
             },
         },
@@ -104,7 +104,10 @@ function getLanguage() {
             accept: "Accept",
             reject: "Reject",
             close: "Close",
-            application: "Application"
+            application: "Application",
+            editedMessage: "This applicataion has already been edited by someone else!\n" +
+                "The page will be reloaded to see the new status.",
+            success: "The application has been changed"
 
         },
         apply: {
@@ -174,7 +177,7 @@ function getLanguage() {
                 statuselse: "Status Loading/Error"
             }
         ],
-        general:{
+        general: {
             loading: "Loading...",
         }
     }

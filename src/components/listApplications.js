@@ -7,6 +7,7 @@ import '../resources/css/listApplications.css';
 import Application from './fragments/application';
 import axios from 'axios';
 import Access from './fragments/access';
+import { toast } from 'react-toastify';
 
 class ListApplications extends Component {
     constructor(props) {
@@ -106,6 +107,28 @@ class ListApplications extends Component {
                 console.log(err)
             })
     }
+    changeApplicationStatus = (status, id) => {
+        axios
+            .put('/api/application', { status: status, id: id, lastEdited: this.state.timestamp })
+            .then(res => {
+                console.log(res.status)
+                this.showInfo(id, false)
+                this.setState({ timestamp: new Date() })
+                toast(this.props.info.listApplications.success)
+                this.getApplicationsAndCompetences();
+                // window.location.href = "/listApplications";
+
+            })
+            .catch(err => {
+                console.log(err.response.data)
+                if (err.response.data === 'APPLICATION_EDITED_ERROR') {
+                    this.showInfo(id, false)
+                    this.setState({ timestamp: new Date() })
+                    toast(this.props.info.listApplications.editedMessage)
+                    this.getApplicationsAndCompetences();
+                }
+            })
+    }
     parseApplications(applications) {
         let listOfApplications = [];
         for (let app of applications) {
@@ -139,14 +162,6 @@ class ListApplications extends Component {
         )
     }
     // <Application info={this.props.info} application={application} />
-    changeApplicationStatus = (status, id) => {
-        axios
-            .put('/api/application', { status: status, id: id, lastEdited: this.state.timestamp })
-            .then(res =>
-                console.log(res.status))
-            .catch(err =>
-                console.error(err))
-    }
     showInfo(id, state) {
         let list = this.state.showUser;
         list[id] = state;

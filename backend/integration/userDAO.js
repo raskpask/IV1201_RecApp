@@ -244,15 +244,15 @@ function getPrivilegeLevel(token) {
         }
         client.query(getPrivilegeLevelQuery, (err, res) => {
             if (notVaildResponse(res)) {
-                client.end()
                 reject(new Error(dbError.errorCodes.GET_USER_ERROR.code));
+                client.end()
             } else {
                 if (res.rows[0] != null) {
-                    client.end()
                     resolve(res.rows[0]);
+                    client.end()
                 }
-                client.end()
                 reject(new Error(dbError.errorCodes.GET_USER_ERROR.code))
+                client.end()
             }
         });
     });
@@ -386,26 +386,27 @@ function updateApplicationStatus(status, applicationID, lastEdited) {
                     const lastEditedDB = new Date(res.rows[0].last_edited)
                     const lastUpdated = new Date(lastEdited)
                     if (lastEditedDB > lastUpdated) {
-                        throw new Error(dbError.errorCodes.APPLICATION_EDITED_ERROR.code)
+                        reject(new Error(dbError.errorCodes.APPLICATION_EDITED_ERROR.code))
+                    } else {
+                        const updateApplicationStatusQuery = {
+                            text: "UPDATE application SET status = $1 ,last_edited = $2  WHERE application_id = $3",
+                            values: [status, new Date(), applicationID]
+                        }
+                        client
+                            .query(updateApplicationStatusQuery)
+                            .then(res => {
+                                if (res.rowCount == '1') {
+                                    resolve(200)
+                                }
+                                reject(new Error(dbError.errorCodes.UPDATE_APPLCIATION_ERROR.code));
+                            })
+                        client.query("COMMIT");
                     }
                 })
                 .catch(err => {
                     reject(new Error(err.message))
                 })
 
-            const updateApplicationStatusQuery = {
-                text: "UPDATE application SET status = $1 ,last_edited = $2  WHERE application_id = $3",
-                values: [status, new Date(), applicationID]
-            }
-            client
-                .query(updateApplicationStatusQuery)
-                .then(res => {
-                    if (res.rowCount == '1') {
-                        resolve(200)
-                    }
-                    reject(new Error(dbError.errorCodes.UPDATE_APPLCIATION_ERROR.code));
-                })
-            await client.query("COMMIT");
         } catch (e) {
             await client.query("ROLLBACK");
             reject(new Error(dbError.errorCodes.UPDATE_APPLCIATION_ERROR.code))

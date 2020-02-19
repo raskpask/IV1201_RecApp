@@ -70,16 +70,16 @@ function getLanguage() {
             duplicateUsername: {
                 message: "Användarnamnet existerar redan, testa ett annat användarnamn"
             },
-            notNumber:{
+            notNumber: {
                 message: "Du måste specificera ett giltigt nummer"
             },
-            competenceTypeNotChoosen:{
+            competenceTypeNotChoosen: {
                 message: "Välj en kompetens från listan"
             },
-            alreadyHasApplication:{
+            alreadyHasApplication: {
                 message: "Du har redan skapat en applikation. Du får ej skapa fler applikationer."
             },
-            bothCompAndAvailMissing:{
+            bothCompAndAvailMissing: {
                 message: "Var god och skriv in en kompetens och en tillgänglighet"
             },
         },
@@ -98,8 +98,11 @@ function getLanguage() {
             accept: "Acceptera",
             reject: "Avböj",
             close: "Stäng",
-            application: "Ansökan"
-
+            application: "Ansökan",
+            editedMessage: "Denna ansökningen har redan blivit ändrad på av någon annan!\n" +
+                "Sidan kommer att laddas om så det går att se den uppdaterade ansökningen.",
+                
+                success: "Ansökningen har ändrats."
         },
         apply: {
             buttonCompetences: "Kompetens:",
@@ -168,7 +171,7 @@ function getLanguage() {
                 statuselse: "Status Laddar/Fel"
             }
         ],
-        general:{
+        general: {
             loading: "Laddar...",
         }
     }
