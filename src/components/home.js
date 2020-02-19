@@ -8,7 +8,11 @@ class Home extends Component {
     render() {
         return (
             <div>
-                
+                <p> </p>
+                <p> </p>
+                <p>{this.props.info.home.message}</p>
+                <p>{this.props.info.home.tel}</p>
+                <p>{this.props.info.home.mail}</p>
             </div >
         );
     };

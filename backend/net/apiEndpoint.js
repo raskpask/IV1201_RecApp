@@ -106,7 +106,7 @@ function router(router) {
     router.put('/api/application', async (req, res) => {
         try {
             const application = await controller.updateApplicationStatus(req);
-            if (application === "OK") {
+            if (application === 200) {
                 res.send()
             }
         } catch (error) {
