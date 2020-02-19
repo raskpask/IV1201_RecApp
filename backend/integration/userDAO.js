@@ -24,6 +24,7 @@ const pool = new Pool({
 })
 
 function connect() {
+    console.log(`Your uri is ${process.env.DATABASE_URL}`)
     const client = new Client({
         connectionString: process.env.DATABASE_URL,
         /*user: "wlmremkduaitnk",
