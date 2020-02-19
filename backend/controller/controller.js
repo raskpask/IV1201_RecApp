@@ -83,9 +83,7 @@ async function getApplication(req) {
         if (privilegeLevel == "no access") {
             throw new Error(dbError.errorCodes.NO_ACCESS_ERROR);
         }
-        const applicationU = await userDAO.getApplication(privilegeLevel, application, lang);
-        console.log(applicationU)
-        return applicationU;
+        return await userDAO.getApplication(privilegeLevel, application, lang);
     } catch (error) {
         throw error
     }

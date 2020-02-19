@@ -158,7 +158,8 @@ function getLanguage() {
                 lastEdited: "Senast redigerad:  ",
                 firstName: "Förnamn: ",
                 lastName: "Efternamn: ",
-                dateOfBirth: "Födelsedag: "
+                dateOfBirth: "Födelsedag: ",
+                info: "Info"
             },
             {
                 status0: "Ej hanterad",
