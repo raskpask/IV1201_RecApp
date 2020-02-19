@@ -7,6 +7,9 @@ import '../resources/css/listApplications.css';
 import Application from './fragments/application';
 import axios from 'axios';
 import Access from './fragments/access';
+import { toast } from 'react-toastify';
+const APPLICATION_EDITED = 'APPLICATION_EDITED_ERROR';
+const NO_APPLICATION = 'NO_APPLICATION_ERROR';
 
 class ListApplications extends Component {
     constructor(props) {
@@ -79,6 +82,10 @@ class ListApplications extends Component {
             })
             .catch(err => {
                 console.log(err)
+                if (err.response.data === NO_APPLICATION) {
+                    this.setState({ show: false })
+                    toast(this.props.info.listApplications.noApplications)
+                }
             })
     }
     getApplicationsAndCompetences = () => {
@@ -98,12 +105,34 @@ class ListApplications extends Component {
                     })
                     .catch(err => {
                         console.log(err)
+
                     })
                 this.setState({ application: this.parseApplications(res.data) })
 
             })
             .catch(err => {
                 console.log(err)
+            })
+    }
+    changeApplicationStatus = (status, id) => {
+        axios
+            .put('/api/application', { status: status, id: id, lastEdited: this.state.timestamp })
+            .then(res => {
+                console.log(res.status)
+                this.showInfo(id, false)
+                this.setState({ timestamp: new Date() })
+                toast(this.props.info.listApplications.success)
+                this.getApplicationsAndCompetences();
+
+            })
+            .catch(err => {
+                console.log(err.response.data)
+                if (err.response.data === APPLICATION_EDITED) {
+                    this.showInfo(id, false)
+                    this.setState({ timestamp: new Date() })
+                    toast(this.props.info.listApplications.editedMessage)
+                    this.getApplicationsAndCompetences();
+                }
             })
     }
     parseApplications(applications) {
@@ -139,14 +168,6 @@ class ListApplications extends Component {
         )
     }
     // <Application info={this.props.info} application={application} />
-    changeApplicationStatus = (status, id) => {
-        axios
-            .put('/api/application', { status: status, id: id, lastEdited: this.state.timestamp })
-            .then(res =>
-                console.log(res.status))
-            .catch(err =>
-                console.error(err))
-    }
     showInfo(id, state) {
         let list = this.state.showUser;
         list[id] = state;
@@ -183,7 +204,7 @@ class ListApplications extends Component {
         return (
             <Nav>
                 <Button variant="primary ml-auto" onClick={() => this.setState({ show: true })}>
-                    Add filter
+                    {this.props.info.listApplications.filter}
                 </Button>
 
                 <Modal
