@@ -94,6 +94,9 @@ function getLanguage() {
             availMissing: {
                 message: "Please specify a availibility date"
             },
+            availEmpty:{
+                message: "Please give a valid availibility date"
+            },
         },
         listApplications: {
             firstName: "First name",
@@ -183,6 +186,9 @@ function getLanguage() {
                 status1: "Accepted",
                 status2: "Rejected",
                 statuselse: "Status Loading/Error"
+            },
+            {
+                noApplicationMessage: "This is where your application will be displayed when you create one."
             }
         ],
         general: {
