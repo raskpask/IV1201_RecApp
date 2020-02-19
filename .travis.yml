@@ -8,8 +8,8 @@ addons:
   postgresql: "11.6"
   apt:
     packages:
-    - postgresql-11.6
-    - postgresql-client-11.6
+    - postgresql-11
+    - postgresql-client-11
 
 services:
   - postgresql
