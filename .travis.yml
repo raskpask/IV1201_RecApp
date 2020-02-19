@@ -6,6 +6,10 @@ addons:
   hosts:
     - localhost
   postgresql: "11.6"
+  apt:
+    packages:
+    - postgresql-11.6
+    - postgresql-client-11.6
 
 services:
   - postgresql
