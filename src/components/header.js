@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Navbar, FormControl, Form, Button, Nav, NavDropdown } from 'react-bootstrap';
 import Cookies from 'universal-cookie';
 import { errorCodes } from '../model/dbErrors'
+import { toast } from 'react-toastify';
 
 
 import axios from 'axios';
@@ -52,6 +53,7 @@ class Header extends Component {
 
         } catch (error) {
             if(error.response.data === errorCodes.LOGIN_ERROR.code){
+                toast(this.props.info.header.loginError)
                 this.setState({
                     form:{
                         invalidLogin:true,

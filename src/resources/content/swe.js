@@ -49,6 +49,7 @@ function getLanguage() {
             profile: "Min profil",
             swe: "SWE",
             eng: "ENG",
+            loginError: "Fel lösenord/användarnamn"
 
         },
         validationError: {

@@ -154,10 +154,11 @@ function changeAuthToken(credentials, token) {
             if (notVaildResponse(res)) {
                 client.end()
                 reject(new Error(dbError.errorCodes.TOKEN_ERROR.code))
-            }
-            if (res.rowCount == '1') {
-                client.end()
-                resolve(token)
+            } else {
+                if (res.rowCount == '1') {
+                    client.end()
+                    resolve(token)
+                }
             }
         });
     });
