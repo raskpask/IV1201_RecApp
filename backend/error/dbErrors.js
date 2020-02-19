@@ -57,7 +57,7 @@ errorCodes = {
         message: 'Error while getting the competences.'
     },
     WRONG_REGISTER_INPUT_ERROR: {
-        code: 'WRONG_REGISTER_INPUT',
+        code: 'WRONG_REGISTER_INPUT_ERROR',
         message: 'The input from the user is incorrect'
     },
     DUPLICATE_USER_ERROR: {
@@ -80,7 +80,7 @@ errorCodes = {
         code: 'APPLICATION_EDITED_ERROR',
         message: 'The application was updated after the user checked the status'
     },
-    
+
 }
 function respondError(error, res) {
     console.error(error)
@@ -91,11 +91,11 @@ function respondError(error, res) {
             break;
         case errorCodes.INSERTING_USER_ERROR.code:
             res.status(503);
-            res.send('DB error');
+            res.send(INSERTING_USER_ERROR.code);
             break;
         case errorCodes.UNKNOWN_ERROR.code:
             res.status(500);
-            res.send('Internal server error');
+            res.send(UNKNOWN_ERROR.code);
             break;
         case errorCodes.USER_ERROR.code:
             res.status(503);
@@ -157,6 +157,11 @@ function respondError(error, res) {
             res.status(400);
             res.send(errorCodes.APPLICATION_EDITED_ERROR.code);
             break;
+        case errorCodes.CREATE_APPLICATION_ERROR.code:
+            res.status(400);
+            res.send(errorCodes.CREATE_APPLICATION_ERROR.code);
+            break;
+            
         default:
             res.status(500);
             res.send('Something went wrong on the server');
