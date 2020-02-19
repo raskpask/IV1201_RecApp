@@ -116,6 +116,7 @@ function getLanguage() {
             filter: "Filter"
         },
         apply: {
+            sumbitError: "Du skrev fyllde inte i fälten korrekt! Titta över det du fyllt i och försök igen.",
             buttonCompetences: "Kompetens:",
             buttonDefaultValue: "Välj en kompetens",
             buttonAddCompetence: "Lägg till kompetens",

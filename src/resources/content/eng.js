@@ -122,6 +122,7 @@ function getLanguage() {
 
         },
         apply: {
+            sumbitError: "You did not use the correct input for the application so it could not be created. Please check the application and try again.",
             buttonCompetences: "Competence:",
             buttonDefaultValue: "Pick a competence",
             buttonAddCompetence: "Add competence",
