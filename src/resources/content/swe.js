@@ -3,6 +3,12 @@ function getLanguage() {
         access: {
             message: "Du har inte tillgång till denna sida logga in för att få åtkomst"
         },
+        home: {
+            message: "Om du inte har något lösenord eller användarnamn var vänligen kontakta admin.",
+            tel: "Tel: 0701238274",
+            mail: "Mail: admin@iv1201.se"
+            
+        },
         register: {
             register: "Registrera",
             username: {

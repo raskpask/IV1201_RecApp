@@ -3,6 +3,11 @@ function getLanguage() {
         access: {
             message: "You do not have the access rights for this page! Login or get higher privilege from admin"
         },
+        home: {
+            message: "If you don't have username and password please contact the admin to obtain them.",
+            tel: "Tel: 0701238274",
+            mail: "Mail: admin@iv1201.se"
+        },
         register: {
             register: "Register",
             username: {
