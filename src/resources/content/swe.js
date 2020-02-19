@@ -82,6 +82,9 @@ function getLanguage() {
             bothCompAndAvailMissing:{
                 message: "Var god och skriv in en kompetens och en tillgänglighet"
             },
+            availEmpty:{
+                message: "Skriv in ett korrekt tillgänglighetsdatum"
+            },
         },
         listApplications: {
             firstName: "Förnamn",

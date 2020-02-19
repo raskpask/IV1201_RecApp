@@ -33,6 +33,8 @@ class Apply extends Component {
             },
             availabilityCounter: 1,
             availability: [],
+            availabilityIsInvalid:false,
+            availabilityErrorMessage:"",
             form:{
                 noCompetences:false,
                 noAvailability:false,
@@ -78,7 +80,6 @@ class Apply extends Component {
     }
     componentDidMount = async () => {
         const competences = await (await axios.get('/api/competence')).data;
-        console.log(competences);
         this.setState({ competences: competences, competence:{ 
             ...this.state.competence,
             competenceType : {
@@ -139,11 +140,15 @@ class Apply extends Component {
     }
     
     addAvailability() {
-        const newAvailability = { startDate: Moment(this.state.startDate).format('YYYY-MM-DD'), endDate: Moment(this.state.endDate).format('YYYY-MM-DD'), period: this.state.availabilityCounter };
-        let list = this.state.availability;
-        const period = this.state.availabilityCounter;
-        list.push(newAvailability);
-        this.setState({ availability: list, startDate: "", endDate: "", availabilityCounter: period + 1 });
+        if(this.state.startDate ==="" || this.state.endDate ===""){
+            this.setState({availabilityIsInvalid:true, availabilityErrorMessage: this.props.info.validationError.availEmpty.message})
+        }else{
+            const newAvailability = { startDate: Moment(this.state.startDate).format('YYYY-MM-DD'), endDate: Moment(this.state.endDate).format('YYYY-MM-DD'), period: this.state.availabilityCounter };
+            let list = this.state.availability;
+            const period = this.state.availabilityCounter;
+            list.push(newAvailability);
+            this.setState({ availability: list, startDate: "", endDate: "", availabilityCounter: period + 1 });
+        }
     }
     renderAvailability() {
         return (
@@ -154,13 +159,15 @@ class Apply extends Component {
                     // startDateId="your_unique_start_date_id"
                     endDate={this.state.endDate}
                     // endDateId="your_unique_end_date_id"
-                    onDatesChange={({ startDate, endDate }) => this.setState({ startDate, endDate })}
+                    onDatesChange={({ startDate, endDate }) => this.setState({ startDate, endDate,  availabilityIsInvalid:false})}
                     focusedInput={this.state.focusedInput}
                     onFocusChange={focusedInput => this.setState({ focusedInput })}
                 />
                 <Button variant="primary" className="marginLeft"
                     onClick={() => this.addAvailability()}
                 >{this.props.info.apply.availabilityButton}</Button>
+                {this.renderErrorMessage(this.state.availabilityIsInvalid ,this.state.availabilityErrorMessage)}
+
             </Fragment>
         )
     }

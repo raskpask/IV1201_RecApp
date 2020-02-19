@@ -88,6 +88,9 @@ function getLanguage() {
             availMissing:{
                 message: "Please specify a availibility date"
             },
+            availEmpty:{
+                message: "Please give a valid availibility date"
+            },
         },
         listApplications: {
             firstName: "First name",
