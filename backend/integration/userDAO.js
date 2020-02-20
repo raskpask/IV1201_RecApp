@@ -21,7 +21,7 @@ const pool = new Pool({
     port: 5432,
     host: "ec2-54-247-92-167.eu-west-1.compute.amazonaws.com",*/
     ssl: true,
-    connectionTimeoutMillis: 500,
+    connectionTimeoutMillis: 2000,
 })
 
 function connect() {
@@ -33,7 +33,7 @@ function connect() {
         port: 5432,
         host: "ec2-54-247-92-167.eu-west-1.compute.amazonaws.com",*/
         ssl: true,
-        statement_timeout: 500
+        statement_timeout: 2000,
     });
     client.connect();
     return client
