@@ -3,19 +3,19 @@ node_js:
   - "10"
 
 #addons:
- # hosts:
+# hosts:
 #  - localhost
 #  postgresql: "11.6"
 #  apt:
 #    packages:
 #    - postgresql-11
 #    - postgresql-client-11
-before_install:
-  - sudo apt-get update
-  - sudo apt-get --yes remove postgresql\*
-  - sudo apt-get install -y postgresql-11 postgresql-client-11
-  - sudo cp /etc/postgresql/{9.6,11}/main/pg_hba.conf
-  - sudo service postgresql restart 11  
+#before_install:
+#  - sudo apt-get update
+#  - sudo apt-get --yes remove postgresql\*
+#  - sudo apt-get install -y postgresql-11 postgresql-client-11
+#  - sudo cp /etc/postgresql/{9.6,11}/main/pg_hba.conf
+#  - sudo service postgresql restart 11  
 #before_script:
   
   #- psql -c 'CREATE DATABASE {{your database name here}};' -U postgres
@@ -24,8 +24,8 @@ before_install:
 
 services:
   - postgresql
-addons:
-  postgresql: "11.2"
+#addons:
+#  postgresql: "11.2"
   
 install:
   - npm install newman
@@ -34,18 +34,18 @@ before_script:
   - node --version
   - npm --version
   - node_modules/.bin/newman --version
-  - psql --version
+  #- psql --version
   #- psql -c "CREATE DATABASE testdatabase WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8';" -U postgres
   #- psql -f ./tests/testDatabase.sql -U postgres
-  - psql -c 'create database travis_ci_test;' -U postgres
-  - psql -f ./tests/tables.sql -U postgres
-  - psql -f ./tests/values.sql -U postgres
+  #- psql -c 'create database travis_ci_test;' -U postgres
+  #- psql -f ./tests/tables.sql -U postgres
+  #- psql -f ./tests/values.sql -U postgres
   - npm start &
 script: bundle exec rake spec
 env:
   global:
-    -DATABASE_URL='postgres://postgres@127.0.0.1:5432/travis_ci_test'
-#     -DATABASE_URL='postgres://wlmremkduaitnk:83a43bfb610544a9c62da56a7144bafb13a726bf63a91e7ec454178a9623b479@ec2-54-247-92-167.eu-west-1.compute.amazonaws.com:5432/d38bijitre5o3s'
+    #-DATABASE_URL='postgres://postgres@127.0.0.1:5432/travis_ci_test'
+    -DATABASE_URL='postgres://wlmremkduaitnk:83a43bfb610544a9c62da56a7144bafb13a726bf63a91e7ec454178a9623b479@ec2-54-247-92-167.eu-west-1.compute.amazonaws.com:5432/d38bijitre5o3s'
 
 
 
