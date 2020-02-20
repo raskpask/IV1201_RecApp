@@ -132,7 +132,7 @@ class Apply extends Component {
             let list = this.state.addedCompetences;
             list.push(newCompetence);
             this.setState({ addedCompetences: list });
-            delete this.state.competences[newCompetence.competenceID];
+            delete this.state.competences[newCompetence.competenceID -1];
             this.resetCompitences();
         }
     }
