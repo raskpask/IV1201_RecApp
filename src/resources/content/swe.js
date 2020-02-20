@@ -188,6 +188,7 @@ function getLanguage() {
         ],
         general: {
             loading: "Laddar...",
+            error: "Hoppsan något gick fel!"
         }
     }
     return lang;

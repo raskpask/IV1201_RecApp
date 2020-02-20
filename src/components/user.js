@@ -6,7 +6,7 @@ import axios from 'axios';
 import Application from './fragments/application';
 import Access from './fragments/access';
 import { errorCodes } from '../model/dbErrors'
-
+import { toast } from 'react-toastify';
 
 import '../resources/css/register.css';
 import '../resources/css/user.css';
@@ -18,7 +18,7 @@ class User extends Component {
         this.state = {
             renderApplication: "",
             typeOfUser: "",
-            noApplication:false,
+            noApplication: false,
             user: {
                 username: "",
                 password: "",
@@ -54,16 +54,18 @@ class User extends Component {
     }
 
     componentDidMount = async () => {
-        try{
+        try {
             const user = await (await axios.get('/api/user')).data.user;
             const application = (await axios.get('api/application')).data[0];
             this.setState({ user: user, application: JSON.parse(application) })
             this.setState({ renderApplication: this.renderApplication() })
             console.log(this.state.application)
-            this.privilege()  
-        }catch(error){
-            if(error.response.data === errorCodes.NO_APPLICATION_ERROR.code){
-                this.setState({noApplication:true});
+            this.privilege()
+        } catch (error) {
+            if (error.response.data === errorCodes.NO_APPLICATION_ERROR.code) {
+                this.setState({ noApplication: true });
+            } else {
+                toast(this.props.info.general.error)
             }
         }
     }
@@ -78,14 +80,14 @@ class User extends Component {
         }
         this.forceUpdate()
     }
-    renderNoApplicationMessage = ()=>{
-        return(
-        <Fragment>
+    renderNoApplicationMessage = () => {
+        return (
+            <Fragment>
 
-            <div className = "noApplicationMessage">
-                {this.props.info.user[9].noApplicationMessage}
-            </div>
-        </Fragment>
+                <div className="noApplicationMessage">
+                    {this.props.info.user[9].noApplicationMessage}
+                </div>
+            </Fragment>
         )
     }
     renderUser = () => {
@@ -129,7 +131,7 @@ class User extends Component {
     render() {
         return (
             <div>
-                {(this.state.noApplication) ? this.renderNoApplicationMessage():null}
+                {(this.state.noApplication) ? this.renderNoApplicationMessage() : null}
                 <Access access='2' info={this.props.info.access} />
                 {this.state.typeOfUser}
             </div >

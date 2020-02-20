@@ -5,6 +5,7 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import axios from 'axios';
 import { errorCodes } from '../model/dbErrors'
+import { toast } from 'react-toastify';
 
 
 import Spinner from 'react-bootstrap/Spinner'
@@ -33,7 +34,6 @@ class Register extends Component {
 
     }
   }
-  //////////API CALL CODE///////////////
   checkUsername = async (usernameValue) =>{
     try{
       const name = { username:usernameValue };
@@ -41,18 +41,12 @@ class Register extends Component {
       console.log(name);
       console.log("RESPONSE: "+ response.data);
     }catch(error){
+      toast(this.props.info.general.error)
       console.log("ERROR: "+error);
     }
   }
-  ///////////////////////////////////
-  //Used for checking validation after a onChange event
   checkValidation = (type, state) => {
     const validState = validator(type, state.user, this.props.info.validationError);
-    /*
-    if(type === "username"){
-      this.checkUsername(validState.username.value);
-    }
-    */
     this.setState({
       ...this.state,
       user: {
@@ -61,7 +55,6 @@ class Register extends Component {
       }
     })
   }
-  //Called from the subbmitt button
   handleSubmit = (event) => {
     event.preventDefault();
     const validState = validator(null, this.state.user, this.props.info.validationError);
@@ -123,15 +116,15 @@ class Register extends Component {
             }
           }
         };
-        //we have to redo the validation to that the DUPLICATE_USER_ERROR will be shown
         this.checkValidation(null,state);
 
       }else{
-        console.log("Unhandled error occured in frontend!")
+        toast(this.props.info.general.error)
+        console.log(error)
+        this.setState({
+          isLoading: false,
+        });
       }
-      this.setState({
-        isLoading: false,
-      });
     }
   }
   renderRegisterForm = () => {

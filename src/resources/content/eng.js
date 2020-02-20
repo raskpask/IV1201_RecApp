@@ -194,6 +194,7 @@ function getLanguage() {
         ],
         general: {
             loading: "Loading...",
+            error: "oops something went wrong!"
         }
     }
     return lang;

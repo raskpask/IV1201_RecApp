@@ -84,16 +84,20 @@ class Apply extends Component {
         });
     }
     componentDidMount = async () => {
-        const competences = await (await axios.get('/api/competence')).data;
-        this.setState({
-            competences: competences, competence: {
-                ...this.state.competence,
-                competenceType: {
-                    ...this.state.competence.competenceType,
-                    value: this.props.info.apply.buttonDefaultValue
+        try {
+            const competences = await (await axios.get('/api/competence')).data;
+            this.setState({
+                competences: competences, competence: {
+                    ...this.state.competence,
+                    competenceType: {
+                        ...this.state.competence.competenceType,
+                        value: this.props.info.apply.buttonDefaultValue
+                    }
                 }
-            }
-        })
+            })
+        } catch (err) {
+            toast(this.props.info.general.error)
+        }
     }
     errorTag(message) {
         return (
@@ -132,7 +136,7 @@ class Apply extends Component {
             let list = this.state.addedCompetences;
             list.push(newCompetence);
             this.setState({ addedCompetences: list });
-            delete this.state.competences[newCompetence.competenceID -1];
+            delete this.state.competences[newCompetence.competenceID - 1];
             this.resetCompitences();
         }
     }
@@ -311,9 +315,10 @@ class Apply extends Component {
                     });
                 } else if (error.response.data === errorCodes.CREATE_APPLICATION_ERROR.code) {
                     toast(this.props.info.apply.sumbitError)
-                    this.setState({isLoading: false, availability: [] })
+                    this.setState({ isLoading: false, availability: [] })
                 } else {
-                    console.log("Unhandled error occured in frontend!")
+                    this.setState({ isLoading: false })
+                    toast(this.props.info.general.error)
                 }
             }
         }

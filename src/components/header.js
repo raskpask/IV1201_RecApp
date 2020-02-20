@@ -18,9 +18,9 @@ class Header extends Component {
                 username: "",
                 password: "",
             },
-            form:{
-                invalidLogin:false,
-                isLoading:false,
+            form: {
+                invalidLogin: false,
+                isLoading: false,
             }
         }
     }
@@ -33,11 +33,11 @@ class Header extends Component {
     }
     login = async () => {
         this.setState({
-            form:{
-                invalidLogin:false,
-                isLoading:true
+            form: {
+                invalidLogin: false,
+                isLoading: true
             }
-          });
+        });
         try {
             const credentials = {
                 username: this.state.username,
@@ -52,30 +52,37 @@ class Header extends Component {
             }
 
         } catch (error) {
-            if(error.response.data === errorCodes.LOGIN_ERROR.code){
+            if (error.response.data === errorCodes.LOGIN_ERROR.code) {
                 toast(this.props.info.header.loginError)
                 this.setState({
-                    form:{
-                        invalidLogin:true,
-                        isLoading:false
+                    form: {
+                        invalidLogin: true,
+                        isLoading: false
                     }
-                  });
-            }else{
-                console.log("Unhandled error occured in frontend!")
+                });
+            } else {
+                this.setState({ isLoading: false })
+                console.error(error)
+                toast(this.props.info.general.error)
             }
         }
     }
     logout = async () => {
-        const response = await axios.delete('/api/authentication')
-        if (response.status === 200) {
-            window.location.href = "/";
-            this.forceUpdate()
+        try {
+            const response = await axios.delete('/api/authentication')
+            if (response.status === 200) {
+                window.location.href = "/";
+                this.forceUpdate()
+            }
+        } catch(err){
+            console.error(err)
+            toast(this.props.info.general.error)
         }
     }
-    chooseUserLevel(){
+    chooseUserLevel() {
         let privilegeLevel = document.cookie.split('privilegeLevel=')[1];
-        
-        if(Boolean(privilegeLevel)){
+
+        if (Boolean(privilegeLevel)) {
             privilegeLevel = privilegeLevel.split(';')[0];
         }
         if (privilegeLevel === '1') {
@@ -128,7 +135,7 @@ class Header extends Component {
                 <Form inline className="ml-auto">
                     <FormControl
                         type="Username"
-                        isInvalid = {this.state.form.invalidLogin} 
+                        isInvalid={this.state.form.invalidLogin}
                         placeholder={this.props.info.header.username}
                         onChange={event => this.setState({ username: event.target.value })}
                         className=" mr-sm-2" />
@@ -136,13 +143,13 @@ class Header extends Component {
                     <FormControl
                         type="Password"
                         placeholder={this.props.info.header.password}
-                        isInvalid = {this.state.form.invalidLogin} 
+                        isInvalid={this.state.form.invalidLogin}
                         onChange={event => this.setState({ password: event.target.value })}
                         className=" mr-sm-2" />
                     <Button onClick={() => this.login()} variant="primary" disabled={this.state.form.isLoading}>
                         {this.state.form.isLoading ? this.props.info.general.loading : this.props.info.header.login}
                     </Button>
-                    
+
                 </Form>
                 {this.renderlanguage()}
             </Nav>

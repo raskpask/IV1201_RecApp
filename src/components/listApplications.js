@@ -71,20 +71,19 @@ class ListApplications extends Component {
             competence: competences,
             name: this.state.filterName
         }
-        // console.log("Before request: ")
-        // console.log(application)
         axios
             .get('/api/application', { params: { application } })
             .then(res => {
                 this.setState({ application: this.parseApplications(res.data) })
                 this.setState({ show: false })
-                // console.log(res.data)
             })
             .catch(err => {
                 console.log(err)
                 if (err.response.data === NO_APPLICATION) {
                     this.setState({ show: false })
                     toast(this.props.info.listApplications.noApplications)
+                } else {
+                    toast(this.props.info.general.error)
                 }
             })
     }
@@ -104,6 +103,7 @@ class ListApplications extends Component {
 
                     })
                     .catch(err => {
+                        toast(this.props.info.general.error)
                         console.log(err)
 
                     })
@@ -111,6 +111,7 @@ class ListApplications extends Component {
 
             })
             .catch(err => {
+                toast(this.props.info.general.error)
                 console.log(err)
             })
     }
@@ -132,6 +133,9 @@ class ListApplications extends Component {
                     this.setState({ timestamp: new Date() })
                     toast(this.props.info.listApplications.editedMessage)
                     this.getApplicationsAndCompetences();
+                } else{
+                    toast(this.props.info.general.error)
+                    console.error(err)
                 }
             })
     }
