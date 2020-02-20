@@ -509,7 +509,7 @@
 							");",
 							"});",
 							"pm.test(\"Contains hejhejhej's application\", function () {",
-							"    pm.expect(pm.response.text()).to.include('\"dateOfSubmission\\\\\":\\\\\"2020-02-13\\\\\",\\\\\"status\\\\\":0,\\\\\"firstName\\\\\":\\\\\"hejhejhej\\\\\",\\\\\"lastName\\\\\":\\\\\"hejhejhej\\\\\",\\\\\"dateOfBirth\\\\\":\\\\\"0001-01-01\\\\\",\\\\\"id\\\\\":\\\\\"40\\\\\",\\\\\"competence\\\\\":[{\\\\\"name\\\\\":\\\\\"Carousel');",
+							"    pm.expect(pm.response.text()).to.include('\"hejhejhej');",
 							"});"
 						],
 						"type": "text/javascript"
@@ -726,8 +726,8 @@
 							"pm.test(\"Status code is 400\", function () {",
 							"    pm.response.to.have.status(400);",
 							"});",
-							"pm.test(\"No Token\", function () {",
-							"    pm.response.to.have.body(\"NO_TOKEN_ERROR\");",
+							"pm.test(\"No application\", function () {",
+							"    pm.response.to.have.body(\"NO_APPLICATION_ERROR\");",
 							"});"
 						],
 						"type": "text/javascript"
@@ -808,52 +808,20 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "11352a2f-5273-40b7-97c3-25b41ae01ca0",
+						"id": "ae561e13-ec36-4a64-a210-9aed0bad87fd",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});",
 							"pm.test(\"Contains user's application\", function () {",
-							"    pm.expect(pm.response.text()).to.include('\"dateOfSubmission\\\\\":\\\\\"2020-01-29\\\\\",\\\\\"status\\\\\":2,\\\\\"firstName\\\\\":\\\\\"1\\\\\",\\\\\"lastName\\\\\":\\\\\"asd\\\\\",\\\\\"dateOfBirth\\\\\":\\\\\"1231-12-01\\\\\",\\\\\"id\\\\\":\\\\\"10\\\\\",\\\\\"competence\\\\\":[{\\\\\"name\\\\\":\\\\\"Clown\\\\\",\\\\\"yearsOfExperience\\\\\":\\\\\"4.00\\\\\"},{\\\\\"name\\\\\":\\\\\"Carousel operation\\\\\",\\\\\"yearsOfExperience\\\\\":\\\\\"5.00\\\\\"},{\\\\\"name\\\\\":\\\\\"Sales\\\\\",\\\\\"yearsOfExperience\\\\\":\\\\\"2.00\\\\\"}],\\\\\"availability\\\\\":[{\\\\\"startDate\\\\\":\\\\\"2020-02-19T23:00:00.000Z\\\\\",\\\\\"endDate\\\\\":\\\\\"2020-02-16T23:00:00.000Z\\\\\"},{\\\\\"startDate\\\\\":\\\\\"2020-02-05T23:00:00.000Z\\\\\",\\\\\"endDate\\\\\":\\\\\"2020-02-03T23:00:00.000Z\\\\\"},{\\\\\"startDate\\\\\":\\\\\"2020-02-02T23:00:00.000Z\\\\\",\\\\\"endDate\\\\\":\\\\\"2020-01-30T23:00:00.000Z\\\\\"}]}\"]');",
+							"    pm.expect(pm.response.text()).to.include('asd');",
 							"});",
 							"",
 							"pm.test(\"Does not contain other user\", function () {",
 							"    pm.expect(pm.response.text()).to.not.include('Pebo');",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{url}}/api/application",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"api",
-						"application"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Application in system",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "384b54d3-df38-4d02-8c87-e9f7b1470123",
-						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});",
-							"pm.test(\"Body contains application string\", function () {",
-							"    pm.expect(pm.response.text()).to.include('\"dateOfSubmission\\\\\":\\\\\"2020-01-29\\\\\",\\\\\"status\\\\\":2,\\\\\"firstName\\\\\":\\\\\"1\\\\\",\\\\\"lastName\\\\\":\\\\\"asd\\\\\",\\\\\"dateOfBirth\\\\\":\\\\\"1231-12-01\\\\\",\\\\\"id\\\\\":\\\\\"10\\\\\",\\\\\"competence\\\\\\\":[{\\\\\\\"name\\\\\":\\\\\"Clown\\\\\",\\\\\"yearsOfExperience\\\\\":\\\\\"4.00\\\\\"');",
 							"});"
 						],
 						"type": "text/javascript"
