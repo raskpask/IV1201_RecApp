@@ -68,6 +68,7 @@ function registerUser(user) {
             client.end()
             reject(new Error(dbError.errorCodes.USER_ERROR.code))
         });
+        client.release()
     });
 }
 /**
@@ -95,6 +96,7 @@ function updateUser(user, token) {
             client.end()
             reject(new Error(dbError.errorCodes.UPDATE_USER_ERROR.code))
         });
+        client.release()
     });
 }
 /**
@@ -126,6 +128,7 @@ function authenticateUser(credentials) {
             reject(new Error(dbError.errorCodes.LOGIN_ERROR.code))
 
         })
+        client.release()
     });
 }
 /**
@@ -161,6 +164,7 @@ function changeAuthToken(credentials, token) {
                 }
             }
         });
+        client.release()
     });
 }
 
@@ -193,6 +197,7 @@ function checkIfUsernameIsAvailable(username) {
                 resolve("Username taken");
             }
         });
+        client.release()
     });
 }
 /**
@@ -225,6 +230,7 @@ function getUser(token) {
                 reject(new Error(dbError.errorCodes.NO_USER_ERROR.code))
             }
         });
+        client.release()
     });
 }
 /**
@@ -262,6 +268,7 @@ function getPrivilegeLevel(token) {
                 client.end()
             }
         });
+        client.release()
     });
 }
 
@@ -320,6 +327,7 @@ function getApplication(privilegeLevel, application, lang) {
             client.end()
             resolve(applicationList)
         });
+        client.release()
     });
 }
 /**
@@ -447,6 +455,7 @@ function getCompetence(lang) {
             client.end()
             reject(new Error(dbError.errorCodes.UNKNOWN_ERROR.code));
         });
+        client.release()
     });
 }
 
